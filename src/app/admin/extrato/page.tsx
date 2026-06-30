@@ -129,6 +129,34 @@ export default function AdminLedgerPage() {
     }
   };
 
+  // Excluir Pedido Permanentemente
+  const handleDeleteOrder = async (orderId: string, orderCode: string) => {
+    const confirmDelete = window.confirm(`ATENÇÃO: Deseja realmente excluir permanentemente o pedido ${orderCode}?\n\nSe ele estava aprovado, os presentes retornarão ao estoque.`);
+    if (!confirmDelete) return;
+
+    try {
+      setSubmittingId(orderId);
+      const res = await fetch(`/api/admin/orders?id=${orderId}`, {
+        method: "DELETE",
+      });
+
+      const json = await res.json();
+
+      if (!res.ok) {
+        toast.error(json.error || "Erro ao excluir pedido.");
+        return;
+      }
+
+      toast.success(`Pedido ${orderCode} excluído com sucesso!`);
+      fetchOrders();
+    } catch (err) {
+      console.error(err);
+      toast.error("Erro ao conectar.");
+    } finally {
+      setSubmittingId(null);
+    }
+  };
+
   // Exportar Pedidos para Planilha CSV
   const handleExportCSV = () => {
     if (orders.length === 0) {
@@ -477,7 +505,7 @@ export default function AdminLedgerPage() {
                         </td>
 
                         {/* Ações adicionais */}
-                        <td className="px-6 py-4.5 text-right">
+                        <td className="px-6 py-4.5 text-right flex items-center justify-end gap-2">
                           {isManualApprovePossible && (
                             <button
                               onClick={() => handleApprovePayment(ord.id, ord.code)}
@@ -490,6 +518,14 @@ export default function AdminLedgerPage() {
                           {!isManualApprovePossible && (
                             <span className="text-slate-300 font-semibold text-[10px]">-</span>
                           )}
+                          <button
+                            onClick={() => handleDeleteOrder(ord.id, ord.code)}
+                            disabled={submittingId === ord.id}
+                            className="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-500 transition-colors border border-rose-100 disabled:opacity-50"
+                            title="Excluir Pedido"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                          </button>
                         </td>
                       </tr>
                     );

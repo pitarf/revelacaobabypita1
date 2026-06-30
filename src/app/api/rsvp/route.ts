@@ -1,15 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-// Função utilitária para gerar código de acesso alfanumérico único de 6 dígitos
-function generateAccessCode() {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  let code = "";
-  for (let i = 0; i < 6; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return code;
-}
 
 // GET /api/rsvp?code=XXXXXX - Consulta detalhes de uma confirmação pelo código de acesso
 export async function GET(req: NextRequest) {
@@ -124,12 +115,18 @@ export async function POST(req: NextRequest) {
       }, { status: 400 });
     }
 
-    // Gera um código de acesso alfanumérico único
+    // Gera código usando Primeiro Nome + número
+    const firstName = fullName.trim().split(" ")[0].normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().replace(/[^A-Z]/g, "");
     let code = "";
     let isUnique = false;
     let attempts = 0;
-    while (!isUnique && attempts < 10) {
-      code = generateAccessCode();
+    
+    while (!isUnique && attempts < 20) {
+      const numDigits = attempts < 10 ? 1 : 2;
+      const maxVal = attempts < 10 ? 5 : 50;
+      const num = Math.floor(Math.random() * maxVal) * 2;
+      code = `${firstName}${num}`;
+      
       const exists = await prisma.rsvp.findUnique({ where: { accessCode: code } });
       if (!exists) {
         isUnique = true;

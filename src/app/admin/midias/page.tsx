@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import AdminSidebar from "@/components/admin/AdminSidebar";
-import { Save, Image as ImageIcon, Music, Video, Plus, Trash2, Check, Star } from "lucide-react";
+import ImageCropper from "@/components/admin/ImageCropper";
+import { Save, Image as ImageIcon, Music, Video, Plus, Trash2, Check, Star, UploadCloud } from "lucide-react";
 import { toast } from "sonner";
 
 interface Photo {
@@ -39,6 +40,7 @@ export default function AdminMediaPage() {
   const [newPhotoUrl, setNewPhotoUrl] = useState("");
   const [newPhotoCaption, setNewPhotoCaption] = useState("");
   const [newPhotoFeatured, setNewPhotoFeatured] = useState(false);
+  const [cropperOpen, setCropperOpen] = useState(false);
 
   useEffect(() => {
     loadSettings();
@@ -141,7 +143,7 @@ export default function AdminMediaPage() {
     e.preventDefault();
 
     if (!newPhotoUrl.trim()) {
-      toast.error("A URL da imagem é obrigatória.");
+      toast.error("A imagem é obrigatória.");
       return;
     }
 
@@ -174,6 +176,25 @@ export default function AdminMediaPage() {
       toast.error("Erro ao enviar imagem.");
     } finally {
       setAddingPhoto(false);
+    }
+  };
+
+  const handleCropComplete = async (base64Webp: string) => {
+    try {
+      setCropperOpen(false);
+      toast.info("Enviando e otimizando imagem...");
+      const res = await fetch("/api/admin/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageBase64: base64Webp }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error);
+      setNewPhotoUrl(json.url);
+      toast.success("Imagem enviada com sucesso!");
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Erro ao fazer upload da imagem.");
     }
   };
 
@@ -382,15 +403,30 @@ export default function AdminMediaPage() {
                 </h4>
                 
                 <div>
-                  <label className="block text-[9px] font-bold text-slate-400 uppercase mb-1">URL da Imagem *</label>
-                  <input
-                    type="text"
-                    placeholder="https://exemplo.com/maternidade.jpg"
-                    value={newPhotoUrl}
-                    onChange={(e) => setNewPhotoUrl(e.target.value)}
-                    required
-                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-semibold focus:outline-none"
-                  />
+                  <label className="block text-[9px] font-bold text-slate-400 uppercase mb-1">Imagem *</label>
+                  
+                  <div className="flex items-center gap-2">
+                    {newPhotoUrl ? (
+                      <div className="h-10 w-10 rounded-lg border border-slate-200 overflow-hidden flex-none">
+                        <img src={newPhotoUrl} alt="Preview" className="h-full w-full object-cover" />
+                      </div>
+                    ) : (
+                      <div className="h-10 w-10 rounded-lg border border-slate-200 bg-slate-100 flex items-center justify-center flex-none">
+                        <ImageIcon className="h-4 w-4 text-slate-400" />
+                      </div>
+                    )}
+                    
+                    <div className="flex-1 flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setCropperOpen(true)}
+                        className="flex items-center justify-center gap-1.5 bg-sky-50 text-sky-600 hover:bg-sky-100 border border-sky-100 px-3 py-2 rounded-xl text-xs font-bold transition-all w-full"
+                      >
+                        <UploadCloud className="h-4 w-4" />
+                        Enviar Foto (1:1)
+                      </button>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
@@ -478,6 +514,14 @@ export default function AdminMediaPage() {
           </div>
 
         </div>
+
+        {cropperOpen && (
+          <ImageCropper 
+            onCropComplete={handleCropComplete} 
+            onCancel={() => setCropperOpen(false)} 
+            aspect={16/9}
+          />
+        )}
 
       </main>
     </div>

@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
         maxQuantity: parseInt(maxQuantity || "1"),
         externalLink: externalLink || null,
         isFeatured: isFeatured !== undefined ? isFeatured : false,
-        status: status || "active",
+        status: status === "inactive" ? "inactive" : "available",
         categoryId,
       },
     });
@@ -118,6 +118,12 @@ export async function PUT(req: NextRequest) {
     }
 
     const targetMax = parseInt(maxQuantity);
+    
+    // Auto-calcula o status de estoque
+    let finalStatus = status === "inactive" ? "inactive" : "available";
+    if (finalStatus === "available" && currentGift.chosenQuantity >= targetMax) {
+      finalStatus = "out_of_stock";
+    }
 
     const updated = await prisma.gift.update({
       where: { id },
@@ -129,7 +135,7 @@ export async function PUT(req: NextRequest) {
         maxQuantity: targetMax,
         externalLink: externalLink || null,
         isFeatured,
-        status,
+        status: finalStatus,
         categoryId,
       },
     });

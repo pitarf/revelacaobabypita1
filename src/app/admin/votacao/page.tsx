@@ -68,7 +68,7 @@ export default function AdminVotingPage() {
 
   // Filtra palpites
   const filteredVotes = votes.filter((vote) => {
-    const contactStr = `${vote.voterEmail || ""} ${vote.voterPhone || ""} ${vote.ipAddress || ""}`.toLowerCase();
+    const contactStr = `${vote.voterEmail || ""} ${vote.voterPhone || ""}`.toLowerCase();
     const matchesSearch = contactStr.includes(search.toLowerCase());
     const matchesBaby = filterBaby === "all" || vote.babyName === filterBaby;
 
@@ -143,7 +143,7 @@ export default function AdminVotingPage() {
           <div className="relative w-full sm:max-w-md">
             <input
               type="text"
-              placeholder="Buscar por e-mail, celular ou IP..."
+              placeholder="Buscar por e-mail ou celular..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 pl-11 text-xs focus:outline-none focus:border-slate-400 font-semibold shadow-sm transition-all"
@@ -183,7 +183,6 @@ export default function AdminVotingPage() {
                   <tr>
                     <th className="px-6 py-4">Bebê Opcional</th>
                     <th className="px-6 py-4">Contato do Convidado</th>
-                    <th className="px-6 py-4">Endereço IP</th>
                     <th className="px-6 py-4">Data do Voto</th>
                     <th className="px-6 py-4 text-right">Ações</th>
                   </tr>
@@ -209,9 +208,6 @@ export default function AdminVotingPage() {
                         <td className="px-6 py-4.5 text-slate-700 font-extrabold">
                           {identifier}
                         </td>
-
-                        {/* IP */}
-                        <td className="px-6 py-4.5 font-mono text-[11px] text-slate-400">{vote.ipAddress || "-"}</td>
 
                         {/* Data */}
                         <td className="px-6 py-4.5 text-slate-500">

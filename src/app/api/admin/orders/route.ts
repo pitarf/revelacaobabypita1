@@ -146,3 +146,63 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ error: "Erro ao modificar pedido." }, { status: 500 });
   }
 }
+
+// DELETE: Exclui um pedido permanentemente
+export async function DELETE(req: NextRequest) {
+  try {
+    const session = await getAdminSession();
+    if (!session) {
+      return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json({ error: "ID não fornecido." }, { status: 400 });
+    }
+
+    const order = await prisma.order.findUnique({
+      where: { id },
+      include: { orderItems: true },
+    });
+
+    if (!order) {
+      return NextResponse.json({ error: "Pedido não localizado." }, { status: 404 });
+    }
+
+    await prisma.$transaction(async (tx) => {
+      // Devolver o estoque se o pedido estava aprovado
+      if (order.paymentStatus === "approved") {
+        for (const item of order.orderItems) {
+          await tx.gift.update({
+            where: { id: item.giftId },
+            data: {
+              chosenQuantity: { decrement: item.quantity },
+            },
+          });
+        }
+      }
+
+      // Os OrderItems e Payments devem ser deletados por Cascade se o schema estiver configurado, 
+      // mas por garantia, deletamos manualmente antes do pedido.
+      await tx.orderItem.deleteMany({ where: { orderId: id } });
+      await tx.payment.deleteMany({ where: { orderId: id } });
+      await tx.order.delete({ where: { id } });
+    });
+
+    // Auditoria
+    await prisma.auditLog.create({
+      data: {
+        adminId: session.id,
+        action: "DELETE_ORDER",
+        details: `Excluiu permanentemente o pedido Código ${order.code}`,
+      },
+    });
+
+    return NextResponse.json({ success: true, message: "Pedido excluído com sucesso." });
+  } catch (error) {
+    console.error("Erro no DELETE admin/orders:", error);
+    return NextResponse.json({ error: "Erro ao excluir pedido." }, { status: 500 });
+  }
+}

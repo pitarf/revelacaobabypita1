@@ -13,6 +13,7 @@ export interface CartItem {
   quantity: number;
   subtotal: number;
   available: number;
+  externalLink?: string | null;
 }
 
 interface CartContextType {

@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import AdminSidebar from "@/components/admin/AdminSidebar";
-import { Plus, Edit2, Trash2, CheckCircle, XCircle, Star, Image as ImageIcon, ExternalLink } from "lucide-react";
+import ImageCropper from "@/components/admin/ImageCropper";
+import { Plus, Edit2, Trash2, CheckCircle, XCircle, Star, Image as ImageIcon, ExternalLink, UploadCloud } from "lucide-react";
 import { toast } from "sonner";
 
 interface Category {
@@ -35,6 +36,11 @@ export default function AdminGiftsPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
+  // Estados de Filtro e Ordenação
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterCategory, setFilterCategory] = useState("todos");
+  const [sortBy, setSortBy] = useState("relevant");
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [imageUrl, setImageUrl] = useState("");
@@ -42,9 +48,71 @@ export default function AdminGiftsPage() {
   const [maxQuantity, setMaxQuantity] = useState("1");
   const [externalLink, setExternalLink] = useState("");
   const [isFeatured, setIsFeatured] = useState(false);
-  const [status, setStatus] = useState("active");
+  const [status, setStatus] = useState("available");
   const [categoryId, setCategoryId] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [cropperOpen, setCropperOpen] = useState(false);
+
+  // Seleção em massa
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+  const toggleSelection = (id: string) => {
+    const newSelected = new Set(selectedIds);
+    if (newSelected.has(id)) newSelected.delete(id);
+    else newSelected.add(id);
+    setSelectedIds(newSelected);
+  };
+
+  const filteredGifts = gifts.filter((g) => {
+    const matchesSearch = g.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = filterCategory === "todos" || g.categoryId === filterCategory;
+    return matchesSearch && matchesCategory;
+  }).sort((a, b) => {
+    if (sortBy === "price-desc") return b.value - a.value;
+    if (sortBy === "price-asc") return a.value - b.value;
+    if (sortBy === "name-asc") return a.name.localeCompare(b.name);
+    if (sortBy === "name-desc") return b.name.localeCompare(a.name);
+    return (a.isFeatured === b.isFeatured ? 0 : a.isFeatured ? -1 : 1);
+  });
+
+  const toggleAll = () => {
+    if (selectedIds.size === filteredGifts.length && filteredGifts.length > 0) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filteredGifts.map(g => g.id)));
+    }
+  };
+
+  const handleMassAction = async (action: 'active' | 'inactive' | 'delete') => {
+    if (selectedIds.size === 0) return;
+    const confirmMessage = action === 'delete' 
+      ? `Deseja excluir ${selectedIds.size} presentes permanentemente?` 
+      : `Deseja ${action === 'active' ? 'ativar' : 'inativar'} ${selectedIds.size} presentes?`;
+      
+    if (!window.confirm(confirmMessage)) return;
+
+    try {
+      setLoading(true);
+      const res = await fetch("/api/admin/gifts/mass", {
+        method: action === 'delete' ? "DELETE" : "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: Array.from(selectedIds), action }),
+      });
+
+      if (!res.ok) {
+        toast.error("Erro na ação em massa.");
+      } else {
+        toast.success(`Ação concluída para ${selectedIds.size} presentes!`);
+        setSelectedIds(new Set());
+        fetchGifts();
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Erro de conexão.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchGifts();
@@ -90,7 +158,7 @@ export default function AdminGiftsPage() {
     setMaxQuantity("1");
     setExternalLink("");
     setIsFeatured(false);
-    setStatus("active");
+    setStatus("available");
     setCategoryId(categories[0]?.id || "");
     setFormOpen(true);
   };
@@ -104,9 +172,28 @@ export default function AdminGiftsPage() {
     setMaxQuantity(String(gift.maxQuantity));
     setExternalLink(gift.externalLink || "");
     setIsFeatured(gift.isFeatured);
-    setStatus(gift.status);
+    setStatus(gift.status === "inactive" ? "inactive" : "available");
     setCategoryId(gift.categoryId);
     setFormOpen(true);
+  };
+
+  const handleCropComplete = async (base64Webp: string) => {
+    try {
+      setCropperOpen(false);
+      toast.info("Enviando e otimizando imagem...");
+      const res = await fetch("/api/admin/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageBase64: base64Webp }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error);
+      setImageUrl(json.url);
+      toast.success("Imagem enviada com sucesso!");
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Erro ao fazer upload da imagem.");
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -203,6 +290,50 @@ export default function AdminGiftsPage() {
           </button>
         </div>
 
+        {/* Barra de Ações em Massa */}
+        {selectedIds.size > 0 && (
+          <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between animate-fade-in">
+            <span className="text-xs font-bold text-slate-600 px-2">{selectedIds.size} presentes selecionados</span>
+            <div className="flex gap-2">
+              <button onClick={() => handleMassAction('active')} className="px-3 py-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100">Ativar</button>
+              <button onClick={() => handleMassAction('inactive')} className="px-3 py-1.5 text-xs font-bold text-slate-600 bg-slate-100 border border-slate-200 rounded-lg hover:bg-slate-200">Ocultar</button>
+              <button onClick={() => handleMassAction('delete')} className="px-3 py-1.5 text-xs font-bold text-rose-600 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100">Excluir</button>
+            </div>
+          </div>
+        )}
+
+        {/* Filtros e Busca */}
+        <div className="flex flex-col md:flex-row gap-4 mb-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          <input
+            type="text"
+            placeholder="Buscar por nome..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 text-xs font-semibold focus:outline-none focus:border-slate-400"
+          />
+          <select
+            value={filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value)}
+            className="w-full md:w-auto bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 text-xs font-semibold focus:outline-none focus:border-slate-400 cursor-pointer"
+          >
+            <option value="todos">Todas as Categorias</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>{cat.name}</option>
+            ))}
+          </select>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="w-full md:w-auto bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 text-xs font-semibold focus:outline-none focus:border-slate-400 cursor-pointer"
+          >
+            <option value="relevant">Relevância / Destaques</option>
+            <option value="price-desc">Maior Preço</option>
+            <option value="price-asc">Menor Preço</option>
+            <option value="name-asc">Ordem Alfabética (A-Z)</option>
+            <option value="name-desc">Ordem Alfabética (Z-A)</option>
+          </select>
+        </div>
+
         {/* Tabela de Presentes */}
         <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
           {loading ? (
@@ -210,15 +341,23 @@ export default function AdminGiftsPage() {
               <div className="animate-spin inline-block h-8 w-8 border-4 border-slate-900 border-t-transparent rounded-full mb-2"></div>
               <p className="text-xs text-gray-400 font-bold">Carregando presentes...</p>
             </div>
-          ) : gifts.length === 0 ? (
+          ) : filteredGifts.length === 0 ? (
             <div className="text-center py-20 text-slate-400 font-bold uppercase text-[10px]">
-              Nenhum presente cadastrado no catálogo.
+              Nenhum presente localizado com os filtros atuais.
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs font-semibold text-slate-500">
                 <thead className="bg-slate-50 text-[10px] text-slate-400 font-bold uppercase border-b border-slate-150">
                   <tr>
+                    <th className="px-4 py-4 w-10">
+                      <input 
+                        type="checkbox" 
+                        checked={selectedIds.size === filteredGifts.length && filteredGifts.length > 0}
+                        onChange={toggleAll}
+                        className="accent-slate-900 cursor-pointer w-3.5 h-3.5"
+                      />
+                    </th>
                     <th className="px-4 py-4">Foto</th>
                     <th className="px-4 py-4">Nome</th>
                     <th className="px-4 py-4">Categoria</th>
@@ -230,8 +369,17 @@ export default function AdminGiftsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {gifts.map((gift) => (
-                    <tr key={gift.id} className="hover:bg-slate-50/50">
+                  {filteredGifts.map((gift) => (
+                    <tr key={gift.id} className={`hover:bg-slate-50/50 ${selectedIds.has(gift.id) ? "bg-slate-50/80" : ""}`}>
+                      {/* Checkbox */}
+                      <td className="px-4 py-3">
+                        <input 
+                          type="checkbox" 
+                          checked={selectedIds.has(gift.id)}
+                          onChange={() => toggleSelection(gift.id)}
+                          className="accent-slate-900 cursor-pointer w-3.5 h-3.5"
+                        />
+                      </td>
                       {/* Mini Foto */}
                       <td className="px-4 py-3">
                         <div className="h-10 w-10 rounded-lg border bg-slate-50 overflow-hidden flex items-center justify-center text-slate-300">
@@ -286,11 +434,13 @@ export default function AdminGiftsPage() {
                       {/* Status */}
                       <td className="px-4 py-3">
                         <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-bold ${
-                          gift.status === "active" 
-                            ? "bg-emerald-50 text-emerald-700 border border-emerald-250" 
+                          gift.status !== "inactive"
+                            ? gift.status === "out_of_stock"
+                              ? "bg-rose-50 text-rose-700 border border-rose-250"
+                              : "bg-emerald-50 text-emerald-700 border border-emerald-250" 
                             : "bg-slate-100 text-slate-500 border border-slate-200"
                         }`}>
-                          {gift.status === "active" ? "Ativo" : "Inativo"}
+                          {gift.status === "inactive" ? "Inativo" : gift.status === "out_of_stock" ? "Esgotado" : "Ativo"}
                         </span>
                       </td>
 
@@ -388,16 +538,31 @@ export default function AdminGiftsPage() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Foto URL */}
+                  {/* Foto URL e Upload */}
                   <div>
-                    <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1.5">URL da Imagem</label>
-                    <input
-                      type="text"
-                      placeholder="https://exemplo.com/foto.jpg"
-                      value={imageUrl}
-                      onChange={(e) => setImageUrl(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold focus:outline-none focus:border-slate-400 transition-all"
-                    />
+                    <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1.5">Imagem (Otimizada WebP)</label>
+                    <div className="flex items-center gap-2">
+                      {imageUrl ? (
+                        <div className="h-10 w-10 rounded-lg border border-slate-200 overflow-hidden flex-none">
+                          <img src={imageUrl} alt="Preview" className="h-full w-full object-cover" />
+                        </div>
+                      ) : (
+                        <div className="h-10 w-10 rounded-lg border border-slate-200 bg-slate-100 flex items-center justify-center flex-none">
+                          <ImageIcon className="h-4 w-4 text-slate-400" />
+                        </div>
+                      )}
+                      
+                      <div className="flex-1 flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setCropperOpen(true)}
+                          className="flex items-center justify-center gap-1.5 bg-sky-50 text-sky-600 hover:bg-sky-100 border border-sky-100 px-3 py-2 rounded-xl text-xs font-bold transition-all w-full"
+                        >
+                          <UploadCloud className="h-4 w-4" />
+                          Enviar Foto (1:1)
+                        </button>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Link Externo */}
@@ -432,7 +597,7 @@ export default function AdminGiftsPage() {
                       onChange={(e) => setStatus(e.target.value)}
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold focus:outline-none focus:border-slate-400 cursor-pointer text-center"
                     >
-                      <option value="active">Ativo (Exibido na vitrine)</option>
+                      <option value="available">Ativo (Exibido na vitrine)</option>
                       <option value="inactive">Inativo (Ocultado)</option>
                     </select>
                   </div>
@@ -477,6 +642,14 @@ export default function AdminGiftsPage() {
 
             </div>
           </div>
+        )}
+        
+        {cropperOpen && (
+          <ImageCropper 
+            onCropComplete={handleCropComplete} 
+            onCancel={() => setCropperOpen(false)} 
+            aspect={1}
+          />
         )}
 
       </main>

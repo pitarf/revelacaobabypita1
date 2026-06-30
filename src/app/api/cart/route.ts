@@ -87,6 +87,7 @@ export async function GET(req: NextRequest) {
         quantity: item.quantity,
         subtotal,
         available: Math.max(0, item.gift.maxQuantity - item.gift.chosenQuantity),
+        externalLink: item.gift.externalLink,
       };
     });
 
@@ -245,6 +246,7 @@ export async function POST(req: NextRequest) {
         quantity: item.quantity,
         subtotal,
         available: Math.max(0, g.maxQuantity - g.chosenQuantity),
+        externalLink: g.externalLink,
       };
     });
 

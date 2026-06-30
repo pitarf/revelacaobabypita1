@@ -9,6 +9,12 @@ export default function AdminSettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
+  // Estados - Site/Tema
+  const [faviconUrl, setFaviconUrl] = useState("");
+  const [primaryColor, setPrimaryColor] = useState("#0ea5e9"); // Default sky-500
+  const [fontFamily, setFontFamily] = useState("font-sans");
+
+
   // Estados - Evento
   const [title, setTitle] = useState("");
   const [babyOption1, setBabyOption1] = useState("");
@@ -36,8 +42,19 @@ export default function AdminSettingsPage() {
         const data = await res.json();
         
         if (res.ok) {
-          const { event, payment } = data;
+          const { site, event, payment } = data;
           
+          if (site) {
+            setFaviconUrl(site.faviconUrl || "");
+            if (site.themeJson) {
+              try {
+                const parsed = JSON.parse(site.themeJson);
+                setPrimaryColor(parsed.primaryColor || "#0ea5e9");
+                setFontFamily(parsed.fontFamily || "font-sans");
+              } catch (e) {}
+            }
+          }
+
           // Preenche Evento
           setTitle(event.title || "");
           setBabyOption1(event.babyOption1 || "");
@@ -85,6 +102,14 @@ export default function AdminSettingsPage() {
       setSaving(true);
       
       const payload = {
+        site: {
+          siteTitle: title.trim(),
+          faviconUrl: faviconUrl.trim() || null,
+          themeJson: JSON.stringify({
+            primaryColor,
+            fontFamily,
+          }),
+        },
         event: {
           title: title.trim(),
           babyOption1: babyOption1.trim(),
@@ -383,6 +408,54 @@ export default function AdminSettingsPage() {
 
             </div>
 
+          </div>
+
+          {/* Seção 3: Personalização Visual (Branding & Theme) */}
+          <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-4">
+            <h3 className="text-sm font-extrabold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-100 pb-3 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-500"><path d="m2 11 3-3a1 1 0 0 1 1.414 0l6.586 6.586a1 1 0 0 1 0 1.414l-3 3a1 1 0 0 1-1.414 0L2 12.414a1 1 0 0 1 0-1.414Z"/><path d="M11 20h11"/><path d="M19 7a4 4 0 0 0-4-4l-4 4"/></svg>
+              Personalização Visual (Tema)
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              
+              <div>
+                <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1.5">Cor Principal</label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="color"
+                    value={primaryColor}
+                    onChange={(e) => setPrimaryColor(e.target.value)}
+                    className="h-10 w-10 cursor-pointer rounded-xl border border-slate-200 p-0"
+                  />
+                  <span className="text-xs font-mono font-bold text-slate-400 uppercase">{primaryColor}</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1.5">Família da Fonte</label>
+                <select
+                  value={fontFamily}
+                  onChange={(e) => setFontFamily(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold focus:outline-none focus:border-slate-400 cursor-pointer"
+                >
+                  <option value="font-sans">Sans (Moderna)</option>
+                  <option value="font-serif">Serif (Clássica)</option>
+                  <option value="font-mono">Mono (Técnica)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1.5">Favicon URL (Ícone da aba)</label>
+                <input
+                  type="text"
+                  placeholder="https://exemplo.com/favicon.ico"
+                  value={faviconUrl}
+                  onChange={(e) => setFaviconUrl(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-semibold focus:outline-none focus:border-slate-400 transition-all"
+                />
+              </div>
+            </div>
           </div>
 
         </form>

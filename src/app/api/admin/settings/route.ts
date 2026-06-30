@@ -9,7 +9,7 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
     }
 
-    const { event, payment } = await req.json();
+    const { site, event, payment } = await req.json();
 
     if (!event) {
       return NextResponse.json({ error: "Configurações de evento não enviadas." }, { status: 400 });
@@ -37,7 +37,7 @@ export async function PUT(req: NextRequest) {
         });
       }
 
-      // Atualiza o hideVotingResults no themeJson do SiteSetting
+      // Atualiza SiteSettings
       const currentSite = await tx.siteSetting.findFirst();
       if (currentSite) {
         let themeObj: any = {};
@@ -46,11 +46,22 @@ export async function PUT(req: NextRequest) {
         } catch (e) {
           themeObj = {};
         }
+        
+        // Mantém propriedades anteriores e aplica novas
         themeObj.hideVotingResults = !!event.hideResults;
+        
+        if (site && site.themeJson) {
+          try {
+            const newTheme = JSON.parse(site.themeJson);
+            themeObj = { ...themeObj, ...newTheme };
+          } catch (e) {}
+        }
         
         await tx.siteSetting.update({
           where: { id: currentSite.id },
           data: {
+            siteTitle: site ? site.siteTitle : currentSite.siteTitle,
+            faviconUrl: site ? site.faviconUrl : currentSite.faviconUrl,
             themeJson: JSON.stringify(themeObj),
           },
         });
