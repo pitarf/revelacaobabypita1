@@ -527,29 +527,24 @@ export default function CartModal({ isOpen, onClose, initialStep }: CartModalPro
                     </div>
                   </label>
 
-                  {/* Opção Cartão de Crédito */}
+                  {/* Opção Cartão de Crédito (Temporariamente Desativado) */}
                   <label 
-                    className={`flex items-center gap-4 border-2 rounded-2xl p-4 cursor-pointer transition-all shadow-sm ${
-                      paymentMethod === "card"
-                        ? "border-[#f6b26b] bg-[#f6b26b]/5"
-                        : "border-slate-200 bg-white hover:border-slate-300"
-                    }`}
+                    className="flex items-center gap-4 border-2 rounded-2xl p-4 cursor-not-allowed opacity-50 bg-gray-50 border-slate-200"
                   >
                     <input
                       type="radio"
                       name="payment_method"
                       value="card"
-                      checked={paymentMethod === "card"}
-                      onChange={() => setPaymentMethod("card")}
+                      disabled
                       className="accent-[#f6b26b]"
                     />
-                    <div className="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 flex-none">
+                    <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 flex-none">
                       <CreditCard className="h-5 w-5" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-extrabold text-slate-800">Cartão de Crédito</h4>
-                      <p className="text-xs text-gray-500 font-medium leading-relaxed">
-                        Pagamento rápido e seguro.
+                      <h4 className="text-sm font-extrabold text-gray-500">Cartão de Crédito</h4>
+                      <p className="text-xs text-gray-400 font-medium leading-relaxed">
+                        Opção indisponível no momento.
                       </p>
                     </div>
                   </label>
