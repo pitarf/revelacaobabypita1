@@ -549,7 +549,7 @@ export default function CartModal({ isOpen, onClose, initialStep }: CartModalPro
                     <div>
                       <h4 className="text-sm font-extrabold text-slate-800">Cartão de Crédito</h4>
                       <p className="text-xs text-gray-500 font-medium leading-relaxed">
-                        Parcele em até 12x via Mercado Pago.
+                        Pagamento rápido e seguro.
                       </p>
                     </div>
                   </label>
@@ -622,9 +622,6 @@ export default function CartModal({ isOpen, onClose, initialStep }: CartModalPro
                         {totalValue.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-400 font-semibold leading-relaxed">
-                      Ou em até 12 parcelas de {installmentValue.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-                    </p>
                   </div>
 
                   <div className="space-y-3">

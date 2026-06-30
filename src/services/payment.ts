@@ -154,7 +154,7 @@ export async function createCardPreference(
           { id: "ticket" }, // exclui boleto
           { id: "bank_transfer" } // exclui outros além de cartão
         ],
-        installments: 5, // Limita a 5 vezes conforme o requisito inicial do evento
+        installments: 1, // Limita a 1 vez (pagamento à vista no crédito)
       },
       ...(process.env.NEXT_PUBLIC_APP_URL && !process.env.NEXT_PUBLIC_APP_URL.includes("localhost")
         ? { notification_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/payment` }
