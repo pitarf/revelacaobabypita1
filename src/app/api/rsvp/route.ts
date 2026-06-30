@@ -62,6 +62,26 @@ export async function POST(req: NextRequest) {
     const totalGuests = parsedAdults + parsedChildren;
     const cleanPhone = phone.replace(/\D/g, "");
 
+    // Preparar dados do evento para o e-mail
+    let eventTitle = "nosso Chá Revelação (Miguel ou Rafaella?)";
+    let eventDateStr = "";
+    let locationStr = "";
+    let googleMapsUrl = null;
+    
+    if (eventSetting) {
+      eventTitle = eventSetting.title || eventTitle;
+      googleMapsUrl = eventSetting.googleMapsUrl || null;
+      if (eventSetting.eventDate) {
+        const eDate = new Date(eventSetting.eventDate);
+        const dStr = eDate.toLocaleDateString("pt-BR", { day: '2-digit', month: 'long', year: 'numeric' });
+        eventDateStr = `${dStr} às ${eventSetting.eventTime || ""}`;
+      }
+      if (eventSetting.locationName || eventSetting.address) {
+        locationStr = `${eventSetting.locationName || ""} ${eventSetting.address ? "- " + eventSetting.address : ""}`.trim();
+        if (locationStr.startsWith("- ")) locationStr = locationStr.substring(2);
+      }
+    }
+
     // 3. Processamento de EDICAO de RSVP existente
     if (accessCode) {
       const cleanCode = accessCode.toUpperCase().trim();
@@ -90,7 +110,7 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      sendRsvpConfirmation(updatedRsvp.email, updatedRsvp.fullName).catch(console.error);
+      sendRsvpConfirmation(updatedRsvp.email, updatedRsvp.fullName, eventTitle, eventDateStr, locationStr, googleMapsUrl).catch(console.error);
 
       return NextResponse.json({
         success: true,
@@ -151,7 +171,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    sendRsvpConfirmation(newRsvp.email, newRsvp.fullName).catch(console.error);
+    sendRsvpConfirmation(newRsvp.email, newRsvp.fullName, eventTitle, eventDateStr, locationStr, googleMapsUrl).catch(console.error);
 
     return NextResponse.json({
       success: true,

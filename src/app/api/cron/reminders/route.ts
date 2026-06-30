@@ -70,9 +70,10 @@ export async function GET(req: NextRequest) {
         const timeStr = eventSettings.eventTime;
         const dateTimeStr = `${dateStr} às ${timeStr}`;
         const locationStr = `${eventSettings.locationName} - ${eventSettings.address}`;
+        const googleMapsUrl = eventSettings.googleMapsUrl || null;
 
         for (const rsvp of rsvps) {
-          await sendEventReminder(rsvp.email, rsvp.fullName, eventSettings.title, dateTimeStr, locationStr);
+          await sendEventReminder(rsvp.email, rsvp.fullName, eventSettings.title, dateTimeStr, locationStr, googleMapsUrl);
           results.eventRemindersSent++;
         }
       }

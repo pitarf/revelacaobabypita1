@@ -35,8 +35,17 @@ const sendEmail = async (to: string, subject: string, html: string) => {
 // Templates
 // ==========================================
 
-export const sendRsvpConfirmation = async (email: string, name: string) => {
+export const sendRsvpConfirmation = async (email: string, name: string, eventTitle: string, eventDateStr: string, locationStr: string, googleMapsUrl: string | null) => {
   const subject = "Recebemos sua confirmação de presença! 🎉";
+  
+  const locationHtml = locationStr ? `
+        <ul style="list-style-type: none; padding-left: 0; background-color: #f9f9f9; padding: 15px; border-radius: 8px;">
+          <li style="margin-bottom: 10px;">📅 <strong>Quando:</strong> ${eventDateStr}</li>
+          <li style="margin-bottom: 10px;">📍 <strong>Onde:</strong> ${locationStr}</li>
+          ${googleMapsUrl ? `<li>🗺️ <a href="${googleMapsUrl}" style="color: #6fa8dc; text-decoration: none; font-weight: bold;">Ver no Google Maps</a></li>` : ''}
+        </ul>
+  ` : '';
+
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
       <div style="text-align: center; padding: 20px; background-color: #fcf8f2; border-radius: 10px 10px 0 0;">
@@ -44,7 +53,9 @@ export const sendRsvpConfirmation = async (email: string, name: string) => {
       </div>
       <div style="padding: 20px; background-color: #ffffff; border: 1px solid #fcf8f2;">
         <p>Olá, <strong>${name}</strong>!</p>
-        <p>Sua presença no nosso Chá Revelação (Miguel ou Rafaella?) está confirmadíssima! Estamos muito felizes que você vai compartilhar esse momento especial conosco.</p>
+        <p>Sua presença no ${eventTitle || "nosso Chá Revelação (Miguel ou Rafaella?)"} está confirmadíssima! Estamos muito felizes que você vai compartilhar esse momento especial conosco.</p>
+        
+        ${locationHtml}
         
         <div style="margin: 30px 0; padding: 20px; background-color: #f0f8ff; border-radius: 8px; text-align: center;">
           <h3 style="color: #6fa8dc; margin-top: 0;">Ainda não escolheu um presente? 🎁</h3>
@@ -127,7 +138,7 @@ export const sendPixReminder = async (email: string, name: string, orderCode: st
   await sendEmail(email, subject, html);
 };
 
-export const sendEventReminder = async (email: string, name: string, eventTitle: string, eventDateStr: string, locationStr: string) => {
+export const sendEventReminder = async (email: string, name: string, eventTitle: string, eventDateStr: string, locationStr: string, googleMapsUrl: string | null) => {
   const subject = "O grande dia está chegando! Faltam 3 dias! 👶🎈";
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
@@ -139,7 +150,8 @@ export const sendEventReminder = async (email: string, name: string, eventTitle:
         <p>Estamos super ansiosos e passamos para lembrar que faltam apenas <strong>3 dias</strong> para o ${eventTitle}!</p>
         <ul style="list-style-type: none; padding-left: 0; background-color: #f9f9f9; padding: 15px; border-radius: 8px;">
           <li style="margin-bottom: 10px;">📅 <strong>Quando:</strong> ${eventDateStr}</li>
-          <li>📍 <strong>Onde:</strong> ${locationStr}</li>
+          <li style="margin-bottom: 10px;">📍 <strong>Onde:</strong> ${locationStr}</li>
+          ${googleMapsUrl ? `<li>🗺️ <a href="${googleMapsUrl}" style="color: #6fa8dc; text-decoration: none; font-weight: bold;">Ver no Google Maps</a></li>` : ''}
         </ul>
         <p>Não vemos a hora de celebrar esse momento mágico com você!</p>
         <p>Até logo,<br>Os papais.</p>
