@@ -202,9 +202,10 @@ export async function POST(req: NextRequest) {
       paymentData = {
         initPoint: cardResult.initPoint,
         preferenceId: cardResult.preferenceId,
-      }
-    } catch (paymentError: any) {
-      console.error("[Checkout API] Falha na integração de pagamento, revertendo pedido:", paymentError);
+      };
+    }
+  } catch (paymentError: any) {
+    console.error("[Checkout API] Falha na integração de pagamento, revertendo pedido:", paymentError);
       
       // Rollback manual do banco de dados já que o pagamento falhou
       await prisma.$transaction(async (tx) => {
