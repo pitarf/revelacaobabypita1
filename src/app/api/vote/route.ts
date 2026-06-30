@@ -65,7 +65,7 @@ export async function GET() {
 // POST /api/vote - Registra um novo palpite/voto
 export async function POST(req: NextRequest) {
   try {
-    const { babyName, voterPhone, voterEmail } = await req.json();
+    const { babyName, voterName, voterPhone, voterEmail } = await req.json();
     const ipAddress = req.headers.get("x-forwarded-for")?.split(",")[0] || req.headers.get("x-real-ip") || "127.0.0.1";
 
     // 1. Validações básicas de entrada
@@ -160,6 +160,7 @@ export async function POST(req: NextRequest) {
       data: {
         babyName,
         voterIp: ipAddress,
+        voterName: voterName ? voterName.trim() : null,
         voterEmail: voterEmail ? voterEmail.trim().toLowerCase() : null,
         voterPhone: voterPhone ? voterPhone.replace(/\D/g, "") : null,
       },

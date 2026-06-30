@@ -72,7 +72,9 @@ export async function createPixPayment(
         first_name: firstName,
         last_name: lastName,
       },
-      notification_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/webhooks/payment`,
+      ...(process.env.NEXT_PUBLIC_APP_URL && !process.env.NEXT_PUBLIC_APP_URL.includes("localhost")
+        ? { notification_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/payment` }
+        : {}),
       external_reference: orderCode,
     };
 
@@ -153,7 +155,9 @@ export async function createCardPreference(
         ],
         installments: 5, // Limita a 5 vezes conforme o requisito inicial do evento
       },
-      notification_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/webhooks/payment`,
+      ...(process.env.NEXT_PUBLIC_APP_URL && !process.env.NEXT_PUBLIC_APP_URL.includes("localhost")
+        ? { notification_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/payment` }
+        : {}),
       external_reference: orderCode,
     };
 

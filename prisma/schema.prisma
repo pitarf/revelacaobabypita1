@@ -164,6 +164,7 @@ model Vote {
   id        String   @id @default(uuid())
   babyName  String // Nome votado: Miguel ou Rafaella
   voterIp   String
+  voterName String?
   voterPhone String?
   voterEmail String?
   createdAt DateTime @default(now())

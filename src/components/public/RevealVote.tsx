@@ -22,6 +22,7 @@ export default function RevealVote({ babyOption1, babyOption2 }: RevealVoteProps
   const [hasVoted, setHasVoted] = useState(false);
   const [selectedBaby, setSelectedBaby] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [voterName, setVoterName] = useState("");
   const [loading, setLoading] = useState(false);
   const [showResultsWithoutVoting, setShowResultsWithoutVoting] = useState(false);
 
@@ -63,6 +64,7 @@ export default function RevealVote({ babyOption1, babyOption2 }: RevealVoteProps
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           babyName: selectedBaby,
+          voterName,
           voterEmail: null,
           voterPhone: null,
         }),
@@ -230,6 +232,20 @@ export default function RevealVote({ babyOption1, babyOption2 }: RevealVoteProps
 
             <form onSubmit={handleVoteSubmit} className="space-y-6">
               
+              {/* Nome */}
+              <div className="space-y-2">
+                <label className="block text-xs font-black uppercase text-gray-400 tracking-wider">
+                  Seu Nome *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Ex: Ana Maria"
+                  value={voterName}
+                  onChange={(e) => setVoterName(e.target.value)}
+                  className="w-full bg-gray-50/50 border border-[#f6b26b]/30 rounded-2xl px-4 py-3.5 text-sm text-center focus:outline-none focus:border-[#f6b26b] font-bold text-gray-700 transition-all placeholder:text-gray-350"
+                />
+              </div>
 
               {/* Botões do Rodapé */}
               <div className="flex gap-4 pt-4">
