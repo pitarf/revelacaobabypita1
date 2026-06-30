@@ -20,8 +20,8 @@ async function getPaymentConfig() {
   const settings = await prisma.paymentSetting.findFirst();
   return {
     gateway: "pagseguro",
-    token: "48adde83-9a7d-49a4-bd7f-6240562f5eecca39084f4ae2a2e59ff2359c3a9fab550233-ad4b-439d-9099-2c9cd3c752ba", // TEMP SANDBOX TOKEN
-    isTest: true, // Forçando ambiente de testes
+    token: settings?.pagSeguroToken || process.env.PAGSEGURO_TOKEN || "",
+    isTest: false, // Produção
   };
 }
 
@@ -71,13 +71,15 @@ export async function createPixPayment(
         {
           type: "PIX"
         }
-      ],
-      redirect_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/presentes/conclusao/${orderCode}?payment_status=pending`,
-      return_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/presentes/conclusao/${orderCode}?payment_status=pending`,
-      notification_urls: [
-        `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/payment`
       ]
     };
+
+    const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const appUrl = rawAppUrl.endsWith('/') ? rawAppUrl.slice(0, -1) : rawAppUrl;
+
+    payload.redirect_url = `${appUrl}/presentes/conclusao/${orderCode}?payment_status=pending`;
+    payload.return_url = `${appUrl}/presentes/conclusao/${orderCode}?payment_status=pending`;
+    payload.notification_urls = [`${appUrl}/api/webhooks/payment`];
 
     const response = await fetch(url, {
       method: "POST",
@@ -158,13 +160,15 @@ export async function createCardPreference(
             }
           ]
         }
-      ],
-      redirect_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/presentes/conclusao/${orderCode}?payment_status=pending`,
-      return_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/presentes/conclusao/${orderCode}?payment_status=pending`,
-      notification_urls: [
-        `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/payment`
       ]
     };
+
+    const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const appUrl = rawAppUrl.endsWith('/') ? rawAppUrl.slice(0, -1) : rawAppUrl;
+
+    payload.redirect_url = `${appUrl}/presentes/conclusao/${orderCode}?payment_status=pending`;
+    payload.return_url = `${appUrl}/presentes/conclusao/${orderCode}?payment_status=pending`;
+    payload.notification_urls = [`${appUrl}/api/webhooks/payment`];
 
     const response = await fetch(url, {
       method: "POST",
