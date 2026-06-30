@@ -129,6 +129,8 @@ export default function RsvpModal({ isOpen, onClose, initialData, onSuccess }: R
       }
 
       toast.success(data.message || "Presença confirmada!");
+      // Dispara evento para o GuestbookSection atualizar os recados
+      window.dispatchEvent(new CustomEvent("refresh-guestbook"));
       onSuccess(data.data);
       onClose();
     } catch (err) {

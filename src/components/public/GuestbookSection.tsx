@@ -24,6 +24,12 @@ export default function GuestbookSection() {
 
   useEffect(() => {
     fetchMessages();
+    
+    // Escuta evento customizado de outras partes do sistema para atualizar os recados
+    const handleRefresh = () => fetchMessages();
+    window.addEventListener("refresh-guestbook", handleRefresh);
+    
+    return () => window.removeEventListener("refresh-guestbook", handleRefresh);
   }, []);
 
   const fetchMessages = async () => {
@@ -148,7 +154,7 @@ export default function GuestbookSection() {
                   key={msg.id} 
                   className="bg-[#faf6f0]/40 rounded-3xl p-6 border border-baby-beige/70 shadow-sm flex flex-col justify-between hover:shadow-md transition-all min-w-[280px] sm:min-w-[320px] max-w-sm shrink-0 snap-center"
                 >
-                  <p className="text-xl md:text-2xl text-slate-800 mb-5 whitespace-pre-wrap leading-relaxed font-serif tracking-wide">
+                  <p className="text-lg md:text-xl text-slate-800 mb-5 whitespace-pre-wrap leading-relaxed font-serif tracking-wide line-clamp-3">
                     "{msg.message}"
                   </p>
                   <div className="flex items-center justify-between border-t border-baby-beige/50 pt-3">
