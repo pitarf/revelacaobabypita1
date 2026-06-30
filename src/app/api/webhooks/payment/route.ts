@@ -203,14 +203,18 @@ export async function POST(req: NextRequest) {
         
         // Envia e-mail de confirmação apenas quando o pagamento for aprovado
         const giftNames = order.orderItems.map(item => item.name).join(", ");
-        sendGiftConfirmation(
-          order.gifterEmail,
-          order.gifterName,
-          order.code,
-          order.paymentMethod,
-          "approved",
-          giftNames
-        ).catch(console.error);
+        try {
+          await sendGiftConfirmation(
+            order.gifterEmail,
+            order.gifterName,
+            order.code,
+            order.paymentMethod,
+            "approved",
+            giftNames
+          );
+        } catch (emailError) {
+          console.error("Erro ao enviar email de confirmação no webhook:", emailError);
+        }
 
         console.log(`✔ Pedido ${order.code} aprovado via Webhook.`);
       } else if (status === "cancelled" || status === "rejected" || status === "refunded") {

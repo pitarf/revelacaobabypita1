@@ -231,14 +231,18 @@ export async function POST(req: NextRequest) {
 
     // Enviar email com QR Code do Pix (apenas para PIX, pois Cartão ainda não foi pago)
     if (order.paymentMethod === "pix") {
-      sendGiftConfirmation(
-        order.gifterEmail,
-        order.gifterName,
-        order.code,
-        order.paymentMethod,
-        order.paymentStatus,
-        giftNames
-      ).catch(console.error);
+      try {
+        await sendGiftConfirmation(
+          order.gifterEmail,
+          order.gifterName,
+          order.code,
+          order.paymentMethod,
+          order.paymentStatus,
+          giftNames
+        );
+      } catch (emailError) {
+        console.error("Erro ao enviar email de pix pendente no checkout:", emailError);
+      }
     }
 
     return response;
