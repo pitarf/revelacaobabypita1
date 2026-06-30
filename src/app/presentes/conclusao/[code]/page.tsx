@@ -197,11 +197,11 @@ export default function OrderCompletionPage() {
 
                 {/* Exibição do QR Code se gerado */}
                 {mainPayment?.pixQrCode && mainPayment.pixQrCode.startsWith("data:image") ? (
-                  <div className="mx-auto h-36 w-36 bg-white p-2 rounded-xl border border-baby-beige shadow-inner flex items-center justify-center">
+                  <div className="mx-auto h-56 w-56 md:h-64 md:w-64 bg-white p-2 rounded-xl border border-baby-beige shadow-inner flex items-center justify-center">
                     <img src={mainPayment.pixQrCode} alt="QR Code Pix" className="h-full w-full object-contain" />
                   </div>
                 ) : (
-                  <div className="mx-auto h-32 w-32 bg-white rounded-xl border border-dashed border-baby-gold/30 flex flex-col items-center justify-center text-baby-gold/40 text-xs">
+                  <div className="mx-auto h-56 w-56 md:h-64 md:w-64 bg-white rounded-xl border border-dashed border-baby-gold/30 flex flex-col items-center justify-center text-baby-gold/40 text-xs">
                     <span>📱 QR Code Pix</span>
                   </div>
                 )}
@@ -225,9 +225,30 @@ export default function OrderCompletionPage() {
                   </div>
                 )}
 
-                {/* Botão de Homologação / Simulador de Webhook */}
+                {/* Botão de Homologação / Mudar Pagamento */}
                 {!isApproved && (
-                  <div className="pt-2 border-t border-baby-beige/40 mt-4">
+                  <div className="pt-2 border-t border-baby-beige/40 mt-4 flex flex-col gap-2">
+                    <button
+                      onClick={async () => {
+                        const confirm = window.confirm("Deseja trocar o método de pagamento para Cartão de Crédito?");
+                        if (!confirm) return;
+                        try {
+                          const res = await fetch("/api/order/payment", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ orderCode: order.code, paymentMethod: "card" }),
+                          });
+                          if (res.ok) window.location.reload();
+                          else alert("Erro ao trocar método de pagamento.");
+                        } catch (err) {
+                          alert("Erro de conexão.");
+                        }
+                      }}
+                      className="bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold px-5 py-2.5 rounded-full shadow-sm hover:scale-105 active:scale-95 transition-all w-full md:w-auto mx-auto"
+                    >
+                      💳 Trocar para Cartão de Crédito
+                    </button>
+
                     <p className="text-[10px] text-amber-600 font-bold mb-1.5">⚡ Simulador de Testes do Desenvolvedor:</p>
                     <button
                       onClick={handleSimulatedApprove}
@@ -253,11 +274,35 @@ export default function OrderCompletionPage() {
                       href={mainPayment?.transactionId ? `https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=${mainPayment.transactionId}` : "#"}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-block mt-3 bg-baby-blue hover:bg-baby-blue-hover text-white text-xs font-bold px-6 py-2.5 rounded-full shadow-sm"
+                      className="inline-block mt-3 mb-4 bg-baby-blue hover:bg-baby-blue-hover text-white text-xs font-bold px-6 py-2.5 rounded-full shadow-sm w-full md:w-auto"
                     >
                       Pagar com Cartão
                     </a>
+
+                    <div className="pt-2 border-t border-baby-beige/40">
+                      <button
+                        onClick={async () => {
+                          const confirm = window.confirm("Deseja trocar o método de pagamento para Pix?");
+                          if (!confirm) return;
+                          try {
+                            const res = await fetch("/api/order/payment", {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ orderCode: order.code, paymentMethod: "pix" }),
+                            });
+                            if (res.ok) window.location.reload();
+                            else alert("Erro ao trocar método de pagamento.");
+                          } catch (err) {
+                            alert("Erro de conexão.");
+                          }
+                        }}
+                        className="bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold px-5 py-2.5 rounded-full shadow-sm hover:scale-105 active:scale-95 transition-all w-full md:w-auto"
+                      >
+                        📱 Trocar para Pix
+                      </button>
+                    </div>
                   </div>
+
                 )}
               </div>
             )}

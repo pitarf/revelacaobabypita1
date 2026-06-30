@@ -219,6 +219,16 @@ export async function POST(req: NextRequest) {
       payment: paymentData,
     });
 
+    // Salvar recado no Mural de Recados se houver
+    if (message && message.trim()) {
+      await prisma.guestMessage.create({
+        data: {
+          name: isAnonymous ? "Anônimo" : gifterName.trim(),
+          message: message.trim(),
+        }
+      });
+    }
+
     // Enviar email de confirmação assincronamente
     sendGiftConfirmation(
       order.gifterEmail,
