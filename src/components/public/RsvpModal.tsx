@@ -80,14 +80,16 @@ export default function RsvpModal({ isOpen, onClose, initialData, onSuccess }: R
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const rawPhone = isAttending ? phone.replace(/\D/g, "") : "00000000000";
+
     // Validações básicas
-    if (!fullName.trim() || !email.trim() || !phone.trim()) {
+    if (!fullName.trim() || !email.trim() || (isAttending && !phone.trim())) {
       toast.error("Por favor, preencha todos os campos obrigatórios.");
       return;
     }
 
     if (!captchaChecked) {
-      toast.error("Por favor, marque a caixa 'Não sou um robô' para confirmar sua presença.");
+      toast.error("Por favor, marque a caixa 'Não sou um robô' para prosseguir.");
       return;
     }
 
@@ -99,8 +101,7 @@ export default function RsvpModal({ isOpen, onClose, initialData, onSuccess }: R
     }
 
     // Validação de telefone (mínimo 10 dígitos numéricos)
-    const rawPhone = phone.replace(/\D/g, "");
-    if (rawPhone.length < 10) {
+    if (isAttending && rawPhone.length < 10) {
       toast.error("Por favor, insira um número de telefone com DDD válido.");
       return;
     }
@@ -199,30 +200,32 @@ export default function RsvpModal({ isOpen, onClose, initialData, onSuccess }: R
           </div>
 
           {/* WhatsApp */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-              Seu whatsapp<span className="text-red-500">*</span>:
-            </label>
-            <input
-              type="text"
-              placeholder="(00) 00000-0000"
-              value={phone}
-              onChange={(e) => {
-                let val = e.target.value.replace(/\D/g, "");
-                if (val.length > 11) val = val.substring(0, 11);
-                if (val.length > 10) {
-                  val = `(${val.substring(0, 2)}) ${val.substring(2, 7)}-${val.substring(7)}`;
-                } else if (val.length > 2) {
-                  val = `(${val.substring(0, 2)}) ${val.substring(2, 6)}-${val.substring(6)}`;
-                } else if (val.length > 0) {
-                  val = `(${val}`;
-                }
-                setPhone(val);
-              }}
-              required
-              className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-baby-gold font-semibold transition-all"
-            />
-          </div>
+          {isAttending && (
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                Seu whatsapp<span className="text-red-500">*</span>:
+              </label>
+              <input
+                type="text"
+                placeholder="(00) 00000-0000"
+                value={phone}
+                onChange={(e) => {
+                  let val = e.target.value.replace(/\D/g, "");
+                  if (val.length > 11) val = val.substring(0, 11);
+                  if (val.length > 10) {
+                    val = `(${val.substring(0, 2)}) ${val.substring(2, 7)}-${val.substring(7)}`;
+                  } else if (val.length > 2) {
+                    val = `(${val.substring(0, 2)}) ${val.substring(2, 6)}-${val.substring(6)}`;
+                  } else if (val.length > 0) {
+                    val = `(${val}`;
+                  }
+                  setPhone(val);
+                }}
+                required={isAttending}
+                className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-baby-gold font-semibold transition-all"
+              />
+            </div>
+          )}
 
           {/* E-mail */}
           <div>
