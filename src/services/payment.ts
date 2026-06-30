@@ -134,8 +134,12 @@ export async function createPushinPayPixPayment(
   try {
     const amountInCents = Math.round(totalValue * 100);
 
+    const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL || "https://babypita.vercel.app";
+    const appUrl = rawAppUrl.endsWith('/') ? rawAppUrl.slice(0, -1) : rawAppUrl;
+
     const payload: any = {
-      value: amountInCents
+      value: amountInCents,
+      webhook_url: `${appUrl}/api/webhooks/pushinpay`
     };
 
     if (process.env.PIX_PAYER_DOCUMENT) {
