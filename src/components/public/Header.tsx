@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Calendar, MapPin, Clock, Menu, X, Gift, CheckCircle } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 import RevealVote from "./RevealVote";
 
 interface HeaderProps {
@@ -36,6 +37,8 @@ export default function Header({
   });
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
 
   // Calcula o tempo restante da contagem regressiva
   useEffect(() => {
@@ -67,6 +70,12 @@ export default function Header({
   // Função para fazer scroll suave até as seções
   const scrollToSection = (id: string) => {
     setMobileMenuOpen(false);
+    
+    if (pathname !== "/") {
+      router.push(`/#${id}`);
+      return;
+    }
+
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
