@@ -20,8 +20,8 @@ async function getPaymentConfig() {
   const settings = await prisma.paymentSetting.findFirst();
   return {
     gateway: "pagseguro",
-    token: "48adde83-9a7d-49a4-bd7f-6240562f5eecca39084f4ae2a2e59ff2359c3a9fab550233-ad4b-439d-9099-2c9cd3c752ba", // TEMP SANDBOX TOKEN
-    isTest: true, // Forçando ambiente de testes
+    token: process.env.PAGSEGURO_TOKEN || settings?.pagSeguroToken || "", 
+    isTest: false, // Forçando produção conforme solicitado 
   };
 }
 
