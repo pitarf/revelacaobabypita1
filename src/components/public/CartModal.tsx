@@ -564,8 +564,8 @@ export default function CartModal({ isOpen, onClose, initialStep }: CartModalPro
                     </div>
                     <div>
                       <h4 className="text-sm font-extrabold text-slate-800">Cartão de Crédito</h4>
-                      <p className="text-xs text-slate-400 font-semibold mt-0.5 leading-normal">
-                        Parcele em até 12x via Mercado Pago ou Simulador.
+                      <p className="text-xs text-gray-500 font-medium leading-relaxed">
+                        Parcele em até 12x via Mercado Pago.
                       </p>
                     </div>
                   </label>
