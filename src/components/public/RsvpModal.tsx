@@ -36,7 +36,6 @@ export default function RsvpModal({ isOpen, onClose, initialData, onSuccess }: R
   const [notes, setNotes] = useState("");
   const [lgpdConsent, setLgpdConsent] = useState(true); // Assume consentimento com a nota de rodapé
   const [loading, setLoading] = useState(false);
-  const [captchaChecked, setCaptchaChecked] = useState(false);
   const [isAttending, setIsAttending] = useState(true);
 
   // Preenche dados caso seja uma Edição (initialData ativo)
@@ -85,11 +84,6 @@ export default function RsvpModal({ isOpen, onClose, initialData, onSuccess }: R
     // Validações básicas
     if (!fullName.trim() || !email.trim() || (isAttending && !phone.trim())) {
       toast.error("Por favor, preencha todos os campos obrigatórios.");
-      return;
-    }
-
-    if (!captchaChecked) {
-      toast.error("Por favor, marque a caixa 'Não sou um robô' para prosseguir.");
       return;
     }
 
@@ -317,29 +311,6 @@ export default function RsvpModal({ isOpen, onClose, initialData, onSuccess }: R
               rows={2}
               className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-baby-gold font-semibold transition-all"
             />
-          </div>
-
-          {/* Card reCAPTCHA Mockup - Idêntico ao print */}
-          <div className="bg-gray-50 border border-gray-250 rounded-xl p-4 flex items-center justify-between shadow-inner max-w-sm">
-            <div className="flex items-center gap-3">
-              <input
-                type="checkbox"
-                id="recaptcha"
-                checked={captchaChecked}
-                onChange={(e) => setCaptchaChecked(e.target.checked)}
-                className="h-6 w-6 border-2 border-gray-300 text-[#f6b26b] rounded focus:ring-[#f6b26b] cursor-pointer accent-[#f6b26b]"
-              />
-              <label htmlFor="recaptcha" className="text-sm font-semibold text-gray-600 cursor-pointer select-none">
-                Não sou um robô
-              </label>
-            </div>
-            <div className="flex flex-col items-center justify-center shrink-0 ml-4">
-              <svg className="w-8 h-8 text-blue-500 animate-pulse-soft" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10S2 17.523 2 12c0-2.3.77-4.42 2.07-6.13" />
-                <path d="m21.88 9-2.88 2.88L17.5 10.5" />
-              </svg>
-              <span className="text-[8px] text-gray-400 font-bold uppercase tracking-wide mt-1">reCAPTCHA</span>
-            </div>
           </div>
 
           {/* Nota LGPD do rodapé */}
