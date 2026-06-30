@@ -83,6 +83,7 @@ export async function createPixPayment(
       headers: {
         Authorization: `Bearer ${config.accessToken}`,
         "Content-Type": "application/json",
+        "X-Idempotency-Key": orderCode,
       },
       body: JSON.stringify(payload),
     });
@@ -166,6 +167,7 @@ export async function createCardPreference(
       headers: {
         Authorization: `Bearer ${config.accessToken}`,
         "Content-Type": "application/json",
+        "X-Idempotency-Key": orderCode,
       },
       body: JSON.stringify(payload),
     });
