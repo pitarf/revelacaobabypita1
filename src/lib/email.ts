@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { prisma } from "./prisma";
 
 const getTransporter = () => {
   return nodemailer.createTransport({
@@ -12,12 +13,39 @@ const getTransporter = () => {
   });
 };
 
-const sendEmail = async (to: string, subject: string, html: string) => {
+export const sendEmail = async (to: string, subject: string, html: string, existingLogId?: string) => {
   if (!process.env.BREVO_SMTP_LOGIN) {
     console.warn("BREVO_SMTP_LOGIN não configurado. E-mail não será enviado.");
     return;
   }
+  
+  let emailLogId: string | null = existingLogId || null;
+  
   try {
+    if (!existingLogId) {
+      // 1. Cria o log como 'pending'
+      const log = await prisma.emailLog.create({
+        data: {
+          to,
+          subject,
+          htmlContent: html,
+          status: "pending",
+        }
+      });
+      emailLogId = log.id;
+    } else {
+      // 1b. Se já existe, volta para pending e limpa erro
+      await prisma.emailLog.update({
+        where: { id: existingLogId },
+        data: {
+          status: "pending",
+          errorMessage: null,
+          sentAt: null,
+        }
+      });
+    }
+
+    // 2. Envia o e-mail
     const transporter = getTransporter();
     await transporter.sendMail({
       from: '"Chá Revelação" <charevelacao@babypita.com>', // Sender address
@@ -25,9 +53,31 @@ const sendEmail = async (to: string, subject: string, html: string) => {
       subject, // Subject line
       html, // HTML body
     });
+    
+    // 3. Atualiza o log para 'sent'
+    if (emailLogId) {
+      await prisma.emailLog.update({
+        where: { id: emailLogId },
+        data: {
+          status: "sent",
+          sentAt: new Date(),
+        }
+      });
+    }
     console.log(`E-mail enviado para ${to}`);
-  } catch (error) {
+  } catch (error: any) {
     console.error(`Erro ao enviar e-mail para ${to}:`, error);
+    
+    // 4. Se falhou, atualiza o log para 'failed' com a mensagem de erro
+    if (emailLogId) {
+      await prisma.emailLog.update({
+        where: { id: emailLogId },
+        data: {
+          status: "failed",
+          errorMessage: error?.message || String(error),
+        }
+      });
+    }
   }
 };
 

@@ -141,3 +141,8 @@ export type AuditLog = Prisma.AuditLogModel
  * 
  */
 export type GuestMessage = Prisma.GuestMessageModel
+/**
+ * Model EmailLog
+ * 
+ */
+export type EmailLog = Prisma.EmailLogModel

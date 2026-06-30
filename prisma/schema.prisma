@@ -320,3 +320,17 @@ model GuestMessage {
 
   @@map("guest_messages")
 }
+
+// 19. Histórico de E-mails Enviados e Falhas
+model EmailLog {
+  id           String   @id @default(uuid())
+  to           String
+  subject      String
+  htmlContent  String   @db.Text
+  status       String   @default("pending") // pending, sent, failed
+  errorMessage String?  @db.Text
+  sentAt       DateTime?
+  createdAt    DateTime @default(now())
+
+  @@map("email_logs")
+}

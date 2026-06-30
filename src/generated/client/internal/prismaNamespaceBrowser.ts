@@ -70,7 +70,8 @@ export const ModelName = {
   PaymentEvent: 'PaymentEvent',
   UploadedReceipt: 'UploadedReceipt',
   AuditLog: 'AuditLog',
-  GuestMessage: 'GuestMessage'
+  GuestMessage: 'GuestMessage',
+  EmailLog: 'EmailLog'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -387,6 +388,20 @@ export const GuestMessageScalarFieldEnum = {
 } as const
 
 export type GuestMessageScalarFieldEnum = (typeof GuestMessageScalarFieldEnum)[keyof typeof GuestMessageScalarFieldEnum]
+
+
+export const EmailLogScalarFieldEnum = {
+  id: 'id',
+  to: 'to',
+  subject: 'subject',
+  htmlContent: 'htmlContent',
+  status: 'status',
+  errorMessage: 'errorMessage',
+  sentAt: 'sentAt',
+  createdAt: 'createdAt'
+} as const
+
+export type EmailLogScalarFieldEnum = (typeof EmailLogScalarFieldEnum)[keyof typeof EmailLogScalarFieldEnum]
 
 
 export const SortOrder = {

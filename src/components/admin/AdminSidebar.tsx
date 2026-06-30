@@ -17,7 +17,8 @@ import {
   Menu,
   X,
   UserCheck,
-  MessageSquare
+  MessageSquare,
+  Mail
 } from "lucide-react";
 
 export default function AdminSidebar() {
@@ -74,6 +75,7 @@ export default function AdminSidebar() {
     { name: "Mural de Recados", path: "/admin/recados", icon: MessageSquare },
     { name: "Mídias & Galeria", path: "/admin/midias", icon: ImageIcon },
     { name: "Extrato Financeiro", path: "/admin/extrato", icon: DollarSign },
+    { name: "Histórico de E-mails", path: "/admin/emails", icon: Mail },
     { name: "Personalização", path: "/admin/personalizacao", icon: Paintbrush },
     { name: "Configurações", path: "/admin/configuracoes", icon: Settings },
   ];
