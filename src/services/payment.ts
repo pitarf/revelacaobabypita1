@@ -110,6 +110,75 @@ export async function createPixPayment(
 }
 
 /**
+ * Cria uma cobrança Pix usando a API da PushinPay
+ */
+export async function createPushinPayPixPayment(
+  orderCode: string,
+  totalValue: number,
+  gifterEmail: string,
+  gifterName: string
+): Promise<PixPaymentResult> {
+  const token = process.env.PUSHINPAY_TOKEN;
+  
+  if (!token) {
+    console.log(`[PUSHINPAY SIMULATOR] Gerando pagamento Pix para pedido ${orderCode}`);
+    const mockTxId = `sim_pushin_${Math.random().toString(36).substring(2, 15)}`;
+    return {
+      transactionId: mockTxId,
+      qrCode: "00020101021226870014br.gov.bcb.pix2565qrcodesimulado1234567890",
+      copiaCola: "00020101021226870014br.gov.bcb.pix2565qrcodesimulado1234567890",
+      status: "pending",
+    };
+  }
+
+  try {
+    const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const appUrl = rawAppUrl.endsWith('/') ? rawAppUrl.slice(0, -1) : rawAppUrl;
+    const webhookUrl = `${appUrl}/api/webhooks/pushinpay`;
+    
+    const amountInCents = Math.round(totalValue * 100);
+
+    const payload = {
+      value: amountInCents,
+      webhook_url: webhookUrl
+    };
+
+    const response = await fetch("https://api.pushinpay.com.br/api/pix/cashIn", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`Erro na API PushinPay: ${JSON.stringify(errorData)}`);
+    }
+
+    const data = await response.json();
+
+    let qrCodeBase64 = data.qr_code_base64 || "";
+    if (qrCodeBase64 && !qrCodeBase64.startsWith("data:image")) {
+      qrCodeBase64 = `data:image/png;base64,${qrCodeBase64}`;
+    }
+
+    return {
+      transactionId: data.id || data.transaction_id || `pushinpay_${orderCode}`,
+      qrCode: qrCodeBase64,
+      copiaCola: data.qr_code || data.copy_and_paste || "",
+      status: "pending",
+    };
+  } catch (error) {
+    console.error("Falha ao criar Pix na PushinPay:", error);
+    throw error;
+  }
+}
+
+
+/**
  * Cria uma preferência de Checkout no PagSeguro
  */
 export async function createCardPreference(

@@ -337,17 +337,16 @@ export default function CheckoutPage() {
                 {availablePaymentMethods.includes("card") && (
                   <button
                     type="button"
-                    onClick={() => setPaymentMethod("card")}
-                    className={`flex items-start gap-3 rounded-2xl p-4 border-2 text-left transition-all ${
-                      paymentMethod === "card"
-                        ? "border-baby-gold bg-baby-gold-light/20 shadow-sm"
-                        : "border-baby-beige bg-white hover:bg-gray-50"
-                    }`}
+                    disabled
+                    className="flex relative overflow-hidden items-start gap-3 rounded-2xl p-4 border-2 text-left transition-all border-slate-200 bg-slate-50 cursor-not-allowed opacity-75"
                   >
-                    <CreditCard className="h-5 w-5 text-gray-600 mt-1" />
+                    <CreditCard className="h-5 w-5 text-gray-400 mt-1" />
                     <div>
-                      <h4 className="text-xs font-black text-gray-700">Cartão de Crédito</h4>
-                      <p className="text-[10px] text-gray-400 mt-0.5 font-medium leading-snug">Parcelamento seguro em até 5x via Mercado Pago. O valor será enviado aos pais para compra.</p>
+                      <h4 className="text-xs font-black text-gray-400">Cartão de Crédito</h4>
+                      <p className="text-[10px] text-gray-400 mt-0.5 font-medium leading-snug">Parcelamento seguro em até 5x via Checkout Transparente.</p>
+                    </div>
+                    <div className="absolute top-3 right-3 bg-slate-200 text-slate-500 text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded shadow-sm">
+                      Em breve
                     </div>
                   </button>
                 )}

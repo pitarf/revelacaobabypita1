@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { createPixPayment, createCardPreference } from "@/services/payment";
+import { createPixPayment, createPushinPayPixPayment, createCardPreference } from "@/services/payment";
 import { sendGiftConfirmation } from "@/lib/email";
 
 // Função para gerar código legível de pedido (Ex: CHA-942851)
@@ -153,8 +153,8 @@ export async function POST(req: NextRequest) {
     let paymentData: any = null;
 
     if (paymentMethod === "pix") {
-      // Gera o Pix
-      const pixResult = await createPixPayment(
+      // Gera o Pix com PushinPay
+      const pixResult = await createPushinPayPixPayment(
         order.code,
         totalValue,
         order.gifterEmail,
@@ -167,14 +167,18 @@ export async function POST(req: NextRequest) {
           orderId: order.id,
           transactionId: pixResult.transactionId,
           status: pixResult.status,
-          gateway: "pagseguro",
+          gateway: "pushinpay",
           value: totalValue,
+          pixQrCode: pixResult.qrCode,
+          pixCopiaCola: pixResult.copiaCola,
         },
       });
 
       paymentData = {
-        initPoint: pixResult.initPoint,
+        initPoint: `/presentes/conclusao/${order.code}`,
         preferenceId: pixResult.transactionId,
+        qrCode: pixResult.qrCode,
+        copiaCola: pixResult.copiaCola
       };
 
     } else if (paymentMethod === "card") {
