@@ -57,8 +57,7 @@ export async function createPixPayment(
       reference_id: orderCode,
       customer: {
         name: gifterName.trim() || "Convidado",
-        email: gifterEmail || "convidado@charevelacao.com.br",
-        tax_id: "00000000000"
+        email: gifterEmail || "convidado@charevelacao.com.br"
       },
       items: [
         {

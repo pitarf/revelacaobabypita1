@@ -1,0 +1,90 @@
+==== REQUEST (ENVIADO PELO SITE NO AMBIENTE SANDBOX) ====
+POST https://sandbox.api.pagseguro.com/checkouts
+Headers:
+Authorization: Bearer [TOKEN OMITIDO POR SEGURANÇA]
+Content-Type: application/json
+
+Body:
+{
+  "reference_id": "CHA-HOMOLOGACAO",
+  "customer": {
+    "name": "Teste de Homologacao",
+    "email": "homologacao@teste.com.br"
+  },
+  "items": [
+    {
+      "reference_id": "CHA-HOMOLOGACAO",
+      "name": "Presente do Chá Revelação",
+      "quantity": 1,
+      "unit_amount": 500
+    }
+  ],
+  "payment_methods": [
+    {
+      "type": "PIX"
+    }
+  ],
+  "redirect_url": "https://babypita.vercel.app/presentes/conclusao/CHA-HOMOLOGACAO",
+  "return_url": "https://babypita.vercel.app/presentes/conclusao/CHA-HOMOLOGACAO",
+  "notification_urls": [
+    "https://babypita.vercel.app/api/webhooks/payment"
+  ]
+}
+
+
+==== RESPONSE (RECEBIDO DO PAGSEGURO SANDBOX) ====
+Status Code: 201
+
+Body:
+{
+  "id": "CHEC_931A88E9-5D45-49B6-96BF-CCD1DB547404",
+  "reference_id": "CHA-HOMOLOGACAO",
+  "created_at": "2026-06-30T16:03:36-03:00",
+  "status": "ACTIVE",
+  "customer": {
+    "name": "Teste de Homologacao",
+    "email": "homologacao@teste.com.br"
+  },
+  "customer_modifiable": true,
+  "items": [
+    {
+      "reference_id": "CHA-HOMOLOGACAO",
+      "name": "Presente do Chá Revelação",
+      "quantity": 1,
+      "unit_amount": 500
+    }
+  ],
+  "additional_amount": 0,
+  "discount_amount": 0,
+  "payment_methods": [
+    {
+      "type": "PIX"
+    }
+  ],
+  "redirect_url": "https://babypita.vercel.app/presentes/conclusao/CHA-HOMOLOGACAO",
+  "return_url": "https://babypita.vercel.app/presentes/conclusao/CHA-HOMOLOGACAO",
+  "notification_urls": [
+    "https://babypita.vercel.app/api/webhooks/payment"
+  ],
+  "payment_notification_urls": [
+    "https://babypita.vercel.app/api/webhooks/payment"
+  ],
+  "links": [
+    {
+      "rel": "SELF",
+      "href": "https://sandbox.api.pagseguro.com/checkouts/CHEC_931A88E9-5D45-49B6-96BF-CCD1DB547404",
+      "method": "GET"
+    },
+    {
+      "rel": "PAY",
+      "href": "https://pagamento.sandbox.pagbank.com.br/pagamento?code=931a88e9-5d45-49b6-96bf-ccd1db547404",
+      "method": "GET"
+    },
+    {
+      "rel": "INACTIVATE",
+      "href": "https://sandbox.api.pagseguro.com/checkouts/CHEC_931A88E9-5D45-49B6-96BF-CCD1DB547404/inactivate",
+      "method": "POST"
+    }
+  ],
+  "origin": "CHECKOUT_WEB"
+}
