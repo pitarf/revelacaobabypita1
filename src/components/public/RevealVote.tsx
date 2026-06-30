@@ -29,8 +29,10 @@ export default function RevealVote({ babyOption1, babyOption2 }: RevealVoteProps
   // Verifica se o usuário já votou pela sessão/cookie local na montagem do componente
   useEffect(() => {
     const localVoted = localStorage.getItem("has_voted_reveal");
+    const localBaby = localStorage.getItem("voted_baby_name");
     if (localVoted === "1") {
       setHasVoted(true);
+      if (localBaby) setSelectedBaby(localBaby);
     }
     fetchResults();
   }, []);
@@ -90,6 +92,7 @@ export default function RevealVote({ babyOption1, babyOption2 }: RevealVoteProps
 
       setHasVoted(true);
       localStorage.setItem("has_voted_reveal", "1");
+      localStorage.setItem("voted_baby_name", selectedBaby);
       setStats({
         option1: data.option1,
         option2: data.option2,
@@ -152,7 +155,7 @@ export default function RevealVote({ babyOption1, babyOption2 }: RevealVoteProps
           {hasVoted && (
             <div className="flex justify-center items-center gap-1.5 text-emerald-500 font-bold text-xs bg-emerald-50 py-2 px-4 rounded-full">
               <CheckCircle2 className="h-4 w-4" />
-              <span>Palpite registrado com sucesso!</span>
+              <span>{selectedBaby ? `Seu palpite: ${selectedBaby}` : "Palpite registrado com sucesso!"}</span>
             </div>
           )}
 

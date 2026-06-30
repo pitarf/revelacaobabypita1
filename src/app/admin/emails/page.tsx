@@ -9,6 +9,7 @@ export default function AdminEmailsPage() {
   const [emails, setEmails] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [resendingId, setResendingId] = useState<string | null>(null);
+  const [selectedError, setSelectedError] = useState<string | null>(null);
 
   const loadEmails = async () => {
     try {
@@ -126,9 +127,13 @@ export default function AdminEmailsPage() {
                             </span>
                           )}
                           {email.status === "failed" && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-700" title={email.errorMessage}>
+                            <button
+                              onClick={() => setSelectedError(email.errorMessage || "Erro desconhecido")}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-700 hover:bg-rose-200 transition-colors cursor-pointer"
+                              title="Clique para ver o erro"
+                            >
                               <XCircle className="w-3.5 h-3.5" /> Falhou
-                            </span>
+                            </button>
                           )}
                           {email.status === "pending" && (
                             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700">
@@ -160,6 +165,41 @@ export default function AdminEmailsPage() {
 
         </div>
       </div>
+
+      {/* Modal de Erro */}
+      {selectedError && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl w-full max-w-lg shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-rose-50">
+              <h3 className="text-lg font-bold text-rose-800 flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5" />
+                Detalhes do Erro
+              </h3>
+              <button 
+                onClick={() => setSelectedError(null)}
+                className="text-rose-400 hover:text-rose-600 transition-colors"
+              >
+                <XCircle className="w-6 h-6" />
+              </button>
+            </div>
+            <div className="p-6">
+              <div className="bg-slate-900 rounded-lg p-4 overflow-x-auto">
+                <pre className="text-sm font-mono text-emerald-400 whitespace-pre-wrap word-break">
+                  {selectedError}
+                </pre>
+              </div>
+              <div className="mt-6 flex justify-end">
+                <button
+                  onClick={() => setSelectedError(null)}
+                  className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition-colors"
+                >
+                  Fechar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
