@@ -24,6 +24,16 @@ export default function OrderCompletionPage() {
     }
   }, [code]);
 
+  // Polling: se o status for pending, verifica a cada 5 segundos
+  useEffect(() => {
+    if (order && order.paymentStatus === "pending") {
+      const interval = setInterval(() => {
+        fetchOrder();
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [order?.paymentStatus, code]);
+
   const fetchOrder = async () => {
     try {
       setLoading(true);
@@ -96,7 +106,8 @@ export default function OrderCompletionPage() {
   };
 
   const handleShare = () => {
-    const shareText = `Acabei de presentear os pais do Chá Revelação com um presente da lista! Evento: Miguel ou Rafaella? Pedido: ${order?.code}`;
+    const itemsText = order?.orderItems ? order.orderItems.map((i: any) => i.name).join(", ") : "um presente da lista";
+    const shareText = `Acabei de presentear os pais do Chá Revelação com ${itemsText}! Evento: Miguel ou Rafaella? Pedido: ${order?.code}`;
     if (navigator.share) {
       navigator.share({
         title: "Chá Revelação - Presente Enviado",
