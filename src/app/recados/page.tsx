@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Header from "@/components/public/Header";
 import { toast } from "sonner";
 import { Heart, MessageSquare, Sparkles, X, Quote } from "lucide-react";
 
@@ -118,16 +117,20 @@ export default function RecadosPage() {
 
   return (
     <main className="relative min-h-screen bg-baby-gradient flex flex-col">
-      <Header
-        title={event.title || "Chá Revelação"}
-        babyOption1={event.babyOption1 || ""}
-        babyOption2={event.babyOption2 || ""}
-        eventDate={event.eventDate || ""}
-        eventTime={event.eventTime || ""}
-        locationName={event.locationName || ""}
-        address={event.address || ""}
-        showCountdown={false}
-      />
+      {/* Barra de Navegação Simples */}
+      <div className="w-full bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-40 border-b border-baby-beige/50">
+        <div className="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
+          <a href="/" className="flex items-center gap-2 text-gray-600 hover:text-[#f6b26b] font-bold text-sm transition-colors group">
+            <span className="bg-gray-100 group-hover:bg-[#f6b26b]/10 p-2 rounded-full transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            </span>
+            Voltar para o Início
+          </a>
+          <div className="text-sm font-extrabold text-gray-400 font-serif tracking-tight">
+            {event.title || "Chá Revelação"}
+          </div>
+        </div>
+      </div>
 
       <div className="flex-1 w-full bg-white pt-10 pb-20">
         <div className="container mx-auto px-4 max-w-5xl">
