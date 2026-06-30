@@ -53,7 +53,7 @@ export async function createPixPayment(
     const url = `${getBaseUrl(config.isTest)}/checkouts`;
     const amountInCents = Math.round(totalValue * 100);
 
-    const payload = {
+    const payload: any = {
       reference_id: orderCode,
       customer: {
         name: gifterName.trim() || "Convidado",
@@ -131,7 +131,7 @@ export async function createCardPreference(
     const url = `${getBaseUrl(config.isTest)}/checkouts`;
     const amountInCents = Math.round(totalValue * 100);
 
-    const payload = {
+    const payload: any = {
       reference_id: orderCode,
       customer: {
         name: "Convidado",
