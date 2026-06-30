@@ -293,7 +293,7 @@ export default function GiftList({ onOpenCart, onDirectCheckout }: GiftListProps
           </div>
         ) : (
           /* Grid de Cards */
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-stretch">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-6 items-stretch">
             {gifts.map((gift) => {
               const isEsgotado = gift.remainingQuantity <= 0;
 
@@ -340,7 +340,7 @@ export default function GiftList({ onOpenCart, onDirectCheckout }: GiftListProps
                   </div>
 
                   {/* Informações */}
-                  <div className="p-4.5 flex-1 flex flex-col justify-between">
+                  <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between">
                     <div>
                       <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">
                         {gift.category.name}
