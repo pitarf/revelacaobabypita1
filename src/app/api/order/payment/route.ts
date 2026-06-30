@@ -29,6 +29,11 @@ export async function POST(req: NextRequest) {
       data: { paymentMethod },
     });
 
+    // Remove pagamentos anteriores pendentes para que o novo seja o principal
+    await prisma.payment.deleteMany({
+      where: { orderId: order.id, status: "pending" },
+    });
+
     let paymentData: any = null;
 
     if (paymentMethod === "pix") {
