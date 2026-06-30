@@ -29,14 +29,14 @@ const getBaseUrl = (isTest: boolean) =>
   isTest ? "https://sandbox.api.pagseguro.com" : "https://api.pagseguro.com";
 
 /**
- * Cria uma cobrança Pix no PagSeguro
+ * Cria uma cobrança Pix no PagSeguro usando a API de Checkouts
  */
 export async function createPixPayment(
   orderCode: string,
   totalValue: number,
   gifterEmail: string,
   gifterName: string
-): Promise<PixPaymentResult> {
+): Promise<any> {
   const config = await getPaymentConfig();
 
   if (!config.token) {
@@ -44,14 +44,13 @@ export async function createPixPayment(
     const mockTxId = `sim_pix_${Math.random().toString(36).substring(2, 15)}`;
     return {
       transactionId: mockTxId,
-      qrCode: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
-      copiaCola: "00020101021226830014br.gov.bcb.pix2561api.pagseguro.com...",
+      initPoint: `/presentes/conclusao/${orderCode}?payment_status=pending`,
       status: "pending",
     };
   }
 
   try {
-    const url = `${getBaseUrl(config.isTest)}/orders`;
+    const url = `${getBaseUrl(config.isTest)}/checkouts`;
     const amountInCents = Math.round(totalValue * 100);
 
     const payload = {
@@ -59,22 +58,23 @@ export async function createPixPayment(
       customer: {
         name: gifterName.trim() || "Convidado",
         email: gifterEmail || "convidado@charevelacao.com.br",
-        tax_id: "00000000000" // Fallback se não tivermos coletado CPF (PagSeguro Sandbox exige CPF válido, em PROD pode passar sem se usar Checkout, mas no Order API PIX às vezes exige. Enviaremos um genérico se não tiver)
+        tax_id: "00000000000"
       },
       items: [
         {
+          reference_id: orderCode,
           name: `Presente do Chá Revelação - Pedido ${orderCode}`,
           quantity: 1,
           unit_amount: amountInCents,
         }
       ],
-      qr_codes: [
+      payment_methods: [
         {
-          amount: {
-            value: amountInCents
-          }
+          type: "PIX"
         }
       ],
+      redirect_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/presentes/conclusao/${orderCode}?payment_status=pending`,
+      return_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/presentes/conclusao/${orderCode}?payment_status=pending`,
       notification_urls: [
         `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/payment`
       ]
@@ -91,20 +91,19 @@ export async function createPixPayment(
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(`Erro na API do PagSeguro (PIX): ${JSON.stringify(errorData)}`);
+      throw new Error(`Erro na API do PagSeguro (PIX Checkout): ${JSON.stringify(errorData)}`);
     }
 
     const data = await response.json();
-    const qrCodeInfo = data.qr_codes[0];
+    const payUrl = data.links.find((l: any) => l.rel === "PAY")?.href;
 
     return {
       transactionId: data.id,
-      qrCode: qrCodeInfo.links.find((l: any) => l.rel === "QRCODE")?.href || "", // Algumas vezes retorna o base64 aqui ou link da imagem
-      copiaCola: qrCodeInfo.text,
+      initPoint: payUrl,
       status: "pending",
     };
   } catch (error) {
-    console.error("Falha ao criar Pix no PagSeguro:", error);
+    console.error("Falha ao criar Pix Checkout no PagSeguro:", error);
     throw error;
   }
 }

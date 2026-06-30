@@ -169,16 +169,12 @@ export async function POST(req: NextRequest) {
           status: pixResult.status,
           gateway: "pagseguro",
           value: totalValue,
-          pixCopiaCola: pixResult.copiaCola,
-          pixQrCode: pixResult.qrCode,
-          pixQrCodeUrl: pixResult.qrCodeUrl,
         },
       });
 
       paymentData = {
-        copiaCola: pixResult.copiaCola,
-        qrCode: pixResult.qrCode,
-        qrCodeUrl: pixResult.qrCodeUrl,
+        initPoint: pixResult.initPoint,
+        preferenceId: pixResult.transactionId,
       };
 
     } else if (paymentMethod === "card") {

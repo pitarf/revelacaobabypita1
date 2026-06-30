@@ -178,7 +178,7 @@ export default function CartModal({ isOpen, onClose, initialStep }: CartModalPro
       clearCartLocal();
       onClose();
 
-      if (paymentMethod === "card" && data.payment?.initPoint) {
+      if ((paymentMethod === "card" || paymentMethod === "pix") && data.payment?.initPoint) {
         window.location.href = data.payment.initPoint;
       } else {
         router.push(`/presentes/conclusao/${data.order.code}`);
