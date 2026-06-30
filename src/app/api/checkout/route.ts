@@ -138,21 +138,20 @@ export async function POST(req: NextRequest) {
         });
       }
 
-      // G. Limpa o carrinho de compras do convidado
-      await tx.cartItem.deleteMany({
-        where: { cartId: cart.id },
-      });
+      // G. O carrinho só será limpo APÓS o sucesso do gateway de pagamento
+      // para evitar que o usuário perca o carrinho se a API do PagSeguro/PushinPay falhar.
 
       const giftNames = giftsToUpdate.map(g => g.name).join(", ");
-      return { order, totalValue, giftNames };
+      return { order, totalValue, giftNames, cartId: cart.id, giftsToUpdate };
     });
 
-    const { order, totalValue, giftNames } = result;
+    const { order, totalValue, giftNames, cartId, giftsToUpdate } = result;
 
     // 3. Processamento de Pagamento (Fora da Transação SQL para evitar bloqueios de latência da rede)
     let paymentData: any = null;
 
-    if (paymentMethod === "pix") {
+    try {
+      if (paymentMethod === "pix") {
       // Gera o Pix com PushinPay
       const pixResult = await createPushinPayPixPayment(
         order.code,
@@ -203,8 +202,32 @@ export async function POST(req: NextRequest) {
       paymentData = {
         initPoint: cardResult.initPoint,
         preferenceId: cardResult.preferenceId,
-      };
+      }
+    } catch (paymentError: any) {
+      console.error("[Checkout API] Falha na integração de pagamento, revertendo pedido:", paymentError);
+      
+      // Rollback manual do banco de dados já que o pagamento falhou
+      await prisma.$transaction(async (tx) => {
+        for (const update of giftsToUpdate) {
+          await tx.gift.update({
+            where: { id: update.giftId },
+            data: {
+              chosenQuantity: { decrement: update.quantity },
+              status: "available" // força estar available pois reduziu a quantidade
+            }
+          });
+        }
+        await tx.orderItem.deleteMany({ where: { orderId: order.id } });
+        await tx.order.delete({ where: { id: order.id } });
+      });
+      
+      throw paymentError; // repassa para o bloco catch principal
     }
+
+    // 4. Sucesso total (Pedido salvo e gateway respondeu OK) -> Agora podemos limpar o carrinho
+    await prisma.cartItem.deleteMany({
+      where: { cartId },
+    });
 
     const response = NextResponse.json({
       success: true,
