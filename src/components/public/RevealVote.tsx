@@ -22,8 +22,6 @@ export default function RevealVote({ babyOption1, babyOption2 }: RevealVoteProps
   const [hasVoted, setHasVoted] = useState(false);
   const [selectedBaby, setSelectedBaby] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [voterEmail, setVoterEmail] = useState("");
-  const [voterPhone, setVoterPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [showResultsWithoutVoting, setShowResultsWithoutVoting] = useState(false);
 
@@ -65,8 +63,8 @@ export default function RevealVote({ babyOption1, babyOption2 }: RevealVoteProps
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           babyName: selectedBaby,
-          voterEmail: voterEmail || null,
-          voterPhone: voterPhone || null,
+          voterEmail: null,
+          voterPhone: null,
         }),
       });
 
@@ -227,49 +225,11 @@ export default function RevealVote({ babyOption1, babyOption2 }: RevealVoteProps
               Confirme seu Palpite em <span className={selectedBaby === babyOption1 ? "text-baby-blue" : "text-baby-pink"}>{selectedBaby}</span>!
             </h3>
             <p className="text-sm text-gray-400 font-semibold mb-8 max-w-sm mx-auto leading-relaxed">
-              Precisamos apenas do seu contato para garantir que cada convidado dê apenas um palpite.
+              Obrigado por participar! Clique abaixo para registrar seu voto.
             </p>
 
             <form onSubmit={handleVoteSubmit} className="space-y-6">
               
-              {/* WhatsApp / Celular */}
-              <div className="space-y-2">
-                <label className="block text-xs font-black uppercase text-gray-400 tracking-wider">
-                  WhatsApp / Celular (Opcional)
-                </label>
-                <input
-                  type="text"
-                  placeholder="(00) 00000-0000"
-                  value={voterPhone}
-                  onChange={(e) => {
-                    let val = e.target.value.replace(/\D/g, "");
-                    if (val.length > 11) val = val.substring(0, 11);
-                    if (val.length > 10) {
-                      val = `(${val.substring(0, 2)}) ${val.substring(2, 7)}-${val.substring(7)}`;
-                    } else if (val.length > 2) {
-                      val = `(${val.substring(0, 2)}) ${val.substring(2, 6)}-${val.substring(6)}`;
-                    } else if (val.length > 0) {
-                      val = `(${val}`;
-                    }
-                    setVoterPhone(val);
-                  }}
-                  className="w-full bg-gray-50/50 border border-[#f6b26b]/30 rounded-2xl px-4 py-3.5 text-sm text-center focus:outline-none focus:border-[#f6b26b] font-bold text-gray-700 transition-all placeholder:text-gray-350"
-                />
-              </div>
-
-              {/* E-mail */}
-              <div className="space-y-2">
-                <label className="block text-xs font-black uppercase text-gray-400 tracking-wider">
-                  E-mail (Opcional)
-                </label>
-                <input
-                  type="email"
-                  placeholder="seuemail@exemplo.com"
-                  value={voterEmail}
-                  onChange={(e) => setVoterEmail(e.target.value)}
-                  className="w-full bg-gray-50/50 border border-[#f6b26b]/30 rounded-2xl px-4 py-3.5 text-sm text-center focus:outline-none focus:border-[#f6b26b] font-bold text-gray-700 transition-all placeholder:text-gray-355"
-                />
-              </div>
 
               {/* Botões do Rodapé */}
               <div className="flex gap-4 pt-4">
