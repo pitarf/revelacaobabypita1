@@ -156,7 +156,7 @@ export async function createCardPreference(
           config_options: [
             {
               option: "INSTALLMENTS_LIMIT",
-              value: "1" // Apenas à vista
+              value: "5" // Permitir até 5x
             }
           ]
         }
