@@ -147,14 +147,20 @@ export default function OrderCompletionPage() {
             <CheckCircle2 className="h-9 w-9" />
           </div>
 
-          <h2 className="text-2xl font-black text-gray-800 font-serif">Obrigado pelo Presente!</h2>
+          <h2 className="text-2xl font-black text-gray-800 font-serif">
+            {isApproved || isPersonal || isLink ? "Obrigado pelo Presente!" : "Falta pouco!"}
+          </h2>
           <p className="text-xs text-gray-400 font-bold mt-1 uppercase tracking-wider">Código do pedido: {order.code}</p>
 
           <div className="mt-2 text-sm text-gray-500 font-medium max-w-sm mx-auto leading-relaxed">
-            {order.isAnonymous ? (
-              <p>Sua contribuição anônima foi registrada de forma segura para os pais.</p>
+            {isApproved || isPersonal || isLink ? (
+              order.isAnonymous ? (
+                <p>Sua contribuição anônima foi registrada de forma segura para os pais.</p>
+              ) : (
+                <p>Ficamos muito felizes com o seu carinho, <strong className="text-gray-700">{order.gifterName}</strong>!</p>
+              )
             ) : (
-              <p>Ficamos muito felizes com o seu carinho, <strong className="text-gray-700">{order.gifterName}</strong>!</p>
+              <p>O seu pedido foi recebido. Finalize o pagamento para confirmar o seu presente!</p>
             )}
           </div>
 

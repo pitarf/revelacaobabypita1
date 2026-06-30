@@ -108,8 +108,15 @@ export default function CheckoutPage() {
         return;
       }
 
-      // Sucesso!
-      toast.success("Pedido finalizado com sucesso!");
+      // Mensagem de sucesso apropriada
+      if (paymentMethod === "card") {
+        toast.info("Redirecionando para o pagamento seguro...");
+      } else if (paymentMethod === "pix") {
+        toast.info("Gerando seu QR Code Pix...");
+      } else {
+        toast.success("Pedido reservado com sucesso!");
+      }
+      
       clearCartLocal(); // limpa carrinho localmente
 
       // Se for Cartão de Crédito e o gateway gerou o link de redirecionamento
