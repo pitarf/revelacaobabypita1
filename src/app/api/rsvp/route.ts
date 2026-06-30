@@ -111,7 +111,7 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      sendRsvpConfirmation(updatedRsvp.email, updatedRsvp.fullName, eventTitle, eventDateStr, locationStr, googleMapsUrl).catch(console.error);
+      sendRsvpConfirmation(updatedRsvp.email, updatedRsvp.fullName, eventTitle, eventDateStr, locationStr, googleMapsUrl, isAttending, true).catch(console.error);
 
       return NextResponse.json({
         success: true,
@@ -172,7 +172,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    sendRsvpConfirmation(newRsvp.email, newRsvp.fullName, eventTitle, eventDateStr, locationStr, googleMapsUrl).catch(console.error);
+    sendRsvpConfirmation(newRsvp.email, newRsvp.fullName, eventTitle, eventDateStr, locationStr, googleMapsUrl, isAttending, false).catch(console.error);
 
     return NextResponse.json({
       success: true,
