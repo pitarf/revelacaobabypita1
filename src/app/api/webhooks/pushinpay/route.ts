@@ -64,12 +64,8 @@ export async function POST(req: NextRequest) {
         data: { paymentStatus: "approved" }
       });
 
-      for (const item of payment.order.orderItems) {
-        await tx.gift.update({
-          where: { id: item.giftId },
-          data: { chosenQuantity: { increment: item.quantity } }
-        });
-      }
+      // Nota: NÃO incrementamos o chosenQuantity aqui, pois o estoque 
+      // já foi garantido e reservado no momento da geração do PIX (Checkout).
     });
 
     // Enviar email
