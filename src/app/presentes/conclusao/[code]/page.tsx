@@ -40,13 +40,8 @@ export default function OrderCompletionPage() {
       const res = await fetch(`/api/order?code=${code}`);
       const data = await res.json();
       if (res.ok) {
-        // Atualização Otimista: se a URL diz que foi aprovado pelo MP, mas o BD ainda não atualizou (atraso de webhook)
-        if (paymentStatusUrl === "approved" && data.order.paymentStatus !== "approved") {
-          data.order.paymentStatus = "approved";
-        }
-        
         setOrder(data.order);
-        // Se o pedido acabou de ser aprovado na recarga (ou URL), comemora com confete
+        // Se o pedido acabou de ser aprovado na recarga, comemora com confete
         if (data.order.paymentStatus === "approved") {
           triggerSuccessConfetti();
         }
