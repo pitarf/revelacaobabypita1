@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import confetti from "canvas-confetti";
 import { CheckCircle2, Copy, Check, Clock, Calendar, MapPin, Heart, Share2, HelpCircle, PhoneCall } from "lucide-react";
@@ -9,7 +9,9 @@ import { CheckCircle2, Copy, Check, Clock, Calendar, MapPin, Heart, Share2, Help
 export default function OrderCompletionPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const code = params.code as string;
+  const paymentStatusUrl = searchParams.get("payment_status");
 
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -28,8 +30,13 @@ export default function OrderCompletionPage() {
       const res = await fetch(`/api/order?code=${code}`);
       const data = await res.json();
       if (res.ok) {
+        // Atualização Otimista: se a URL diz que foi aprovado pelo MP, mas o BD ainda não atualizou (atraso de webhook)
+        if (paymentStatusUrl === "approved" && data.order.paymentStatus !== "approved") {
+          data.order.paymentStatus = "approved";
+        }
+        
         setOrder(data.order);
-        // Se o pedido acabou de ser aprovado na recarga, comemora com confete
+        // Se o pedido acabou de ser aprovado na recarga (ou URL), comemora com confete
         if (data.order.paymentStatus === "approved") {
           triggerSuccessConfetti();
         }
