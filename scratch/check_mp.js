@@ -1,5 +1,5 @@
 const accessToken = "APP_USR-13888055785530-062920-e18e15a14ec73a0e987cb3c36de03617-263369008"; // do seu .env
-const opId = "166470683864";
+const opId = "165637136431";
 
 async function check() {
   console.log("Checando pagamentos...");
