@@ -134,7 +134,10 @@ export async function createPushinPayPixPayment(
   try {
     const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
     const appUrl = rawAppUrl.endsWith('/') ? rawAppUrl.slice(0, -1) : rawAppUrl;
-    const webhookUrl = `${appUrl}/api/webhooks/pushinpay`;
+    let webhookUrl = `${appUrl}/api/webhooks/pushinpay`;
+    if (process.env.PUSHINPAY_WEBHOOK_TOKEN) {
+      webhookUrl += `?token=${process.env.PUSHINPAY_WEBHOOK_TOKEN}`;
+    }
     
     const amountInCents = Math.round(totalValue * 100);
 

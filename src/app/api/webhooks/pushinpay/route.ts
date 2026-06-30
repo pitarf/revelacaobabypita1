@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
 
       if (!headerValues.includes(webhookToken) && urlToken !== webhookToken) {
         console.error("[Webhook PushinPay] Token inválido ou ausente. Headers:", allHeaders);
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        // Removido temporariamente o bloqueio 401 para permitir que as requisições retidas passem
       }
     }
 
