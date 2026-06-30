@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { ArrowLeft, CreditCard, Copy, Check, ShoppingBag, EyeOff, MapPin, ExternalLink, HelpCircle } from "lucide-react";
+import { ArrowLeft, CreditCard, Copy, Check, ShoppingBag, EyeOff, MapPin, ExternalLink, HelpCircle, ShoppingCart } from "lucide-react";
 
 export default function CheckoutPage() {
   const { cartItems, totalValue, sessionId, clearCartLocal } = useCart();
@@ -26,6 +26,30 @@ export default function CheckoutPage() {
   
   // Configurações do evento obtidas do banco
   const [eventConfig, setEventConfig] = useState<any>(null);
+
+  // Calcula meios de pagamento comuns a todos os presentes no carrinho
+  const availablePaymentMethods = React.useMemo(() => {
+    if (!cartItems || cartItems.length === 0) return ["pix", "card", "personal", "link"];
+    
+    // Calcula interseção
+    const intersection = cartItems.reduce((acc, item) => {
+      const itemMethods = (item.allowedPaymentMethods || "pix,card,personal,link").split(",");
+      return acc.filter(m => itemMethods.includes(m));
+    }, ["pix", "card", "personal", "link"]);
+    
+    // Se não houver interseção, libera apenas pix
+    if (intersection.length === 0) return ["pix"];
+    return intersection;
+  }, [cartItems]);
+
+  // Força o reset do método se o selecionado atualmente ficar indisponível
+  useEffect(() => {
+    if (paymentMethod && !availablePaymentMethods.includes(paymentMethod)) {
+      setPaymentMethod((availablePaymentMethods[0] as any) || "pix");
+    } else if (!paymentMethod && availablePaymentMethods.length > 0) {
+      setPaymentMethod(availablePaymentMethods[0] as any);
+    }
+  }, [availablePaymentMethods, paymentMethod]);
 
   useEffect(() => {
     // Busca dados de localização/endereço seguro do backend
@@ -291,72 +315,80 @@ export default function CheckoutPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 
                 {/* Opção 1: Pix */}
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod("pix")}
-                  className={`flex items-start gap-3 rounded-2xl p-4 border-2 text-left transition-all ${
-                    paymentMethod === "pix"
-                      ? "border-baby-gold bg-baby-gold-light/20 shadow-sm"
-                      : "border-baby-beige bg-white hover:bg-gray-50"
-                  }`}
-                >
-                  <span className="text-2xl mt-0.5">📱</span>
-                  <div>
-                    <h4 className="text-xs font-black text-gray-700">Presentear via Pix</h4>
-                    <p className="text-[10px] text-gray-400 mt-0.5 font-medium leading-snug">Gera QR Code copia e cola do valor correspondente para os pais comprarem o item físico.</p>
-                  </div>
-                </button>
+                {availablePaymentMethods.includes("pix") && (
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod("pix")}
+                    className={`flex items-start gap-3 rounded-2xl p-4 border-2 text-left transition-all ${
+                      paymentMethod === "pix"
+                        ? "border-baby-gold bg-baby-gold-light/20 shadow-sm"
+                        : "border-baby-beige bg-white hover:bg-gray-50"
+                    }`}
+                  >
+                    <span className="text-2xl mt-0.5">📱</span>
+                    <div>
+                      <h4 className="text-xs font-black text-gray-700">Presentear via Pix</h4>
+                      <p className="text-[10px] text-gray-400 mt-0.5 font-medium leading-snug">Gera QR Code copia e cola do valor correspondente para os pais comprarem o item físico.</p>
+                    </div>
+                  </button>
+                )}
 
                 {/* Opção 2: Cartão de Crédito */}
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod("card")}
-                  className={`flex items-start gap-3 rounded-2xl p-4 border-2 text-left transition-all ${
-                    paymentMethod === "card"
-                      ? "border-baby-gold bg-baby-gold-light/20 shadow-sm"
-                      : "border-baby-beige bg-white hover:bg-gray-50"
-                  }`}
-                >
-                  <CreditCard className="h-5 w-5 text-gray-600 mt-1" />
-                  <div>
-                    <h4 className="text-xs font-black text-gray-700">Cartão de Crédito</h4>
-                    <p className="text-[10px] text-gray-400 mt-0.5 font-medium leading-snug">Parcelamento seguro em até 5x via Mercado Pago. O valor será enviado aos pais para compra.</p>
-                  </div>
-                </button>
+                {availablePaymentMethods.includes("card") && (
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod("card")}
+                    className={`flex items-start gap-3 rounded-2xl p-4 border-2 text-left transition-all ${
+                      paymentMethod === "card"
+                        ? "border-baby-gold bg-baby-gold-light/20 shadow-sm"
+                        : "border-baby-beige bg-white hover:bg-gray-50"
+                    }`}
+                  >
+                    <CreditCard className="h-5 w-5 text-gray-600 mt-1" />
+                    <div>
+                      <h4 className="text-xs font-black text-gray-700">Cartão de Crédito</h4>
+                      <p className="text-[10px] text-gray-400 mt-0.5 font-medium leading-snug">Parcelamento seguro em até 5x via Mercado Pago. O valor será enviado aos pais para compra.</p>
+                    </div>
+                  </button>
+                )}
 
                 {/* Opção 3: Levar Pessoalmente */}
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod("personal")}
-                  className={`flex items-start gap-3 rounded-2xl p-4 border-2 text-left transition-all ${
-                    paymentMethod === "personal"
-                      ? "border-baby-gold bg-baby-gold-light/20 shadow-sm"
-                      : "border-baby-beige bg-white hover:bg-gray-50"
-                  }`}
-                >
-                  <span className="text-2xl mt-0.5">🎁</span>
-                  <div>
-                    <h4 className="text-xs font-black text-gray-700">Levar Pessoalmente</h4>
-                    <p className="text-[10px] text-gray-400 mt-0.5 font-medium leading-snug">Você mesmo compra o presente físico e entrega pessoalmente no dia e local do Chá Revelação.</p>
-                  </div>
-                </button>
+                {availablePaymentMethods.includes("personal") && (
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod("personal")}
+                    className={`flex items-start gap-3 rounded-2xl p-4 border-2 text-left transition-all ${
+                      paymentMethod === "personal"
+                        ? "border-baby-gold bg-baby-gold-light/20 shadow-sm"
+                        : "border-baby-beige bg-white hover:bg-gray-50"
+                    }`}
+                  >
+                    <span className="text-2xl mt-0.5">🎁</span>
+                    <div>
+                      <h4 className="text-xs font-black text-gray-700">Levar Pessoalmente</h4>
+                      <p className="text-[10px] text-gray-400 mt-0.5 font-medium leading-snug">Você mesmo compra o presente físico e entrega pessoalmente no dia e local do Chá Revelação.</p>
+                    </div>
+                  </button>
+                )}
 
                 {/* Opção 4: Comprar pelo Link */}
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod("link")}
-                  className={`flex items-start gap-3 rounded-2xl p-4 border-2 text-left transition-all ${
-                    paymentMethod === "link"
-                      ? "border-baby-gold bg-baby-gold-light/20 shadow-sm"
-                      : "border-baby-beige bg-white hover:bg-gray-50"
-                  }`}
-                >
-                  <span className="text-2xl mt-0.5">🛒</span>
-                  <div>
-                    <h4 className="text-xs font-black text-gray-700">Comprar pelo Link</h4>
-                    <p className="text-[10px] text-gray-400 mt-0.5 font-medium leading-snug">Te redireciona para a loja externa do item. Você compra e envia para o endereço dos pais.</p>
-                  </div>
-                </button>
+                {availablePaymentMethods.includes("link") && (
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod("link")}
+                    className={`flex items-start gap-3 rounded-2xl p-4 border-2 text-left transition-all ${
+                      paymentMethod === "link"
+                        ? "border-baby-gold bg-baby-gold-light/20 shadow-sm"
+                        : "border-baby-beige bg-white hover:bg-gray-50"
+                    }`}
+                  >
+                    <ShoppingCart className="h-5 w-5 text-gray-600 mt-1" />
+                    <div>
+                      <h4 className="text-xs font-black text-gray-700">Link Externo de Compra</h4>
+                      <p className="text-[10px] text-gray-400 mt-0.5 font-medium leading-snug">Te redireciona para a loja externa do item. Você compra e envia para o endereço dos pais.</p>
+                    </div>
+                  </button>
+                )}
 
               </div>
 

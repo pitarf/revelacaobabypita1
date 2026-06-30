@@ -25,6 +25,7 @@ interface Gift {
   status: string;
   categoryId: string;
   category: Category;
+  allowedPaymentMethods: string;
 }
 
 export default function AdminGiftsPage() {
@@ -50,6 +51,7 @@ export default function AdminGiftsPage() {
   const [isFeatured, setIsFeatured] = useState(false);
   const [status, setStatus] = useState("available");
   const [categoryId, setCategoryId] = useState("");
+  const [allowedPaymentMethods, setAllowedPaymentMethods] = useState("pix,card,personal,link");
   const [submitting, setSubmitting] = useState(false);
   const [cropperOpen, setCropperOpen] = useState(false);
 
@@ -160,6 +162,7 @@ export default function AdminGiftsPage() {
     setIsFeatured(false);
     setStatus("available");
     setCategoryId(categories[0]?.id || "");
+    setAllowedPaymentMethods("pix,card,personal,link");
     setFormOpen(true);
   };
 
@@ -174,6 +177,7 @@ export default function AdminGiftsPage() {
     setIsFeatured(gift.isFeatured);
     setStatus(gift.status === "inactive" ? "inactive" : "available");
     setCategoryId(gift.categoryId);
+    setAllowedPaymentMethods(gift.allowedPaymentMethods || "pix,card,personal,link");
     setFormOpen(true);
   };
 
@@ -218,6 +222,7 @@ export default function AdminGiftsPage() {
         isFeatured,
         status,
         categoryId,
+        allowedPaymentMethods,
       };
 
       const res = await fetch("/api/admin/gifts", {
@@ -615,6 +620,41 @@ export default function AdminGiftsPage() {
                   <label htmlFor="featured" className="text-xs font-bold text-slate-600 cursor-pointer select-none">
                     Marcar como Presente Recomendado ⭐ (Selo Destaque)
                   </label>
+                </div>
+
+                {/* Métodos de Pagamento Permitidos */}
+                <div>
+                  <label className="block text-[10px] font-bold uppercase text-slate-500 mb-2">Meios de Pagamento Aceitos</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { id: 'pix', label: 'Pix' },
+                      { id: 'card', label: 'Cartão de Crédito' },
+                      { id: 'personal', label: 'Entrega Pessoal' },
+                      { id: 'link', label: 'Link de Compra' }
+                    ].map(method => (
+                      <div key={method.id} className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg p-2.5">
+                        <input
+                          type="checkbox"
+                          id={`method-${method.id}`}
+                          checked={allowedPaymentMethods.includes(method.id)}
+                          onChange={(e) => {
+                            const methods = allowedPaymentMethods.split(",").filter(Boolean);
+                            if (e.target.checked) {
+                              methods.push(method.id);
+                            } else {
+                              const index = methods.indexOf(method.id);
+                              if (index > -1) methods.splice(index, 1);
+                            }
+                            setAllowedPaymentMethods(methods.join(","));
+                          }}
+                          className="accent-slate-900 h-3.5 w-3.5 cursor-pointer"
+                        />
+                        <label htmlFor={`method-${method.id}`} className="text-[11px] font-bold text-slate-600 cursor-pointer select-none flex-1">
+                          {method.label}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="flex gap-3 pt-4">

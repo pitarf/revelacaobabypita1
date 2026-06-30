@@ -14,6 +14,7 @@ export interface CartItem {
   subtotal: number;
   available: number;
   externalLink?: string | null;
+  allowedPaymentMethods: string;
 }
 
 interface CartContextType {

@@ -47,6 +47,7 @@ export async function POST(req: NextRequest) {
       isFeatured,
       status,
       categoryId,
+      allowedPaymentMethods,
     } = await req.json();
 
     if (!name || !value || !categoryId) {
@@ -64,6 +65,7 @@ export async function POST(req: NextRequest) {
         isFeatured: isFeatured !== undefined ? isFeatured : false,
         status: status === "inactive" ? "inactive" : "available",
         categoryId,
+        allowedPaymentMethods: allowedPaymentMethods || "pix,card,personal,link",
       },
     });
 
@@ -102,6 +104,7 @@ export async function PUT(req: NextRequest) {
       isFeatured,
       status,
       categoryId,
+      allowedPaymentMethods,
     } = await req.json();
 
     if (!id || !name || !value || !categoryId) {
@@ -137,6 +140,7 @@ export async function PUT(req: NextRequest) {
         isFeatured,
         status: finalStatus,
         categoryId,
+        allowedPaymentMethods: allowedPaymentMethods || "pix,card,personal,link",
       },
     });
 

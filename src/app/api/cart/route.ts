@@ -88,6 +88,7 @@ export async function GET(req: NextRequest) {
         subtotal,
         available: Math.max(0, item.gift.maxQuantity - item.gift.chosenQuantity),
         externalLink: item.gift.externalLink,
+        allowedPaymentMethods: item.gift.allowedPaymentMethods || "pix,card,personal,link",
       };
     });
 
