@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Heart, X, MessageSquare, Send, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
@@ -15,6 +15,7 @@ export default function GuestbookSection() {
   const [messages, setMessages] = useState<GuestMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
+  const carouselRef = useRef<HTMLDivElement>(null);
   
   // Estados do formulário
   const [name, setName] = useState("");
@@ -39,6 +40,25 @@ export default function GuestbookSection() {
       setLoading(false);
     }
   };
+
+  // Auto-scroll do carrossel
+  useEffect(() => {
+    if (messages.length <= 1) return;
+    
+    let interval = setInterval(() => {
+      if (carouselRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
+        if (scrollLeft + clientWidth >= scrollWidth - 20) {
+          carouselRef.current.scrollTo({ left: 0, behavior: "smooth" });
+        } else {
+          // Rola um card para o lado
+          carouselRef.current.scrollBy({ left: 320, behavior: "smooth" });
+        }
+      }
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [messages]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -119,7 +139,10 @@ export default function GuestbookSection() {
           </div>
         ) : (
           <div className="relative w-full max-w-5xl mx-auto">
-            <div className="flex overflow-x-auto gap-6 text-left pb-8 pt-4 px-4 snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth">
+            <div 
+              ref={carouselRef}
+              className="flex overflow-x-auto gap-6 text-left pb-8 pt-4 px-4 snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth"
+            >
               {messages.map((msg) => (
                 <div 
                   key={msg.id} 

@@ -1,21 +1,8 @@
-import nodemailer from "nodemailer";
 import { prisma } from "./prisma";
 
-const getTransporter = () => {
-  return nodemailer.createTransport({
-    host: "smtp-relay.brevo.com",
-    port: 587,
-    secure: false, // true for 465, false for other ports
-    auth: {
-      user: process.env.BREVO_SMTP_LOGIN || "", // Ex: your_email@domain.com
-      pass: process.env.BREVO_SMTP_KEY || "", // Master password from Brevo
-    },
-  });
-};
-
 export const sendEmail = async (to: string, subject: string, html: string, existingLogId?: string) => {
-  if (!process.env.BREVO_SMTP_LOGIN) {
-    console.warn("BREVO_SMTP_LOGIN não configurado. E-mail não será enviado.");
+  if (!process.env.BREVO_API_KEY) {
+    console.warn("BREVO_API_KEY não configurada. E-mail não será enviado.");
     return;
   }
   
@@ -45,14 +32,27 @@ export const sendEmail = async (to: string, subject: string, html: string, exist
       });
     }
 
-    // 2. Envia o e-mail
-    const transporter = getTransporter();
-    await transporter.sendMail({
-      from: '"Chá Revelação" <charevelacao@babypita.com>', // Sender address
-      to, // List of receivers
-      subject, // Subject line
-      html, // HTML body
+    // 2. Envia o e-mail via Brevo API
+    const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: {
+        "accept": "application/json",
+        "api-key": process.env.BREVO_API_KEY as string,
+        "content-type": "application/json"
+      },
+      body: JSON.stringify({
+        sender: { name: "Chá Revelação", email: "charevelacao@babypita.com" },
+        to: [{ email: to }],
+        subject: subject,
+        htmlContent: html
+      })
     });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(`Brevo API Error: ${data.message || response.statusText}`);
+    }
     
     // 3. Atualiza o log para 'sent'
     if (emailLogId) {
