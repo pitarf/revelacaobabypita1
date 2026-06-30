@@ -35,13 +35,18 @@ export default function MusicPlayer({
 
     // Verificamos se já foi respondido nesta sessão
     const dismissed = sessionStorage.getItem("music_prompt_dismissed");
+    let timeoutId: NodeJS.Timeout;
+
     if (!dismissed) {
-      setShowPromptModal(true);
+      timeoutId = setTimeout(() => {
+        setShowPromptModal(true);
+      }, 4000);
     } else {
       setHasInteracted(true);
     }
 
     return () => {
+      if (timeoutId) clearTimeout(timeoutId);
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current = null;
