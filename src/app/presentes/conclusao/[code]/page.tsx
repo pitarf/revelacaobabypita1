@@ -248,15 +248,6 @@ export default function OrderCompletionPage() {
                     >
                       💳 Trocar para Cartão de Crédito
                     </button>
-
-                    <p className="text-[10px] text-amber-600 font-bold mb-1.5">⚡ Simulador de Testes do Desenvolvedor:</p>
-                    <button
-                      onClick={handleSimulatedApprove}
-                      disabled={simulating}
-                      className="bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold px-5 py-2 rounded-full shadow-sm hover:scale-105 active:scale-95 transition-all"
-                    >
-                      {simulating ? "Processando..." : "Simular Aprovação via Webhook"}
-                    </button>
                   </div>
                 )}
               </div>
