@@ -241,6 +241,7 @@ export const VoteScalarFieldEnum = {
   id: 'id',
   babyName: 'babyName',
   voterIp: 'voterIp',
+  voterName: 'voterName',
   voterPhone: 'voterPhone',
   voterEmail: 'voterEmail',
   createdAt: 'createdAt'

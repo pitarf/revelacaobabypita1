@@ -28,6 +28,7 @@ export type VoteMinAggregateOutputType = {
   id: string | null
   babyName: string | null
   voterIp: string | null
+  voterName: string | null
   voterPhone: string | null
   voterEmail: string | null
   createdAt: Date | null
@@ -37,6 +38,7 @@ export type VoteMaxAggregateOutputType = {
   id: string | null
   babyName: string | null
   voterIp: string | null
+  voterName: string | null
   voterPhone: string | null
   voterEmail: string | null
   createdAt: Date | null
@@ -46,6 +48,7 @@ export type VoteCountAggregateOutputType = {
   id: number
   babyName: number
   voterIp: number
+  voterName: number
   voterPhone: number
   voterEmail: number
   createdAt: number
@@ -57,6 +60,7 @@ export type VoteMinAggregateInputType = {
   id?: true
   babyName?: true
   voterIp?: true
+  voterName?: true
   voterPhone?: true
   voterEmail?: true
   createdAt?: true
@@ -66,6 +70,7 @@ export type VoteMaxAggregateInputType = {
   id?: true
   babyName?: true
   voterIp?: true
+  voterName?: true
   voterPhone?: true
   voterEmail?: true
   createdAt?: true
@@ -75,6 +80,7 @@ export type VoteCountAggregateInputType = {
   id?: true
   babyName?: true
   voterIp?: true
+  voterName?: true
   voterPhone?: true
   voterEmail?: true
   createdAt?: true
@@ -157,6 +163,7 @@ export type VoteGroupByOutputType = {
   id: string
   babyName: string
   voterIp: string
+  voterName: string | null
   voterPhone: string | null
   voterEmail: string | null
   createdAt: Date
@@ -187,6 +194,7 @@ export type VoteWhereInput = {
   id?: Prisma.StringFilter<"Vote"> | string
   babyName?: Prisma.StringFilter<"Vote"> | string
   voterIp?: Prisma.StringFilter<"Vote"> | string
+  voterName?: Prisma.StringNullableFilter<"Vote"> | string | null
   voterPhone?: Prisma.StringNullableFilter<"Vote"> | string | null
   voterEmail?: Prisma.StringNullableFilter<"Vote"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Vote"> | Date | string
@@ -196,6 +204,7 @@ export type VoteOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   babyName?: Prisma.SortOrder
   voterIp?: Prisma.SortOrder
+  voterName?: Prisma.SortOrderInput | Prisma.SortOrder
   voterPhone?: Prisma.SortOrderInput | Prisma.SortOrder
   voterEmail?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -208,6 +217,7 @@ export type VoteWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.VoteWhereInput | Prisma.VoteWhereInput[]
   babyName?: Prisma.StringFilter<"Vote"> | string
   voterIp?: Prisma.StringFilter<"Vote"> | string
+  voterName?: Prisma.StringNullableFilter<"Vote"> | string | null
   voterPhone?: Prisma.StringNullableFilter<"Vote"> | string | null
   voterEmail?: Prisma.StringNullableFilter<"Vote"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Vote"> | Date | string
@@ -217,6 +227,7 @@ export type VoteOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   babyName?: Prisma.SortOrder
   voterIp?: Prisma.SortOrder
+  voterName?: Prisma.SortOrderInput | Prisma.SortOrder
   voterPhone?: Prisma.SortOrderInput | Prisma.SortOrder
   voterEmail?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -232,6 +243,7 @@ export type VoteScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Vote"> | string
   babyName?: Prisma.StringWithAggregatesFilter<"Vote"> | string
   voterIp?: Prisma.StringWithAggregatesFilter<"Vote"> | string
+  voterName?: Prisma.StringNullableWithAggregatesFilter<"Vote"> | string | null
   voterPhone?: Prisma.StringNullableWithAggregatesFilter<"Vote"> | string | null
   voterEmail?: Prisma.StringNullableWithAggregatesFilter<"Vote"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Vote"> | Date | string
@@ -241,6 +253,7 @@ export type VoteCreateInput = {
   id?: string
   babyName: string
   voterIp: string
+  voterName?: string | null
   voterPhone?: string | null
   voterEmail?: string | null
   createdAt?: Date | string
@@ -250,6 +263,7 @@ export type VoteUncheckedCreateInput = {
   id?: string
   babyName: string
   voterIp: string
+  voterName?: string | null
   voterPhone?: string | null
   voterEmail?: string | null
   createdAt?: Date | string
@@ -259,6 +273,7 @@ export type VoteUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   babyName?: Prisma.StringFieldUpdateOperationsInput | string
   voterIp?: Prisma.StringFieldUpdateOperationsInput | string
+  voterName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   voterPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   voterEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -268,6 +283,7 @@ export type VoteUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   babyName?: Prisma.StringFieldUpdateOperationsInput | string
   voterIp?: Prisma.StringFieldUpdateOperationsInput | string
+  voterName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   voterPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   voterEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -277,6 +293,7 @@ export type VoteCreateManyInput = {
   id?: string
   babyName: string
   voterIp: string
+  voterName?: string | null
   voterPhone?: string | null
   voterEmail?: string | null
   createdAt?: Date | string
@@ -286,6 +303,7 @@ export type VoteUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   babyName?: Prisma.StringFieldUpdateOperationsInput | string
   voterIp?: Prisma.StringFieldUpdateOperationsInput | string
+  voterName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   voterPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   voterEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -295,6 +313,7 @@ export type VoteUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   babyName?: Prisma.StringFieldUpdateOperationsInput | string
   voterIp?: Prisma.StringFieldUpdateOperationsInput | string
+  voterName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   voterPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   voterEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -304,6 +323,7 @@ export type VoteCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   babyName?: Prisma.SortOrder
   voterIp?: Prisma.SortOrder
+  voterName?: Prisma.SortOrder
   voterPhone?: Prisma.SortOrder
   voterEmail?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -313,6 +333,7 @@ export type VoteMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   babyName?: Prisma.SortOrder
   voterIp?: Prisma.SortOrder
+  voterName?: Prisma.SortOrder
   voterPhone?: Prisma.SortOrder
   voterEmail?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -322,6 +343,7 @@ export type VoteMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   babyName?: Prisma.SortOrder
   voterIp?: Prisma.SortOrder
+  voterName?: Prisma.SortOrder
   voterPhone?: Prisma.SortOrder
   voterEmail?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -333,6 +355,7 @@ export type VoteSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   id?: boolean
   babyName?: boolean
   voterIp?: boolean
+  voterName?: boolean
   voterPhone?: boolean
   voterEmail?: boolean
   createdAt?: boolean
@@ -342,6 +365,7 @@ export type VoteSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   babyName?: boolean
   voterIp?: boolean
+  voterName?: boolean
   voterPhone?: boolean
   voterEmail?: boolean
   createdAt?: boolean
@@ -351,6 +375,7 @@ export type VoteSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   babyName?: boolean
   voterIp?: boolean
+  voterName?: boolean
   voterPhone?: boolean
   voterEmail?: boolean
   createdAt?: boolean
@@ -360,12 +385,13 @@ export type VoteSelectScalar = {
   id?: boolean
   babyName?: boolean
   voterIp?: boolean
+  voterName?: boolean
   voterPhone?: boolean
   voterEmail?: boolean
   createdAt?: boolean
 }
 
-export type VoteOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "babyName" | "voterIp" | "voterPhone" | "voterEmail" | "createdAt", ExtArgs["result"]["vote"]>
+export type VoteOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "babyName" | "voterIp" | "voterName" | "voterPhone" | "voterEmail" | "createdAt", ExtArgs["result"]["vote"]>
 
 export type $VotePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Vote"
@@ -374,6 +400,7 @@ export type $VotePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     id: string
     babyName: string
     voterIp: string
+    voterName: string | null
     voterPhone: string | null
     voterEmail: string | null
     createdAt: Date
@@ -803,6 +830,7 @@ export interface VoteFieldRefs {
   readonly id: Prisma.FieldRef<"Vote", 'String'>
   readonly babyName: Prisma.FieldRef<"Vote", 'String'>
   readonly voterIp: Prisma.FieldRef<"Vote", 'String'>
+  readonly voterName: Prisma.FieldRef<"Vote", 'String'>
   readonly voterPhone: Prisma.FieldRef<"Vote", 'String'>
   readonly voterEmail: Prisma.FieldRef<"Vote", 'String'>
   readonly createdAt: Prisma.FieldRef<"Vote", 'DateTime'>
