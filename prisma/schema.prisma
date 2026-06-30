@@ -68,6 +68,7 @@ model PaymentSetting {
   gateway         String   @default("mercadopago") // mercadopago, asaas
   mpAccessToken   String?
   mpPublicKey     String?
+  pagSeguroToken  String?
   asaasApiKey     String?
   pixKey          String?
   pixReceiverName String?

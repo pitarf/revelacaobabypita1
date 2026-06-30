@@ -39,6 +39,7 @@ export type PaymentSettingMinAggregateOutputType = {
   gateway: string | null
   mpAccessToken: string | null
   mpPublicKey: string | null
+  pagSeguroToken: string | null
   asaasApiKey: string | null
   pixKey: string | null
   pixReceiverName: string | null
@@ -55,6 +56,7 @@ export type PaymentSettingMaxAggregateOutputType = {
   gateway: string | null
   mpAccessToken: string | null
   mpPublicKey: string | null
+  pagSeguroToken: string | null
   asaasApiKey: string | null
   pixKey: string | null
   pixReceiverName: string | null
@@ -71,6 +73,7 @@ export type PaymentSettingCountAggregateOutputType = {
   gateway: number
   mpAccessToken: number
   mpPublicKey: number
+  pagSeguroToken: number
   asaasApiKey: number
   pixKey: number
   pixReceiverName: number
@@ -97,6 +100,7 @@ export type PaymentSettingMinAggregateInputType = {
   gateway?: true
   mpAccessToken?: true
   mpPublicKey?: true
+  pagSeguroToken?: true
   asaasApiKey?: true
   pixKey?: true
   pixReceiverName?: true
@@ -113,6 +117,7 @@ export type PaymentSettingMaxAggregateInputType = {
   gateway?: true
   mpAccessToken?: true
   mpPublicKey?: true
+  pagSeguroToken?: true
   asaasApiKey?: true
   pixKey?: true
   pixReceiverName?: true
@@ -129,6 +134,7 @@ export type PaymentSettingCountAggregateInputType = {
   gateway?: true
   mpAccessToken?: true
   mpPublicKey?: true
+  pagSeguroToken?: true
   asaasApiKey?: true
   pixKey?: true
   pixReceiverName?: true
@@ -232,6 +238,7 @@ export type PaymentSettingGroupByOutputType = {
   gateway: string
   mpAccessToken: string | null
   mpPublicKey: string | null
+  pagSeguroToken: string | null
   asaasApiKey: string | null
   pixKey: string | null
   pixReceiverName: string | null
@@ -271,6 +278,7 @@ export type PaymentSettingWhereInput = {
   gateway?: Prisma.StringFilter<"PaymentSetting"> | string
   mpAccessToken?: Prisma.StringNullableFilter<"PaymentSetting"> | string | null
   mpPublicKey?: Prisma.StringNullableFilter<"PaymentSetting"> | string | null
+  pagSeguroToken?: Prisma.StringNullableFilter<"PaymentSetting"> | string | null
   asaasApiKey?: Prisma.StringNullableFilter<"PaymentSetting"> | string | null
   pixKey?: Prisma.StringNullableFilter<"PaymentSetting"> | string | null
   pixReceiverName?: Prisma.StringNullableFilter<"PaymentSetting"> | string | null
@@ -287,6 +295,7 @@ export type PaymentSettingOrderByWithRelationInput = {
   gateway?: Prisma.SortOrder
   mpAccessToken?: Prisma.SortOrderInput | Prisma.SortOrder
   mpPublicKey?: Prisma.SortOrderInput | Prisma.SortOrder
+  pagSeguroToken?: Prisma.SortOrderInput | Prisma.SortOrder
   asaasApiKey?: Prisma.SortOrderInput | Prisma.SortOrder
   pixKey?: Prisma.SortOrderInput | Prisma.SortOrder
   pixReceiverName?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -306,6 +315,7 @@ export type PaymentSettingWhereUniqueInput = Prisma.AtLeast<{
   gateway?: Prisma.StringFilter<"PaymentSetting"> | string
   mpAccessToken?: Prisma.StringNullableFilter<"PaymentSetting"> | string | null
   mpPublicKey?: Prisma.StringNullableFilter<"PaymentSetting"> | string | null
+  pagSeguroToken?: Prisma.StringNullableFilter<"PaymentSetting"> | string | null
   asaasApiKey?: Prisma.StringNullableFilter<"PaymentSetting"> | string | null
   pixKey?: Prisma.StringNullableFilter<"PaymentSetting"> | string | null
   pixReceiverName?: Prisma.StringNullableFilter<"PaymentSetting"> | string | null
@@ -322,6 +332,7 @@ export type PaymentSettingOrderByWithAggregationInput = {
   gateway?: Prisma.SortOrder
   mpAccessToken?: Prisma.SortOrderInput | Prisma.SortOrder
   mpPublicKey?: Prisma.SortOrderInput | Prisma.SortOrder
+  pagSeguroToken?: Prisma.SortOrderInput | Prisma.SortOrder
   asaasApiKey?: Prisma.SortOrderInput | Prisma.SortOrder
   pixKey?: Prisma.SortOrderInput | Prisma.SortOrder
   pixReceiverName?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -346,6 +357,7 @@ export type PaymentSettingScalarWhereWithAggregatesInput = {
   gateway?: Prisma.StringWithAggregatesFilter<"PaymentSetting"> | string
   mpAccessToken?: Prisma.StringNullableWithAggregatesFilter<"PaymentSetting"> | string | null
   mpPublicKey?: Prisma.StringNullableWithAggregatesFilter<"PaymentSetting"> | string | null
+  pagSeguroToken?: Prisma.StringNullableWithAggregatesFilter<"PaymentSetting"> | string | null
   asaasApiKey?: Prisma.StringNullableWithAggregatesFilter<"PaymentSetting"> | string | null
   pixKey?: Prisma.StringNullableWithAggregatesFilter<"PaymentSetting"> | string | null
   pixReceiverName?: Prisma.StringNullableWithAggregatesFilter<"PaymentSetting"> | string | null
@@ -362,6 +374,7 @@ export type PaymentSettingCreateInput = {
   gateway?: string
   mpAccessToken?: string | null
   mpPublicKey?: string | null
+  pagSeguroToken?: string | null
   asaasApiKey?: string | null
   pixKey?: string | null
   pixReceiverName?: string | null
@@ -378,6 +391,7 @@ export type PaymentSettingUncheckedCreateInput = {
   gateway?: string
   mpAccessToken?: string | null
   mpPublicKey?: string | null
+  pagSeguroToken?: string | null
   asaasApiKey?: string | null
   pixKey?: string | null
   pixReceiverName?: string | null
@@ -394,6 +408,7 @@ export type PaymentSettingUpdateInput = {
   gateway?: Prisma.StringFieldUpdateOperationsInput | string
   mpAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mpPublicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pagSeguroToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   asaasApiKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pixKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pixReceiverName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -410,6 +425,7 @@ export type PaymentSettingUncheckedUpdateInput = {
   gateway?: Prisma.StringFieldUpdateOperationsInput | string
   mpAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mpPublicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pagSeguroToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   asaasApiKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pixKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pixReceiverName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -426,6 +442,7 @@ export type PaymentSettingCreateManyInput = {
   gateway?: string
   mpAccessToken?: string | null
   mpPublicKey?: string | null
+  pagSeguroToken?: string | null
   asaasApiKey?: string | null
   pixKey?: string | null
   pixReceiverName?: string | null
@@ -442,6 +459,7 @@ export type PaymentSettingUpdateManyMutationInput = {
   gateway?: Prisma.StringFieldUpdateOperationsInput | string
   mpAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mpPublicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pagSeguroToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   asaasApiKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pixKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pixReceiverName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -458,6 +476,7 @@ export type PaymentSettingUncheckedUpdateManyInput = {
   gateway?: Prisma.StringFieldUpdateOperationsInput | string
   mpAccessToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mpPublicKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pagSeguroToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   asaasApiKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pixKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pixReceiverName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -474,6 +493,7 @@ export type PaymentSettingCountOrderByAggregateInput = {
   gateway?: Prisma.SortOrder
   mpAccessToken?: Prisma.SortOrder
   mpPublicKey?: Prisma.SortOrder
+  pagSeguroToken?: Prisma.SortOrder
   asaasApiKey?: Prisma.SortOrder
   pixKey?: Prisma.SortOrder
   pixReceiverName?: Prisma.SortOrder
@@ -494,6 +514,7 @@ export type PaymentSettingMaxOrderByAggregateInput = {
   gateway?: Prisma.SortOrder
   mpAccessToken?: Prisma.SortOrder
   mpPublicKey?: Prisma.SortOrder
+  pagSeguroToken?: Prisma.SortOrder
   asaasApiKey?: Prisma.SortOrder
   pixKey?: Prisma.SortOrder
   pixReceiverName?: Prisma.SortOrder
@@ -510,6 +531,7 @@ export type PaymentSettingMinOrderByAggregateInput = {
   gateway?: Prisma.SortOrder
   mpAccessToken?: Prisma.SortOrder
   mpPublicKey?: Prisma.SortOrder
+  pagSeguroToken?: Prisma.SortOrder
   asaasApiKey?: Prisma.SortOrder
   pixKey?: Prisma.SortOrder
   pixReceiverName?: Prisma.SortOrder
@@ -540,6 +562,7 @@ export type PaymentSettingSelect<ExtArgs extends runtime.Types.Extensions.Intern
   gateway?: boolean
   mpAccessToken?: boolean
   mpPublicKey?: boolean
+  pagSeguroToken?: boolean
   asaasApiKey?: boolean
   pixKey?: boolean
   pixReceiverName?: boolean
@@ -556,6 +579,7 @@ export type PaymentSettingSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   gateway?: boolean
   mpAccessToken?: boolean
   mpPublicKey?: boolean
+  pagSeguroToken?: boolean
   asaasApiKey?: boolean
   pixKey?: boolean
   pixReceiverName?: boolean
@@ -572,6 +596,7 @@ export type PaymentSettingSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   gateway?: boolean
   mpAccessToken?: boolean
   mpPublicKey?: boolean
+  pagSeguroToken?: boolean
   asaasApiKey?: boolean
   pixKey?: boolean
   pixReceiverName?: boolean
@@ -588,6 +613,7 @@ export type PaymentSettingSelectScalar = {
   gateway?: boolean
   mpAccessToken?: boolean
   mpPublicKey?: boolean
+  pagSeguroToken?: boolean
   asaasApiKey?: boolean
   pixKey?: boolean
   pixReceiverName?: boolean
@@ -599,7 +625,7 @@ export type PaymentSettingSelectScalar = {
   updatedAt?: boolean
 }
 
-export type PaymentSettingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "gateway" | "mpAccessToken" | "mpPublicKey" | "asaasApiKey" | "pixKey" | "pixReceiverName" | "maxInstallments" | "feePolicy" | "isTestEnvironment" | "checkoutMessage" | "createdAt" | "updatedAt", ExtArgs["result"]["paymentSetting"]>
+export type PaymentSettingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "gateway" | "mpAccessToken" | "mpPublicKey" | "pagSeguroToken" | "asaasApiKey" | "pixKey" | "pixReceiverName" | "maxInstallments" | "feePolicy" | "isTestEnvironment" | "checkoutMessage" | "createdAt" | "updatedAt", ExtArgs["result"]["paymentSetting"]>
 
 export type $PaymentSettingPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "PaymentSetting"
@@ -609,6 +635,7 @@ export type $PaymentSettingPayload<ExtArgs extends runtime.Types.Extensions.Inte
     gateway: string
     mpAccessToken: string | null
     mpPublicKey: string | null
+    pagSeguroToken: string | null
     asaasApiKey: string | null
     pixKey: string | null
     pixReceiverName: string | null
@@ -1045,6 +1072,7 @@ export interface PaymentSettingFieldRefs {
   readonly gateway: Prisma.FieldRef<"PaymentSetting", 'String'>
   readonly mpAccessToken: Prisma.FieldRef<"PaymentSetting", 'String'>
   readonly mpPublicKey: Prisma.FieldRef<"PaymentSetting", 'String'>
+  readonly pagSeguroToken: Prisma.FieldRef<"PaymentSetting", 'String'>
   readonly asaasApiKey: Prisma.FieldRef<"PaymentSetting", 'String'>
   readonly pixKey: Prisma.FieldRef<"PaymentSetting", 'String'>
   readonly pixReceiverName: Prisma.FieldRef<"PaymentSetting", 'String'>

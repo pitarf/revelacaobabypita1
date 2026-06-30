@@ -19,15 +19,17 @@ export interface CardPreferenceResult {
 async function getPaymentConfig() {
   const settings = await prisma.paymentSetting.findFirst();
   return {
-    gateway: settings?.gateway || "mercadopago",
-    accessToken: settings?.mpAccessToken || process.env.MERCADO_PAGO_ACCESS_TOKEN || "",
-    publicKey: settings?.mpPublicKey || process.env.MERCADO_PAGO_PUBLIC_KEY || "",
-    isTest: false, // Voltando para Produção
+    gateway: "pagseguro",
+    token: settings?.pagSeguroToken || process.env.PAGSEGURO_TOKEN || "",
+    isTest: false, // Produção
   };
 }
 
+const getBaseUrl = (isTest: boolean) => 
+  isTest ? "https://sandbox.api.pagseguro.com" : "https://api.pagseguro.com";
+
 /**
- * Cria uma cobrança Pix no Mercado Pago (ou simulada se não houver credenciais)
+ * Cria uma cobrança Pix no PagSeguro
  */
 export async function createPixPayment(
   orderCode: string,
@@ -37,79 +39,78 @@ export async function createPixPayment(
 ): Promise<PixPaymentResult> {
   const config = await getPaymentConfig();
 
-  // Se não possuir o token do Mercado Pago, roda o modo simulador resiliente e funcional
-  if (!config.accessToken) {
-    console.log(`[PAYMENT SIMULATOR] Gerando pagamento Pix para pedido ${orderCode}. Valor: R$ ${totalValue}`);
-    
-    // Gera dados falsos realistas para fins de teste e demonstração
+  if (!config.token) {
+    console.log(`[PAYMENT SIMULATOR] Gerando pagamento Pix para pedido ${orderCode}`);
     const mockTxId = `sim_pix_${Math.random().toString(36).substring(2, 15)}`;
-    // Pix copia e cola fictício com visual padrão brasileiro
-    const mockCopiaCola = `00020101021226830014br.gov.bcb.pix2561api.mercadopago.com/v1/payments/${mockTxId}5204000053039865405${totalValue.toFixed(2)}5802BR5925Cha Revelacao Miguel Rafa6009Ramos RJ62070503***6304D1B9`;
-    
     return {
       transactionId: mockTxId,
-      qrCode: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=", // Pequeno pixel base64 para evitar quebra de imagem
-      copiaCola: mockCopiaCola,
-      qrCodeUrl: "#",
+      qrCode: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+      copiaCola: "00020101021226830014br.gov.bcb.pix2561api.pagseguro.com...",
       status: "pending",
     };
   }
 
   try {
-    const url = "https://api.mercadopago.com/v1/payments";
-    
-    // Limpa telefone e separa nome/sobrenome
-    const names = gifterName.trim().split(" ");
-    const firstName = names[0] || "Convidado";
-    const lastName = names.slice(1).join(" ") || "Presente";
+    const url = `${getBaseUrl(config.isTest)}/orders`;
+    const amountInCents = Math.round(totalValue * 100);
 
     const payload = {
-      transaction_amount: Number(totalValue.toFixed(2)),
-      description: `Presente do Chá Revelação - Pedido ${orderCode}`,
-      payment_method_id: "pix",
-      payer: {
+      reference_id: orderCode,
+      customer: {
+        name: gifterName.trim() || "Convidado",
         email: gifterEmail || "convidado@charevelacao.com.br",
-        first_name: firstName,
-        last_name: lastName,
+        tax_id: "00000000000" // Fallback se não tivermos coletado CPF (PagSeguro Sandbox exige CPF válido, em PROD pode passar sem se usar Checkout, mas no Order API PIX às vezes exige. Enviaremos um genérico se não tiver)
       },
-      ...(process.env.NEXT_PUBLIC_APP_URL && !process.env.NEXT_PUBLIC_APP_URL.includes("localhost")
-        ? { notification_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/payment` }
-        : {}),
-      external_reference: orderCode,
+      items: [
+        {
+          name: `Presente do Chá Revelação - Pedido ${orderCode}`,
+          quantity: 1,
+          unit_amount: amountInCents,
+        }
+      ],
+      qr_codes: [
+        {
+          amount: {
+            value: amountInCents
+          }
+        }
+      ],
+      notification_urls: [
+        `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/payment`
+      ]
     };
 
     const response = await fetch(url, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${config.accessToken}`,
+        "Authorization": `Bearer ${config.token}`,
         "Content-Type": "application/json",
-        "X-Idempotency-Key": `${orderCode}-${Date.now()}`,
       },
       body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(`Erro na API do Mercado Pago: ${JSON.stringify(errorData)}`);
+      throw new Error(`Erro na API do PagSeguro (PIX): ${JSON.stringify(errorData)}`);
     }
 
     const data = await response.json();
+    const qrCodeInfo = data.qr_codes[0];
 
     return {
-      transactionId: String(data.id),
-      qrCode: data.point_of_interaction?.transaction_data?.qr_code_base64 ? `data:image/png;base64,${data.point_of_interaction.transaction_data.qr_code_base64}` : "",
-      copiaCola: data.point_of_interaction?.transaction_data?.qr_code || "",
-      qrCodeUrl: data.point_of_interaction?.transaction_data?.ticket_url || "",
-      status: data.status, // pending
+      transactionId: data.id,
+      qrCode: qrCodeInfo.links.find((l: any) => l.rel === "QRCODE")?.href || "", // Algumas vezes retorna o base64 aqui ou link da imagem
+      copiaCola: qrCodeInfo.text,
+      status: "pending",
     };
   } catch (error) {
-    console.error("Falha ao gerar Pix dinâmico no Mercado Pago:", error);
+    console.error("Falha ao criar Pix no PagSeguro:", error);
     throw error;
   }
 }
 
 /**
- * Cria uma preferência do Mercado Pago para pagamento via Cartão de Crédito
+ * Cria uma preferência de Checkout no PagSeguro
  */
 export async function createCardPreference(
   orderCode: string,
@@ -118,73 +119,78 @@ export async function createCardPreference(
 ): Promise<CardPreferenceResult> {
   const config = await getPaymentConfig();
 
-  // Se não possuir o token do Mercado Pago, roda o modo simulador
-  if (!config.accessToken) {
-    console.log(`[PAYMENT SIMULATOR] Gerando link de Cartão de Crédito para pedido ${orderCode}`);
+  if (!config.token) {
+    console.log(`[PAYMENT SIMULATOR] Gerando link de Cartão para pedido ${orderCode}`);
     return {
-      preferenceId: `pref_sim_${Math.random().toString(36).substring(2, 10)}`,
+      preferenceId: `sim_pref_${Math.random().toString(36).substring(2, 10)}`,
       initPoint: `/presentes/finalizar/cartao-simulado?code=${orderCode}`,
     };
   }
 
   try {
-    const url = "https://api.mercadopago.com/checkout/preferences";
-    
+    const url = `${getBaseUrl(config.isTest)}/checkouts`;
+    const amountInCents = Math.round(totalValue * 100);
+
     const payload = {
+      reference_id: orderCode,
+      customer: {
+        name: "Convidado",
+        email: gifterEmail || "convidado@charevelacao.com.br"
+      },
       items: [
         {
-          id: orderCode,
-          title: `Contribuição de Presentes - Chá Revelação ${orderCode}`,
+          reference_id: orderCode,
+          name: `Contribuição de Presentes - Chá Revelação ${orderCode}`,
           quantity: 1,
-          currency_id: "BRL",
-          unit_price: Number(totalValue.toFixed(2)),
-        },
+          unit_amount: amountInCents
+        }
       ],
-      payer: {
-        email: gifterEmail,
-      },
-      back_urls: {
-        success: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/presentes/conclusao/${orderCode}?payment_status=approved`,
-        pending: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/presentes/conclusao/${orderCode}?payment_status=pending`,
-        failure: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/presentes/conclusao/${orderCode}?payment_status=failure`,
-      },
-      auto_return: "approved",
-      payment_methods: {
-        excluded_payment_types: [
-          { id: "ticket" }, // exclui boleto
-          { id: "bank_transfer" } // exclui outros além de cartão
-        ],
-        installments: 1, // Limita a 1 vez (pagamento à vista no crédito)
-      },
-      ...(process.env.NEXT_PUBLIC_APP_URL && !process.env.NEXT_PUBLIC_APP_URL.includes("localhost")
-        ? { notification_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/payment` }
-        : {}),
-      external_reference: orderCode,
+      payment_methods: [
+        {
+          type: "CREDIT_CARD"
+        }
+      ],
+      payment_methods_configs: [
+        {
+          type: "CREDIT_CARD",
+          config_options: [
+            {
+              option: "INSTALLMENTS_LIMIT",
+              value: "1" // Apenas à vista
+            }
+          ]
+        }
+      ],
+      redirect_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/presentes/conclusao/${orderCode}?payment_status=pending`,
+      return_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/presentes/conclusao/${orderCode}?payment_status=pending`,
+      notification_urls: [
+        `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/payment`
+      ]
     };
 
     const response = await fetch(url, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${config.accessToken}`,
+        "Authorization": `Bearer ${config.token}`,
         "Content-Type": "application/json",
-        "X-Idempotency-Key": `${orderCode}-${Date.now()}`,
       },
       body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(`Erro na API de preferências do Mercado Pago: ${JSON.stringify(errorData)}`);
+      throw new Error(`Erro na API de checkouts do PagSeguro: ${JSON.stringify(errorData)}`);
     }
 
     const data = await response.json();
+    const payUrl = data.links.find((l: any) => l.rel === "PAY")?.href;
 
     return {
       preferenceId: data.id,
-      initPoint: config.isTest ? data.sandbox_init_point : data.init_point,
+      initPoint: payUrl,
     };
   } catch (error) {
-    console.error("Falha ao criar preferência de cartão de crédito no Mercado Pago:", error);
+    console.error("Falha ao criar preferência de cartão no PagSeguro:", error);
     throw error;
   }
 }

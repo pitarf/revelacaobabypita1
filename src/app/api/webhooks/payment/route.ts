@@ -137,66 +137,35 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 2. PROCESSAMENTO REAL DO WEBHOOK DO MERCADO PAGO
-    // O Mercado Pago notifica enviando o ID do recurso (payment) no body ou params
-    const paymentId = body.data?.id || searchParams.get("data.id") || searchParams.get("id");
-    const type = body.type || searchParams.get("type") || searchParams.get("topic");
+    // 2. PROCESSAMENTO REAL DO WEBHOOK DO PAGSEGURO
+    // O PagSeguro (API v4) envia o objeto Order completo no body da notificação
+    const orderIdGateway = body.id;
+    const orderCodeFromGateway = body.reference_id;
+    const charges = body.charges || [];
 
-    if (type === "payment" && paymentId) {
-      // Busca as chaves de API configuradas no banco
-      const settings = await prisma.paymentSetting.findFirst();
-      const accessToken = settings?.mpAccessToken || process.env.MERCADO_PAGO_ACCESS_TOKEN;
-
-      if (!accessToken) {
-        console.warn("Mercado Pago Access Token não configurado. Ignorando notificação de webhook.");
-        return NextResponse.json({ message: "Webhook ignorado (Access Token ausente)." }, { status: 200 });
-      }
-
-      // Consulta o status de pagamento atualizado na API do Mercado Pago
-      const response = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      if (!response.ok) {
-        console.error(`Erro ao consultar pagamento no Mercado Pago: ${response.statusText}`);
-        return NextResponse.json({ error: "Erro ao consultar gateway." }, { status: 500 });
-      }
-
-      const paymentData = await response.json();
-      const orderCodeFromMP = paymentData.external_reference; // Contém o código CHA-XXXXXX
-
-      if (!orderCodeFromMP) {
-        console.warn("Pagamento sem external_reference (código do pedido). Ignorando.");
-        return NextResponse.json({ message: "Pedido correspondente não identificado." }, { status: 200 });
-      }
-
+    if (orderIdGateway && orderCodeFromGateway) {
       const order = await prisma.order.findUnique({
-        where: { code: orderCodeFromMP },
+        where: { code: orderCodeFromGateway },
         include: { orderItems: true },
       });
 
       if (!order) {
-        console.warn(`Pedido com código ${orderCodeFromMP} não encontrado.`);
+        console.warn(`Pedido com código ${orderCodeFromGateway} não encontrado.`);
         return NextResponse.json({ message: "Pedido não encontrado." }, { status: 200 });
       }
 
-      const status = paymentData.status; // approved, pending, in_process, rejected, cancelled, refunded
+      // Se houver cobranças (charges), pegamos o status da cobrança principal
+      // Status possíveis no PagSeguro: AUTHORIZED, PAID, DECLINED, CANCELED
+      const mainCharge = charges[0];
+      const status = mainCharge ? mainCharge.status : body.status; // fallback para o status do pedido se não houver charge
 
-      // Calcula as taxas reais do Mercado Pago
-      // fee_details detalha as taxas aplicadas
+      // A taxa (fee) não costuma vir de forma tão clara no webhook do v4 (depende de configuração de split),
+      // mas podemos registrar o netValue estimado ou deixar 0 para cálculo manual no painel
       let feeValue = 0;
       let netValue = parseFloat(order.totalValue.toString());
-      if (paymentData.fee_details) {
-        for (const fee of paymentData.fee_details) {
-          feeValue += parseFloat(fee.amount || 0);
-        }
-        netValue = Math.max(0, netValue - feeValue);
-      }
 
-      if (status === "approved") {
-        await approveOrderPayment(order.id, String(paymentId), JSON.stringify(paymentData), {
+      if (status === "PAID") {
+        await approveOrderPayment(order.id, String(orderIdGateway), JSON.stringify(body), {
           net: netValue,
           fee: feeValue,
         });
@@ -216,9 +185,9 @@ export async function POST(req: NextRequest) {
           console.error("Erro ao enviar email de confirmação no webhook:", emailError);
         }
 
-        console.log(`✔ Pedido ${order.code} aprovado via Webhook.`);
-      } else if (status === "cancelled" || status === "rejected" || status === "refunded") {
-        const targetStatus = status === "refunded" ? "refunded" : "cancelled";
+        console.log(`✔ Pedido ${order.code} aprovado via Webhook PagSeguro.`);
+      } else if (status === "CANCELED" || status === "DECLINED" || status === "REFUNDED") {
+        const targetStatus = status === "REFUNDED" ? "refunded" : "cancelled";
         await rollbackGiftInventory(order.id, targetStatus);
         
         // Atualiza a transação correspondente
@@ -226,7 +195,7 @@ export async function POST(req: NextRequest) {
         if (paymentRecord) {
           await prisma.payment.update({
             where: { id: paymentRecord.id },
-            data: { status: targetStatus, rawPayload: JSON.stringify(paymentData) },
+            data: { status: targetStatus, rawPayload: JSON.stringify(body) },
           });
         }
         console.log(`✖ Pedido ${order.code} cancelado/estornado via Webhook e estoque devolvido.`);
@@ -235,7 +204,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true });
     }
 
-    // Retorna 200 OK para o Mercado Pago validar o recebimento da rota em testes iniciais
+    // Retorna 200 OK para o PagSeguro validar o recebimento da rota
     return NextResponse.json({ received: true });
 
   } catch (error) {

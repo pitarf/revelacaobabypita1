@@ -2076,6 +2076,7 @@ export const PaymentSettingScalarFieldEnum = {
   gateway: 'gateway',
   mpAccessToken: 'mpAccessToken',
   mpPublicKey: 'mpPublicKey',
+  pagSeguroToken: 'pagSeguroToken',
   asaasApiKey: 'asaasApiKey',
   pixKey: 'pixKey',
   pixReceiverName: 'pixReceiverName',

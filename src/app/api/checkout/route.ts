@@ -167,7 +167,7 @@ export async function POST(req: NextRequest) {
           orderId: order.id,
           transactionId: pixResult.transactionId,
           status: pixResult.status,
-          gateway: "mercadopago",
+          gateway: "pagseguro",
           value: totalValue,
           pixCopiaCola: pixResult.copiaCola,
           pixQrCode: pixResult.qrCode,
@@ -195,7 +195,7 @@ export async function POST(req: NextRequest) {
           orderId: order.id,
           transactionId: cardResult.preferenceId,
           status: "pending",
-          gateway: "mercadopago",
+          gateway: "pagseguro",
           value: totalValue,
         },
       });
