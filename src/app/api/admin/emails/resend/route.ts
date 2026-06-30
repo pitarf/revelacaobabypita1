@@ -24,11 +24,20 @@ export async function POST(req: Request) {
     }
 
     // Chama o envio usando o mesmo ID para atualizar o log existente
-    // sendEmail não é await aqui porque queremos retornar logo para o painel
-    // Mas para o admin ter feedback, podemos dar await
     await sendEmail(emailLog.to, emailLog.subject, emailLog.htmlContent, emailLog.id);
 
-    // O status no banco será atualizado pelo sendEmail
+    // Verifica o status final após a tentativa
+    const updatedLog = await prisma.emailLog.findUnique({
+      where: { id: emailLogId },
+    });
+
+    if (updatedLog?.status === "failed") {
+      return NextResponse.json({ 
+        success: false, 
+        error: "Falha ao enviar: " + (updatedLog.errorMessage || "Erro desconhecido.") 
+      }, { status: 400 });
+    }
+
     return NextResponse.json({ success: true, message: "E-mail reenviado com sucesso!" });
   } catch (error: any) {
     console.error("Erro ao reenviar e-mail:", error);
