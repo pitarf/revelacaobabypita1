@@ -52,91 +52,72 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
     }
 
-    const { id, action, deliveryStatus } = await req.json();
+    const { id, ids, action, deliveryStatus } = await req.json();
+    const idsToProcess = ids || (id ? [id] : []);
 
-    if (!id) {
-      return NextResponse.json({ error: "ID do pedido não fornecido." }, { status: 400 });
+    if (idsToProcess.length === 0) {
+      return NextResponse.json({ error: "IDs dos pedidos não fornecidos." }, { status: 400 });
     }
 
     // 1. AÇÃO: Aprovar Pagamento Manualmente
     if (action === "approve_payment") {
-      const order = await prisma.order.findUnique({
-        where: { id },
-        include: { payments: true, orderItems: true },
-      });
-
-      if (!order) {
-        return NextResponse.json({ error: "Pedido não localizado." }, { status: 404 });
-      }
-
-      if (order.paymentStatus === "approved") {
-        return NextResponse.json({ error: "Este pedido já está aprovado." }, { status: 400 });
-      }
-
-      // Executa transação atômica
-      await prisma.$transaction(async (tx) => {
-        // Atualiza status do pedido
-        await tx.order.update({
-          where: { id },
-          data: { paymentStatus: "approved" },
+      let approvedCount = 0;
+      for (const currentId of idsToProcess) {
+        const order = await prisma.order.findUnique({
+          where: { id: currentId },
+          include: { payments: true, orderItems: true },
         });
 
-        // Atualiza os pagamentos pendentes associados
-        await tx.payment.updateMany({
-          where: { orderId: id, status: "pending" },
+        if (!order || order.paymentStatus === "approved") continue;
+
+        await prisma.$transaction(async (tx) => {
+          await tx.order.update({
+            where: { id: currentId },
+            data: { paymentStatus: "approved" },
+          });
+
+          await tx.payment.updateMany({
+            where: { orderId: currentId, status: "pending" },
+            data: { status: "approved", netValue: order.totalValue, feeValue: 0 },
+          });
+
+          for (const item of order.orderItems) {
+            await tx.gift.update({
+              where: { id: item.giftId },
+              data: { chosenQuantity: { increment: item.quantity } },
+            });
+          }
+        });
+
+        await prisma.auditLog.create({
           data: {
-            status: "approved",
-            // Em aprovação manual, taxas são nulas e o líquido é igual ao bruto
-            netValue: order.totalValue,
-            feeValue: 0,
+            adminId: session.id,
+            action: "MANUAL_APPROVE_PAYMENT",
+            details: `Aprovou manualmente o pagamento do pedido Código ${order.code}`,
           },
         });
+        approvedCount++;
+      }
 
-        // Atualiza a quantidade escolhida real do presente (estoque)
-        for (const item of order.orderItems) {
-          await tx.gift.update({
-            where: { id: item.giftId },
-            data: {
-              chosenQuantity: { increment: item.quantity },
-            },
-          });
-        }
-      });
-
-      // Auditoria
-      await prisma.auditLog.create({
-        data: {
-          adminId: session.id,
-          action: "MANUAL_APPROVE_PAYMENT",
-          details: `Aprovou manualmente o pagamento do pedido Código ${order.code}`,
-        },
-      });
-
-      return NextResponse.json({ success: true, message: "Pagamento aprovado manualmente." });
+      return NextResponse.json({ success: true, message: `${approvedCount} pagamento(s) aprovado(s) manualmente.` });
     }
 
     // 2. AÇÃO: Atualizar Status de Entrega Física
     if (deliveryStatus) {
-      const order = await prisma.order.findUnique({ where: { id } });
-      if (!order) {
-        return NextResponse.json({ error: "Pedido não localizado." }, { status: 404 });
-      }
-
-      const updated = await prisma.order.update({
-        where: { id },
+      const updatedCount = await prisma.order.updateMany({
+        where: { id: { in: idsToProcess } },
         data: { deliveryStatus },
       });
 
-      // Auditoria
       await prisma.auditLog.create({
         data: {
           adminId: session.id,
-          action: "UPDATE_DELIVERY_STATUS",
-          details: `Atualizou entrega do pedido ${order.code} para ${deliveryStatus}`,
+          action: "UPDATE_DELIVERY_STATUS_BULK",
+          details: `Atualizou entrega de ${updatedCount.count} pedido(s) para ${deliveryStatus}`,
         },
       });
 
-      return NextResponse.json({ success: true, data: updated });
+      return NextResponse.json({ success: true, count: updatedCount.count });
     }
 
     return NextResponse.json({ error: "Ação não especificada." }, { status: 400 });
@@ -156,53 +137,62 @@ export async function DELETE(req: NextRequest) {
     }
 
     const { searchParams } = new URL(req.url);
-    const id = searchParams.get("id");
-
-    if (!id) {
-      return NextResponse.json({ error: "ID não fornecido." }, { status: 400 });
+    const singleId = searchParams.get("id");
+    const bulkIds = searchParams.getAll("ids[]");
+    
+    // Also accept body for bulk delete if provided
+    let bodyIds: string[] = [];
+    try {
+      const body = await req.json();
+      if (body && body.ids) bodyIds = body.ids;
+    } catch (e) {
+      // ignore JSON parse error for DELETE requests without body
     }
 
-    const order = await prisma.order.findUnique({
-      where: { id },
-      include: { orderItems: true },
-    });
+    const idsToProcess = bulkIds.length > 0 ? bulkIds : (bodyIds.length > 0 ? bodyIds : (singleId ? [singleId] : []));
 
-    if (!order) {
-      return NextResponse.json({ error: "Pedido não localizado." }, { status: 404 });
+    if (idsToProcess.length === 0) {
+      return NextResponse.json({ error: "IDs não fornecidos." }, { status: 400 });
     }
 
-    await prisma.$transaction(async (tx) => {
-      // Devolver o estoque se o pedido estava aprovado
-      if (order.paymentStatus === "approved") {
-        for (const item of order.orderItems) {
-          await tx.gift.update({
-            where: { id: item.giftId },
-            data: {
-              chosenQuantity: { decrement: item.quantity },
-            },
-          });
+    let deletedCount = 0;
+    for (const currentId of idsToProcess) {
+      const order = await prisma.order.findUnique({
+        where: { id: currentId },
+        include: { orderItems: true },
+      });
+
+      if (!order) continue;
+
+      await prisma.$transaction(async (tx) => {
+        // Devolver o estoque se o pedido estava aprovado
+        if (order.paymentStatus === "approved") {
+          for (const item of order.orderItems) {
+            await tx.gift.update({
+              where: { id: item.giftId },
+              data: { chosenQuantity: { decrement: item.quantity } },
+            });
+          }
         }
-      }
 
-      // Os OrderItems e Payments devem ser deletados por Cascade se o schema estiver configurado, 
-      // mas por garantia, deletamos manualmente antes do pedido.
-      await tx.orderItem.deleteMany({ where: { orderId: id } });
-      await tx.payment.deleteMany({ where: { orderId: id } });
-      await tx.order.delete({ where: { id } });
-    });
+        await tx.orderItem.deleteMany({ where: { orderId: currentId } });
+        await tx.payment.deleteMany({ where: { orderId: currentId } });
+        await tx.order.delete({ where: { id: currentId } });
+      });
 
-    // Auditoria
-    await prisma.auditLog.create({
-      data: {
-        adminId: session.id,
-        action: "DELETE_ORDER",
-        details: `Excluiu permanentemente o pedido Código ${order.code}`,
-      },
-    });
+      await prisma.auditLog.create({
+        data: {
+          adminId: session.id,
+          action: "DELETE_ORDER",
+          details: `Excluiu permanentemente o pedido Código ${order.code}`,
+        },
+      });
+      deletedCount++;
+    }
 
-    return NextResponse.json({ success: true, message: "Pedido excluído com sucesso." });
+    return NextResponse.json({ success: true, message: `${deletedCount} pedido(s) excluído(s) com sucesso.` });
   } catch (error) {
     console.error("Erro no DELETE admin/orders:", error);
-    return NextResponse.json({ error: "Erro ao excluir pedido." }, { status: 500 });
+    return NextResponse.json({ error: "Erro ao excluir pedido(s)." }, { status: 500 });
   }
 }

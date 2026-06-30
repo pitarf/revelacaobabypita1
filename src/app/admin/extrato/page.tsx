@@ -49,6 +49,8 @@ export default function AdminLedgerPage() {
   const [filterDelivery, setFilterDelivery] = useState("all");
   
   const [submittingId, setSubmittingId] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [bulkDeliveryStatus, setBulkDeliveryStatus] = useState<string>("delivered");
 
   useEffect(() => {
     fetchOrders();
@@ -157,6 +159,67 @@ export default function AdminLedgerPage() {
     }
   };
 
+  // Bulk Actions
+  const handleBulkApprove = async () => {
+    if (selectedIds.length === 0) return;
+    const confirmApprove = window.confirm(`Deseja aprovar manualmente o pagamento de ${selectedIds.length} pedido(s)?`);
+    if (!confirmApprove) return;
+
+    try {
+      const res = await fetch("/api/admin/orders", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: selectedIds, action: "approve_payment" }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error);
+      toast.success(json.message || "Pagamentos aprovados!");
+      setSelectedIds([]);
+      fetchOrders();
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao aprovar pagamentos.");
+    }
+  };
+
+  const handleBulkDeliveryChange = async () => {
+    if (selectedIds.length === 0) return;
+    try {
+      const res = await fetch("/api/admin/orders", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: selectedIds, deliveryStatus: bulkDeliveryStatus }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error);
+      toast.success(`Entrega atualizada em ${json.count} pedido(s)!`);
+      setSelectedIds([]);
+      fetchOrders();
+    } catch (err: any) {
+      toast.error(err.message || "Erro na alteração de status.");
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedIds.length === 0) return;
+    const confirmDelete = window.confirm(`ATENÇÃO: Deseja realmente excluir permanentemente ${selectedIds.length} pedido(s)?`);
+    if (!confirmDelete) return;
+
+    try {
+      const res = await fetch("/api/admin/orders", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: selectedIds }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error);
+      toast.success(json.message || "Pedidos excluídos!");
+      setSelectedIds([]);
+      fetchOrders();
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao excluir pedidos.");
+    }
+  };
+
   // Exportar Pedidos para Planilha CSV
   const handleExportCSV = () => {
     if (orders.length === 0) {
@@ -230,6 +293,23 @@ export default function AdminLedgerPage() {
 
     return matchesSearch && matchesMethod && matchesPayment && matchesDelivery;
   });
+
+  const allFilteredIds = filteredOrders.map(o => o.id);
+  const isAllSelected = filteredOrders.length > 0 && selectedIds.length === filteredOrders.length;
+  
+  const toggleSelectAll = () => {
+    if (isAllSelected) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(allFilteredIds);
+    }
+  };
+
+  const toggleSelectOrder = (id: string) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+    );
+  };
 
   // Cálculos Financeiros (Pedidos Aprovados)
   const approvedOrders = orders.filter(o => o.paymentStatus === "approved");
@@ -393,6 +473,49 @@ export default function AdminLedgerPage() {
 
         </div>
 
+        {/* Barra de Ações em Massa */}
+        {selectedIds.length > 0 && (
+          <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm animate-in fade-in slide-in-from-bottom-2">
+            <div className="text-indigo-900 font-bold text-sm">
+              <span className="bg-indigo-600 text-white px-2 py-0.5 rounded-md mr-2">{selectedIds.length}</span>
+              pedido(s) selecionado(s)
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <button 
+                onClick={handleBulkApprove}
+                className="bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold px-4 py-2 rounded-lg shadow-sm transition-colors"
+              >
+                Aprovar Pagamentos
+              </button>
+              
+              <div className="flex items-center gap-2 bg-white border border-indigo-100 rounded-lg p-1 pr-2">
+                <select 
+                  value={bulkDeliveryStatus}
+                  onChange={(e) => setBulkDeliveryStatus(e.target.value)}
+                  className="bg-transparent text-xs font-bold text-slate-700 outline-none pl-2 py-1"
+                >
+                  <option value="delivered">Marcar como Entregue</option>
+                  <option value="pending">Marcar como Pendente</option>
+                  <option value="cancelled">Marcar como Cancelado</option>
+                </select>
+                <button 
+                  onClick={handleBulkDeliveryChange}
+                  className="bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded shadow-sm transition-colors"
+                >
+                  Aplicar
+                </button>
+              </div>
+
+              <button 
+                onClick={handleBulkDelete}
+                className="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs font-bold px-4 py-2 rounded-lg transition-colors ml-auto sm:ml-2"
+              >
+                Excluir
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Tabela de Pedidos */}
         <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
           {loading ? (
@@ -409,6 +532,14 @@ export default function AdminLedgerPage() {
               <table className="w-full text-left text-xs font-semibold text-slate-500 whitespace-nowrap">
                 <thead className="bg-slate-50 text-[10px] text-slate-400 font-bold uppercase border-b border-slate-150">
                   <tr>
+                    <th className="px-6 py-4 w-12 text-center">
+                      <input 
+                        type="checkbox" 
+                        checked={isAllSelected}
+                        onChange={toggleSelectAll}
+                        className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                      />
+                    </th>
                     <th className="px-6 py-4">Código</th>
                     <th className="px-6 py-4">Quem Presenteou</th>
                     <th className="px-6 py-4">Presentes</th>
@@ -425,7 +556,17 @@ export default function AdminLedgerPage() {
                     const isManualApprovePossible = !isApproved && (ord.paymentMethod === "pix" || ord.paymentMethod === "card");
 
                     return (
-                      <tr key={ord.id} className="hover:bg-slate-50/50">
+                      <tr key={ord.id} className={`hover:bg-slate-50/50 ${selectedIds.includes(ord.id) ? 'bg-indigo-50/30' : ''}`}>
+                        {/* Checkbox */}
+                        <td className="px-6 py-4.5 text-center">
+                          <input 
+                            type="checkbox" 
+                            checked={selectedIds.includes(ord.id)}
+                            onChange={() => toggleSelectOrder(ord.id)}
+                            className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                          />
+                        </td>
+                        
                         {/* Código */}
                         <td className="px-6 py-4.5 font-mono font-black text-slate-800 text-[11px]">{ord.code}</td>
                         
