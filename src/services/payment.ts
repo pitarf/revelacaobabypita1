@@ -97,7 +97,7 @@ export async function createPixPayment(
 
     return {
       transactionId: String(data.id),
-      qrCode: data.point_of_interaction?.transaction_data?.qr_code_base64 || "",
+      qrCode: data.point_of_interaction?.transaction_data?.qr_code_base64 ? `data:image/png;base64,${data.point_of_interaction.transaction_data.qr_code_base64}` : "",
       copiaCola: data.point_of_interaction?.transaction_data?.qr_code || "",
       qrCodeUrl: data.point_of_interaction?.transaction_data?.ticket_url || "",
       status: data.status, // pending

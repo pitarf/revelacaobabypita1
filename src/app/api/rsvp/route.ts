@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-
-
+import { sendRsvpConfirmation } from "@/lib/email";
 // GET /api/rsvp?code=XXXXXX - Consulta detalhes de uma confirmação pelo código de acesso
 export async function GET(req: NextRequest) {
   try {
@@ -91,6 +90,8 @@ export async function POST(req: NextRequest) {
         },
       });
 
+      sendRsvpConfirmation(updatedRsvp.email, updatedRsvp.fullName).catch(console.error);
+
       return NextResponse.json({
         success: true,
         message: "Sua confirmação de presença foi atualizada com sucesso!",
@@ -149,6 +150,8 @@ export async function POST(req: NextRequest) {
         accessCode: code,
       },
     });
+
+    sendRsvpConfirmation(newRsvp.email, newRsvp.fullName).catch(console.error);
 
     return NextResponse.json({
       success: true,

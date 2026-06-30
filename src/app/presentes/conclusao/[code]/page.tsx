@@ -104,7 +104,7 @@ export default function OrderCompletionPage() {
 
   // Redireciona o convidado para enviar comprovante via WhatsApp
   const handleWhatsAppReceipt = () => {
-    const phone = "21999999999"; // telefone padrão de contato dos pais
+    const phone = "21993439161"; // telefone padrão de contato dos pais
     const text = encodeURIComponent(
       `Olá! Enviei meu presente para o Chá Revelação. Segue o comprovante do pedido ${order?.code} (${order?.paymentMethod.toUpperCase()}) no valor de R$ ${parseFloat(order?.totalValue).toFixed(2)}.`
     );
@@ -192,8 +192,8 @@ export default function OrderCompletionPage() {
             
             {isPix && (
               <div className="space-y-4">
-                <h4 className="text-sm font-extrabold text-gray-700 font-serif">Pagamento via Pix Copia e Cola</h4>
-                <p className="text-[11px] text-gray-400 leading-snug">Efetue a transferência Pix copia e cola abaixo para aprovação automática do pedido.</p>
+                <h4 className="text-lg font-extrabold text-gray-700 font-serif">Pagamento via Pix Copia e Cola</h4>
+                <p className="text-sm text-gray-500 leading-snug">Efetue a transferência Pix copia e cola abaixo para aprovação automática do pedido.</p>
 
                 {/* Exibição do QR Code se gerado */}
                 {mainPayment?.pixQrCode && mainPayment.pixQrCode.startsWith("data:image") ? (
@@ -213,11 +213,11 @@ export default function OrderCompletionPage() {
                       type="text"
                       readOnly
                       value={mainPayment.pixCopiaCola}
-                      className="flex-1 bg-white border border-baby-beige-dark rounded-xl px-3 py-2 text-xs font-mono truncate text-gray-500"
+                      className="flex-1 bg-white border border-baby-beige-dark rounded-xl px-4 py-3 text-sm font-mono truncate text-gray-700"
                     />
                     <button
                       onClick={handleCopyPix}
-                      className="bg-baby-gold hover:bg-baby-gold-hover text-white px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 flex items-center gap-1 flex-none"
+                      className="bg-baby-gold hover:bg-baby-gold-hover text-white px-5 py-3 rounded-xl text-sm font-bold transition-all active:scale-95 flex items-center gap-2 flex-none"
                     >
                       {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
                       <span>{copied ? "Copiado" : "Copiar"}</span>

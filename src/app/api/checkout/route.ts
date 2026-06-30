@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createPixPayment, createCardPreference } from "@/services/payment";
+import { sendGiftConfirmation } from "@/lib/email";
 
 // Função para gerar código legível de pedido (Ex: CHA-942851)
 function generateOrderCode() {
@@ -142,10 +143,11 @@ export async function POST(req: NextRequest) {
         where: { cartId: cart.id },
       });
 
-      return { order, totalValue };
+      const giftNames = giftsToUpdate.map(g => g.name).join(", ");
+      return { order, totalValue, giftNames };
     });
 
-    const { order, totalValue } = result;
+    const { order, totalValue, giftNames } = result;
 
     // 3. Processamento de Pagamento (Fora da Transação SQL para evitar bloqueios de latência da rede)
     let paymentData: any = null;
@@ -204,7 +206,7 @@ export async function POST(req: NextRequest) {
       };
     }
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       message: "Pedido de presente finalizado com sucesso!",
       order: {
@@ -216,6 +218,18 @@ export async function POST(req: NextRequest) {
       },
       payment: paymentData,
     });
+
+    // Enviar email de confirmação assincronamente
+    sendGiftConfirmation(
+      order.gifterEmail,
+      order.gifterName,
+      order.code,
+      order.paymentMethod,
+      order.paymentStatus,
+      giftNames
+    ).catch(console.error);
+
+    return response;
 
   } catch (error: any) {
     console.error("Erro no checkout:", error);
