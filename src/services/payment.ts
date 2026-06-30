@@ -22,7 +22,7 @@ async function getPaymentConfig() {
     gateway: settings?.gateway || "mercadopago",
     accessToken: settings?.mpAccessToken || process.env.MERCADO_PAGO_ACCESS_TOKEN || "",
     publicKey: settings?.mpPublicKey || process.env.MERCADO_PAGO_PUBLIC_KEY || "",
-    isTest: true, // Forçando Sandbox temporariamente para teste
+    isTest: false, // Voltando para Produção
   };
 }
 
