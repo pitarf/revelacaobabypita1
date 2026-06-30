@@ -138,10 +138,14 @@ export async function createPushinPayPixPayment(
     
     const amountInCents = Math.round(totalValue * 100);
 
-    const payload = {
+    const payload: any = {
       value: amountInCents,
       webhook_url: webhookUrl
     };
+
+    if (process.env.PIX_PAYER_DOCUMENT) {
+      payload.document = process.env.PIX_PAYER_DOCUMENT;
+    }
 
     const response = await fetch("https://api.pushinpay.com.br/api/pix/cashIn", {
       method: "POST",
