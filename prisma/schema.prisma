@@ -1,0 +1,321 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/client"
+}
+
+// 1. Administradores do Painel
+model Administrator {
+  id           String     @id @default(uuid())
+  email        String     @unique
+  passwordHash String
+  name         String
+  role         String     @default("admin") // admin, editor
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  auditLogs    AuditLog[]
+
+  @@map("administrators")
+}
+
+// 2. Configurações Gerais de SEO e Aparência do Site
+model SiteSetting {
+  id               String   @id @default(uuid())
+  siteTitle        String   @default("Chá Revelação")
+  siteDescription  String   @default("Venha participar do nosso Chá Revelação!")
+  siteKeywords     String   @default("chá revelação, bebê, miguel, rafaella")
+  faviconUrl       String?
+  logoUrl          String?
+  illustrationUrl  String?
+  messageTitle     String   @default("Nosso Momento Especial")
+  messageText      String   @db.Text
+  themeJson        String   @default("{}") // Armazena customizações de cores, estilos de ursinhos, nuvens, etc.
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("site_settings")
+}
+
+// 3. Configurações do Evento (Data, Local, etc.)
+model EventSetting {
+  id                   String   @id @default(uuid())
+  title                String   @default("Chá Revelação")
+  babyOption1          String   @default("Miguel")
+  babyOption2          String   @default("Rafaella")
+  eventDate            DateTime
+  eventTime            String
+  locationName         String
+  address              String
+  googleMapsUrl        String?
+  deliveryAddress      String?
+  deliveryInstructions String?  @db.Text
+  contactPhone         String?
+  rsvpDeadline         DateTime?
+  giftsDeadline        DateTime?
+  showCountdown        Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("event_settings")
+}
+
+// 4. Configurações de Pagamento (Mercado Pago, Asaas, Pix)
+model PaymentSetting {
+  id              String   @id @default(uuid())
+  gateway         String   @default("mercadopago") // mercadopago, asaas
+  mpAccessToken   String?
+  mpPublicKey     String?
+  asaasApiKey     String?
+  pixKey          String?
+  pixReceiverName String?
+  maxInstallments Int      @default(5)
+  feePolicy       String   @default("absorb") // absorb, add_to_customer, optional_contribution
+  isTestEnvironment Boolean @default(true)
+  checkoutMessage String?  @db.Text
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("payment_settings")
+}
+
+// 5. Categorias dos Presentes
+model Category {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  order     Int      @default(0)
+  icon      String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  gifts     Gift[]
+
+  @@map("categories")
+}
+
+// 6. Lista de Presentes
+model Gift {
+  id                   String      @id @default(uuid())
+  name                 String
+  description          String?     @db.Text
+  imageUrl             String?
+  categoryId           String
+  category             Category    @relation(fields: [categoryId], references: [id])
+  value                Decimal     @db.Decimal(10, 2)
+  maxQuantity          Int         @default(1)
+  chosenQuantity       Int         @default(0)
+  externalLink         String?
+  isFeatured           Boolean     @default(false)
+  order                Int         @default(0)
+  status               String      @default("available") // available, reserved, out_of_stock, inactive
+  allowedPaymentMethods String    @default("pix,card,personal,link") // separadas por vírgula
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+  orderItems           OrderItem[]
+
+  @@map("gifts")
+}
+
+// 7. Galeria de Fotos
+model GalleryImage {
+  id         String   @id @default(uuid())
+  imageUrl   String
+  caption    String?
+  isFeatured Boolean  @default(false)
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("gallery_images")
+}
+
+// 8. Vídeo Opcional
+model Video {
+  id          String   @id @default(uuid())
+  title       String?
+  description String?  @db.Text
+  videoUrl    String
+  isUpload    Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("videos")
+}
+
+// 9. Configurações de Música de Fundo
+model MusicSetting {
+  id            String   @id @default(uuid())
+  audioUrl      String
+  isActive      Boolean  @default(true)
+  initialVolume Float    @default(0.5)
+  autoRestart   Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("music_settings")
+}
+
+// 10. Votação (Miguel ou Rafaella)
+model Vote {
+  id        String   @id @default(uuid())
+  babyName  String // Nome votado: Miguel ou Rafaella
+  voterIp   String
+  voterPhone String?
+  voterEmail String?
+  createdAt DateTime @default(now())
+
+  @@map("votes")
+}
+
+// 11. RSVP (Confirmação de Presença)
+model Rsvp {
+  id              String   @id @default(uuid())
+  fullName        String
+  email           String
+  phone           String
+  adultsCount     Int      @default(1)
+  childrenCount   Int      @default(0)
+  totalGuests     Int      @default(1)
+  companionsNames String?  @db.Text // Nomes dos acompanhantes separados por vírgula ou JSON
+  foodRestriction String?  @db.Text
+  notes           String?  @db.Text
+  status          String   @default("confirmed") // confirmed, pending, cancelled
+  accessCode      String   @unique // Código seguro para edição/cancelamento
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("rsvps")
+}
+
+// 12. Carrinhos (Persistência básica de sessão, caso necessário)
+model Cart {
+  id        String     @id @default(uuid())
+  sessionId String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  items     CartItem[]
+
+  @@map("carts")
+}
+
+model CartItem {
+  id        String   @id @default(uuid())
+  cartId    String
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  giftId    String
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("cart_items")
+}
+
+// 13. Pedidos (Presentes Selecionados e Checkout)
+model Order {
+  id               String            @id @default(uuid())
+  code             String            @unique // Ex: CHA-100249
+  gifterName       String
+  gifterEmail      String
+  gifterPhone      String
+  message          String?           @db.Text
+  isAnonymous      Boolean           @default(false)
+  totalValue       Decimal           @db.Decimal(10, 2)
+  paymentMethod    String // pix, card, personal, link
+  paymentStatus    String            @default("pending") // pending, approved, refunded, cancelled
+  deliveryStatus   String            @default("pending") // pending (aguardando entrega pessoal ou envio), delivered (entregue), cancelled
+  accessCode       String            @unique // Código de acesso do pedido para o convidado
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  orderItems       OrderItem[]
+  payments         Payment[]
+  uploadedReceipts UploadedReceipt[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id              String   @id @default(uuid())
+  orderId         String
+  order           Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  giftId          String
+  gift            Gift     @relation(fields: [giftId], references: [id])
+  name            String // Cópia do nome do presente no momento da compra
+  quantity        Int      @default(1)
+  priceAtPurchase Decimal  @db.Decimal(10, 2)
+  createdAt       DateTime @default(now())
+
+  @@map("order_items")
+}
+
+// 14. Transações Financeiras e Histórico do Gateway
+model Payment {
+  id             String         @id @default(uuid())
+  orderId        String
+  order          Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  transactionId  String?        @unique // ID retornado pelo Mercado Pago / Asaas
+  status         String         @default("pending") // pending, approved, refunded, cancelled
+  gateway        String
+  rawPayload     String?        @db.Text // Payload JSON bruto do gateway
+  value          Decimal        @db.Decimal(10, 2) // Valor cobrado do cliente
+  netValue       Decimal?       @db.Decimal(10, 2) // Valor líquido (menos taxas)
+  feeValue       Decimal?       @db.Decimal(10, 2) // Taxas aplicadas
+  installments   Int            @default(1)
+  pixQrCode      String?        @db.Text // Base64 ou código copia e cola
+  pixCopiaCola   String?        @db.Text
+  pixQrCodeUrl   String?        @db.Text
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  paymentEvents  PaymentEvent[]
+
+  @@map("payments")
+}
+
+// 15. Webhooks / Eventos do Gateway
+model PaymentEvent {
+  id         String   @id @default(uuid())
+  paymentId  String
+  payment    Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  eventType  String // payment.updated, etc.
+  payload    String   @db.Text
+  createdAt  DateTime @default(now())
+
+  @@map("payment_events")
+}
+
+// 16. Comprovantes de Pix manuais (quando não integrado automaticamente)
+model UploadedReceipt {
+  id         String   @id @default(uuid())
+  orderId    String
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  receiptUrl String
+  uploadedAt DateTime @default(now())
+
+  @@map("uploaded_receipts")
+}
+
+// 17. Log de Auditoria de Ações Administrativas
+model AuditLog {
+  id          String         @id @default(uuid())
+  adminId     String
+  admin       Administrator  @relation(fields: [adminId], references: [id])
+  action      String // Ex: "UPDATE_GIFT", "DELETE_RSVP"
+  details     String?        @db.Text
+  ipAddress   String?
+  createdAt   DateTime       @default(now())
+
+  @@map("audit_logs")
+}
+
+// 18. Recados dos Convidados (Mural de Recados)
+model GuestMessage {
+  id        String   @id @default(uuid())
+  name      String
+  message   String   @db.Text
+  createdAt DateTime @default(now())
+
+  @@map("guest_messages")
+}

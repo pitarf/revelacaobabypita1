@@ -1,65 +1,144 @@
-import Image from "next/image";
+"use client";
+
+import React, { useEffect, useState } from "react";
+import Header from "@/components/public/Header";
+import BabyMessage from "@/components/public/BabyMessage";
+import VideoSection from "@/components/public/VideoSection";
+import PhotoGallery from "@/components/public/PhotoGallery";
+import RsvpSection from "@/components/public/RsvpSection";
+import GuestbookSection from "@/components/public/GuestbookSection";
+import DressCode from "@/components/public/DressCode";
+import GiftList from "@/components/public/GiftList";
+import MusicPlayer from "@/components/public/MusicPlayer";
+import CartDrawer from "@/components/public/CartDrawer";
+import CartModal from "@/components/public/CartModal";
+import FloatingCartButton from "@/components/public/FloatingCartButton";
+import { toast } from "sonner";
 
 export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+  const [config, setConfig] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
+
+  // Carrega as configurações centralizadas da API ao montar a página
+  useEffect(() => {
+    async function loadSettings() {
+      try {
+        const res = await fetch("/api/settings");
+        const data = await res.json();
+        if (res.ok) {
+          setConfig(data);
+        } else {
+          toast.error("Erro ao carregar dados do evento.");
+        }
+      } catch (err) {
+        console.error("Falha ao inicializar configurações da página principal:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadSettings();
+  }, []);
+
+  if (loading) {
+    return (
+      <main className="bg-baby-gradient min-h-screen flex flex-col items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin inline-block h-8 w-8 border-4 border-baby-gold border-t-transparent rounded-full mb-3"></div>
+          <h2 className="text-lg font-bold text-gray-700 font-serif">Preparando Chá Revelação...</h2>
+          <p className="text-xs text-gray-400 font-medium">Carregando o tema e configurações...</p>
         </div>
       </main>
-    </div>
+    );
+  }
+
+  const site = config?.site || {};
+  const event = config?.event || {};
+  const music = config?.music || {};
+
+  return (
+    <main className="relative min-h-screen bg-baby-gradient flex flex-col">
+      {/* 1. Tocador de Música de Fundo */}
+      <MusicPlayer
+        audioUrl={music.audioUrl}
+        isActive={music.isActive}
+        initialVolume={music.initialVolume}
+        autoRestart={music.autoRestart}
+      />
+
+      {/* 2. Cabeçalho Principal (Apresentação e Placar) */}
+      <Header
+        title={event.title}
+        babyOption1={event.babyOption1}
+        babyOption2={event.babyOption2}
+        eventDate={event.eventDate}
+        eventTime={event.eventTime}
+        locationName={event.locationName}
+        address={event.address}
+        googleMapsUrl={event.googleMapsUrl}
+        showCountdown={event.showCountdown}
+      />
+
+      {/* 3. Galeria de Fotos (Carrossel Interativo) */}
+      <PhotoGallery />
+
+      {/* 4. Seção Mensagem dos Pais */}
+      <BabyMessage
+        title={site.messageTitle}
+        text={site.messageText}
+      />
+
+      {/* 5. Confirmação de Presença (RSVP) */}
+      <RsvpSection />
+
+      {/* Mural de Recados (Deixe seu Recadinho) */}
+      <GuestbookSection />
+
+      {/* 6. Sugestão de Traje e Paleta de Cores */}
+      <DressCode />
+
+      {/* 7. Lista de Presentes estilo Loja Virtual */}
+      <GiftList 
+        onOpenCart={() => setIsCartOpen(true)} 
+        onDirectCheckout={() => setIsCheckoutModalOpen(true)}
+      />
+
+      {/* 8. Seção Opcional de Vídeo */}
+      {config?.video?.isActive && (
+        <VideoSection
+          title={config.video.title}
+          description={config.video.description}
+          videoUrl={config.video.videoUrl}
+          isUpload={config.video.isUpload}
+          isActive={config.video.isActive}
+        />
+      )}
+
+      {/* 9. Botão Flutuante do Carrinho de Presentes */}
+      <FloatingCartButton onClick={() => setIsCartOpen(true)} />
+
+      {/* 10. Drawer (Painel Lateral) do Carrinho */}
+      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+
+      {/* Modal de Presente Direto (Checkout direto do Passo 1) */}
+      <CartModal 
+        isOpen={isCheckoutModalOpen} 
+        onClose={() => setIsCheckoutModalOpen(false)} 
+        initialStep={1} 
+      />
+
+      {/* Rodapé da Página Pública */}
+      <footer className="bg-white border-t border-baby-beige py-8 pb-24 md:pb-8 text-center text-xs text-gray-400 font-semibold">
+        <div className="container mx-auto px-4">
+          <p>© {new Date().getFullYear()} - Chá Revelação {event.babyOption1} ou {event.babyOption2}?. Todos os direitos reservados.</p>
+          <div className="flex justify-center gap-4 mt-3">
+            <a href="/politica-privacidade" className="hover:text-baby-gold transition-colors">Política de Privacidade</a>
+            <span>•</span>
+            <a href="/termos-lista" className="hover:text-baby-gold transition-colors">Termos de Uso</a>
+          </div>
+        </div>
+      </footer>
+    </main>
   );
 }

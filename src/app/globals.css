@@ -1,26 +1,161 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@font-face {
+  font-family: 'Pacifico';
+  src: url('/Pacifico.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  --font-sans: "Outfit", var(--font-geist-sans), sans-serif;
+  --font-serif: "Pacifico", cursive;
+  
+  --color-baby-blue: #57a3e2;
+  --color-baby-blue-hover: #3d8ccf;
+  --color-baby-blue-light: #f0f7fd;
+  
+  --color-baby-pink: #e0589a;
+  --color-baby-pink-hover: #cf3f83;
+  --color-baby-pink-light: #fdf5f9;
+  
+  --color-baby-beige: #faf6f0;
+  --color-baby-beige-dark: #f0e6d6;
+  
+  --color-baby-gold: #f6b26b;
+  --color-baby-gold-hover: #e09d56;
+  --color-baby-gold-light: #fef7f0;
+  
+  --color-gray-500: #000000;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-baby-beige);
+  color: #4a4a4a;
+  font-family: "Outfit", sans-serif;
+  overflow-x: hidden;
+}
+
+strong, b {
+  font-weight: 700 !important;
+}
+
+/* Transição de cores suave entre rosa e azul para o fundo principal com imagem de ursinhos */
+.bg-baby-gradient {
+  background-image: url('/background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.bg-baby-split {
+  background: linear-gradient(to right, #fdf5f9 0%, #fdf5f9 45%, #faf6f0 50%, #f0f7fd 55%, #f0f7fd 100%);
+}
+
+/* Animações e Micro-interações Premium */
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(2deg);
+  }
+}
+
+@keyframes float-medium {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(-3deg);
+  }
+}
+
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+}
+
+.animate-float-cloud {
+  animation: float-slow 8s ease-in-out infinite;
+}
+
+.animate-float-balloon-blue {
+  animation: float-medium 10s ease-in-out infinite;
+}
+
+.animate-float-balloon-pink {
+  animation: float-medium 12s ease-in-out infinite 1.5s;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 3s ease-in-out infinite;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.45s ease-out forwards;
+}
+
+/* Efeito Card Premium (Glassmorphism sutil) */
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 8px 32px 0 rgba(223, 178, 109, 0.08);
+}
+
+.glass-card-blue {
+  background: rgba(240, 247, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 8px 32px 0 rgba(87, 163, 226, 0.08);
+}
+
+.glass-card-pink {
+  background: rgba(253, 245, 249, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 8px 32px 0 rgba(224, 88, 154, 0.08);
+}
+
+/* Ocultar scrollbar mantendo funcionalidade */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Efeito de borda dourada elegante */
+.border-gold-gradient {
+  border-image: linear-gradient(to right, #f6b26b, #fef7f0, #f6b26b) 1;
+}
+
+/* Estilo do Slider de Fotos */
+.swiper-zoom-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
