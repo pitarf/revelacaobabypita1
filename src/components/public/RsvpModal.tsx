@@ -15,6 +15,7 @@ interface RsvpData {
   foodRestriction?: string | null;
   notes?: string | null;
   accessCode?: string;
+  status?: string;
 }
 
 interface RsvpModalProps {
@@ -36,6 +37,7 @@ export default function RsvpModal({ isOpen, onClose, initialData, onSuccess }: R
   const [lgpdConsent, setLgpdConsent] = useState(true); // Assume consentimento com a nota de rodapé
   const [loading, setLoading] = useState(false);
   const [captchaChecked, setCaptchaChecked] = useState(false);
+  const [isAttending, setIsAttending] = useState(true);
 
   // Preenche dados caso seja uma Edição (initialData ativo)
   useEffect(() => {
@@ -57,6 +59,7 @@ export default function RsvpModal({ isOpen, onClose, initialData, onSuccess }: R
       setFoodRestriction(initialData.foodRestriction || "");
       setNotes(initialData.notes || "");
       setLgpdConsent(true); // Se já estava cadastrado, assume consentimento
+      setIsAttending(initialData.status !== "cancelled");
     } else {
       // Limpa os campos para novo cadastro
       setFullName("");
@@ -68,6 +71,7 @@ export default function RsvpModal({ isOpen, onClose, initialData, onSuccess }: R
       setFoodRestriction("");
       setNotes("");
       setLgpdConsent(false);
+      setIsAttending(true);
     }
   }, [initialData, isOpen]);
 
@@ -107,12 +111,13 @@ export default function RsvpModal({ isOpen, onClose, initialData, onSuccess }: R
         fullName: fullName.trim(),
         email: email.trim().toLowerCase(),
         phone: rawPhone,
-        adultsCount,
-        childrenCount,
-        companionsNames: adultsCount + childrenCount > 1 ? companionsNames.trim() : null,
-        foodRestriction: foodRestriction.trim() || null,
+        adultsCount: isAttending ? adultsCount : 0,
+        childrenCount: isAttending ? childrenCount : 0,
+        companionsNames: isAttending && (adultsCount + childrenCount > 1) ? companionsNames.trim() : null,
+        foodRestriction: isAttending ? (foodRestriction.trim() || null) : null,
         notes: notes.trim() || null,
         accessCode: initialData?.accessCode || null, // Passa o código se for Edição
+        isAttending,
       };
 
       const res = await fetch("/api/rsvp", {
@@ -161,6 +166,23 @@ export default function RsvpModal({ isOpen, onClose, initialData, onSuccess }: R
 
         <form onSubmit={handleSubmit} className="space-y-5">
           
+          <div className="flex gap-4 mb-2">
+            <button
+              type="button"
+              onClick={() => setIsAttending(true)}
+              className={`flex-1 py-3 px-4 rounded-xl font-bold transition-all border-2 ${isAttending ? 'bg-emerald-50 border-emerald-500 text-emerald-600' : 'bg-gray-50 border-gray-200 text-gray-400 hover:border-gray-300'}`}
+            >
+              Sim, eu vou! 🥳
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsAttending(false)}
+              className={`flex-1 py-3 px-4 rounded-xl font-bold transition-all border-2 ${!isAttending ? 'bg-rose-50 border-rose-500 text-rose-600' : 'bg-gray-50 border-gray-200 text-gray-400 hover:border-gray-300'}`}
+            >
+              Não poderei ir 😢
+            </button>
+          </div>
+
           {/* Nome Completo */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1.5">
@@ -217,7 +239,9 @@ export default function RsvpModal({ isOpen, onClose, initialData, onSuccess }: R
             />
           </div>
 
-          {/* Seletores Dropdown de Adultos e Crianças */}
+          {isAttending && (
+            <>
+              {/* Seletores Dropdown de Adultos e Crianças */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5">Quantidade de Adultos</label>
@@ -274,7 +298,9 @@ export default function RsvpModal({ isOpen, onClose, initialData, onSuccess }: R
               onChange={(e) => setFoodRestriction(e.target.value)}
               className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-baby-gold font-semibold transition-all"
             />
-          </div>
+            </div>
+            </>
+          )}
 
           {/* Mensagem Opcional */}
           <div>

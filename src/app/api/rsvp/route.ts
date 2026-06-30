@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
       foodRestriction,
       notes,
       accessCode, // Se enviado, indica uma EDICAO
+      isAttending = true,
     } = body;
 
     // 1. Validações básicas de formato
@@ -106,7 +107,7 @@ export async function POST(req: NextRequest) {
           companionsNames: companionsNames ? companionsNames.trim() : null,
           foodRestriction: foodRestriction ? foodRestriction.trim() : null,
           notes: notes ? notes.trim() : null,
-          status: "confirmed", // Restaura status para confirmado ao editar
+          status: isAttending ? "confirmed" : "cancelled",
         },
       });
 
@@ -114,7 +115,7 @@ export async function POST(req: NextRequest) {
 
       return NextResponse.json({
         success: true,
-        message: "Sua confirmação de presença foi atualizada com sucesso!",
+        message: isAttending ? "Sua confirmação de presença foi atualizada com sucesso!" : "Que pena que não poderá ir! Seu status foi atualizado.",
         data: updatedRsvp,
       });
     }
@@ -166,7 +167,7 @@ export async function POST(req: NextRequest) {
         companionsNames: companionsNames ? companionsNames.trim() : null,
         foodRestriction: foodRestriction ? foodRestriction.trim() : null,
         notes: notes ? notes.trim() : null,
-        status: "confirmed",
+        status: isAttending ? "confirmed" : "cancelled",
         accessCode: code,
       },
     });
@@ -175,7 +176,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: "Presença confirmada com sucesso! Ficamos muito felizes em ter você conosco.",
+      message: isAttending ? "Presença confirmada com sucesso! Ficamos muito felizes em ter você conosco." : "Que pena que não poderá ir! Agradecemos por nos avisar.",
       data: newRsvp,
     });
   } catch (error) {
