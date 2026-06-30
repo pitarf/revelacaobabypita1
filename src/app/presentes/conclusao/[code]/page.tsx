@@ -177,13 +177,19 @@ export default function OrderCompletionPage() {
 
             <div className="flex justify-between items-center text-[10px] font-bold text-gray-400 mt-2 uppercase tracking-wide">
               <span>Método: {order.paymentMethod.toUpperCase()}</span>
-              <span className={`px-2 py-0.5 rounded-md ${
-                isApproved 
-                  ? "bg-emerald-100 text-emerald-700" 
-                  : "bg-amber-100 text-amber-700"
-              }`}>
-                {order.paymentStatus === "approved" ? "PAGO / APROVADO" : "AGUARDANDO PAGAMENTO"}
-              </span>
+              {isPersonal ? (
+                <span className="px-2 py-0.5 rounded-md bg-baby-blue-light text-baby-blue-dark">
+                  ENTREGA NO DIA
+                </span>
+              ) : (
+                <span className={`px-2 py-0.5 rounded-md ${
+                  isApproved 
+                    ? "bg-emerald-100 text-emerald-700" 
+                    : "bg-amber-100 text-amber-700"
+                }`}>
+                  {order.paymentStatus === "approved" ? "PAGO / APROVADO" : "AGUARDANDO PAGAMENTO"}
+                </span>
+              )}
             </div>
           </div>
 
