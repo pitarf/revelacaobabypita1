@@ -171,20 +171,25 @@ export const sendGiftConfirmation = async (email: string, name: string, orderCod
     `;
   } else {
     content = `
-      <h2 style="color: #6fa8dc; margin: 0;">Presente Confirmado!</h2>
+      <div style="background-color: #fce4ec; border-radius: 12px 12px 0 0; padding: 30px 20px;">
+        <h2 style="color: #d81b60; margin: 0; font-size: 24px; text-align: center;">Presente Confirmado! 💖</h2>
       </div>
-      <div style="padding: 20px; background-color: #ffffff; border: 1px solid #fcf8f2;">
-        <p>Olá, <strong>${name}</strong>!</p>
-        <p>O seu presente <strong>"${giftName}"</strong> já foi confirmado! Agradecemos de coração pelo carinho.</p>
-        <p>O número do seu pedido é <strong>${orderCode}</strong>.</p>
+      <div style="padding: 30px 20px; background-color: #ffffff; border: 1px solid #fce4ec; border-radius: 0 0 12px 12px; font-size: 16px; line-height: 1.6; color: #555;">
+        <p style="font-size: 18px; color: #333;">Olá, <strong>${name}</strong>!</p>
+        <p>Estamos muito felizes e de corações transbordando de alegria!</p>
+        <p>O seu presente <strong>"${giftName}"</strong> (Pedido ${orderCode}) acabou de ser confirmado.</p>
+        <div style="margin: 25px 0; padding: 20px; background-color: #fff3e0; border-left: 4px solid #ff9800; border-radius: 4px;">
+          <p style="margin: 0; font-style: italic; color: #e65100;">"Você contribuiu com o nosso baby, e nós estamos muito felizes e infinitamente gratos por todo esse carinho! Que Deus abençoe grandemente a sua vida."</p>
+        </div>
+        <p style="text-align: right; margin-top: 30px; color: #888;">Com muito amor,<br><strong style="color: #333;">Os papais.</strong></p>
+      </div>
     `;
   }
 
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
-      <div style="text-align: center; padding: 20px; background-color: #fcf8f2; border-radius: 10px 10px 0 0;">
+      <div style="box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-radius: 12px;">
         ${content}
-        <p>Com carinho,<br>Os papais.</p>
       </div>
     </div>
   `;
