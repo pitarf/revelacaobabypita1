@@ -5,12 +5,17 @@ import { sendGiftConfirmation } from "@/lib/email";
 export async function POST(req: NextRequest) {
   try {
     // Validação de segurança do Webhook
-    const authHeader = req.headers.get("authorization");
     const webhookToken = process.env.PUSHINPAY_WEBHOOK_TOKEN;
     
-    if (webhookToken && authHeader !== `Bearer ${webhookToken}`) {
-      console.error("[Webhook PushinPay] Token inválido ou ausente.");
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (webhookToken) {
+      const allHeaders = Object.fromEntries(req.headers.entries());
+      const headerValues = Object.values(allHeaders).join(" ");
+      const urlToken = req.nextUrl.searchParams.get("token");
+
+      if (!headerValues.includes(webhookToken) && urlToken !== webhookToken) {
+        console.error("[Webhook PushinPay] Token inválido ou ausente. Headers:", allHeaders);
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
     }
 
     const body = await req.json();
