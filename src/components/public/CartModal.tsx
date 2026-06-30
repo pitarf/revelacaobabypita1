@@ -93,7 +93,7 @@ export default function CartModal({ isOpen, onClose, initialStep }: CartModalPro
     .slice(0, 5);
 
   // Cálculo da parcela simulada do cartão com juros padrão do MP
-  const installmentValue = (totalValue * 1.28) / 12;
+  const installmentValue = (totalValue * 1.15) / 5;
 
   // Formatação de CPF em tempo real (000.000.000-00)
   const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -198,7 +198,7 @@ export default function CartModal({ isOpen, onClose, initialStep }: CartModalPro
   const hasExternalLink = cartItems.some((item) => item.externalLink && item.externalLink.trim() !== "");
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in overflow-y-auto">
       {/* Clique no fundo fecha */}
       <div className="absolute inset-0 -z-10" onClick={onClose} />
 
@@ -239,56 +239,60 @@ export default function CartModal({ isOpen, onClose, initialStep }: CartModalPro
                       cartItems.map((item) => (
                         <div 
                           key={item.id}
-                          className="flex items-center gap-4 bg-[#faf6f0]/40 border border-baby-beige/60 rounded-2xl p-4 shadow-sm hover:bg-white transition-all relative group"
+                          className="flex flex-col sm:flex-row sm:items-center gap-4 bg-[#faf6f0]/40 border border-baby-beige/60 rounded-2xl p-4 shadow-sm hover:bg-white transition-all relative group"
                         >
-                          {/* Miniatura do Presente */}
-                          <div className="h-16 w-16 rounded-xl bg-white border border-baby-beige overflow-hidden flex-none">
-                            {item.imageUrl ? (
-                              <img src={item.imageUrl} alt={item.name} className="h-full w-full object-cover" />
-                            ) : (
-                              <div className="h-full w-full flex items-center justify-center text-baby-gold/30">
-                                <ShoppingBag className="h-6 w-6" />
-                              </div>
-                            )}
+                          <div className="flex items-center gap-4 w-full sm:w-auto flex-1">
+                            {/* Miniatura do Presente */}
+                            <div className="h-16 w-16 rounded-xl bg-white border border-baby-beige overflow-hidden flex-none">
+                              {item.imageUrl ? (
+                                <img src={item.imageUrl} alt={item.name} className="h-full w-full object-cover" />
+                              ) : (
+                                <div className="h-full w-full flex items-center justify-center text-baby-gold/30">
+                                  <ShoppingBag className="h-6 w-6" />
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Nome e Preço */}
+                            <div className="flex-1 min-w-0">
+                              <h4 className="text-sm font-extrabold text-slate-800 leading-tight truncate pr-2">
+                                {item.name}
+                              </h4>
+                              <p className="text-sm font-black text-[#5c5bd5] mt-1">
+                                {item.price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                              </p>
+                            </div>
                           </div>
 
-                          {/* Nome e Preço */}
-                          <div className="flex-1 min-w-0">
-                            <h4 className="text-sm font-extrabold text-slate-800 leading-tight truncate pr-6">
-                              {item.name}
-                            </h4>
-                            <p className="text-sm font-black text-[#5c5bd5] mt-1">
-                              {item.price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-                            </p>
-                          </div>
+                          <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto border-t sm:border-0 border-baby-beige/50 pt-3 sm:pt-0">
+                            {/* Seletor Quantidade Pill */}
+                            <div className="flex items-center gap-3 border-2 border-[#5c5bd5] px-4 py-1.5 rounded-full text-xs font-black text-[#5c5bd5] bg-white shadow-sm flex-none">
+                              <button 
+                                type="button" 
+                                onClick={() => updateQuantity(item.giftId, item.quantity - 1)}
+                                className="hover:scale-125 transition-transform"
+                              >
+                                -
+                              </button>
+                              <span className="w-4 text-center">{item.quantity}</span>
+                              <button 
+                                type="button" 
+                                onClick={() => updateQuantity(item.giftId, item.quantity + 1)}
+                                className="hover:scale-125 transition-transform"
+                              >
+                                +
+                              </button>
+                            </div>
 
-                          {/* Seletor Quantidade Pill */}
-                          <div className="flex items-center gap-3 border-2 border-[#5c5bd5] px-4 py-1.5 rounded-full text-xs font-black text-[#5c5bd5] bg-white shadow-sm flex-none">
-                            <button 
-                              type="button" 
-                              onClick={() => updateQuantity(item.giftId, item.quantity - 1)}
-                              className="hover:scale-125 transition-transform"
+                            {/* Lixeira */}
+                            <button
+                              onClick={() => removeFromCart(item.giftId)}
+                              className="text-gray-400 hover:text-red-500 p-2 rounded-full hover:bg-red-50 transition-all ml-2 flex-none"
+                              title="Remover presente"
                             >
-                              -
-                            </button>
-                            <span className="w-4 text-center">{item.quantity}</span>
-                            <button 
-                              type="button" 
-                              onClick={() => updateQuantity(item.giftId, item.quantity + 1)}
-                              className="hover:scale-125 transition-transform"
-                            >
-                              +
+                              <Trash2 className="h-4 w-4" />
                             </button>
                           </div>
-
-                          {/* Lixeira */}
-                          <button
-                            onClick={() => removeFromCart(item.giftId)}
-                            className="text-gray-400 hover:text-red-500 p-2 rounded-full hover:bg-red-50 transition-all ml-2 flex-none"
-                            title="Remover presente"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
                         </div>
                       ))
                     )}
@@ -306,7 +310,7 @@ export default function CartModal({ isOpen, onClose, initialStep }: CartModalPro
                         </span>
                       </div>
                       <p className="text-xs text-slate-400 font-semibold leading-relaxed">
-                        Ou em até 12 parcelas de {installmentValue.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                        Ou em até 5 parcelas de {installmentValue.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
                       </p>
                     </div>
 
