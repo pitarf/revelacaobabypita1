@@ -229,15 +229,17 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Enviar email de confirmação assincronamente
-    sendGiftConfirmation(
-      order.gifterEmail,
-      order.gifterName,
-      order.code,
-      order.paymentMethod,
-      order.paymentStatus,
-      giftNames
-    ).catch(console.error);
+    // Enviar email com QR Code do Pix (apenas para PIX, pois Cartão ainda não foi pago)
+    if (order.paymentMethod === "pix") {
+      sendGiftConfirmation(
+        order.gifterEmail,
+        order.gifterName,
+        order.code,
+        order.paymentMethod,
+        order.paymentStatus,
+        giftNames
+      ).catch(console.error);
+    }
 
     return response;
 

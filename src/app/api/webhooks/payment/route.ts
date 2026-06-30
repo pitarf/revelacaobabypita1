@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { sendGiftConfirmation } from "@/lib/email";
 
 /**
  * Função auxiliar para devolver o estoque dos presentes vinculados a um pedido cancelado/reembolsado
@@ -173,6 +174,7 @@ export async function POST(req: NextRequest) {
 
       const order = await prisma.order.findUnique({
         where: { code: orderCodeFromMP },
+        include: { orderItems: true },
       });
 
       if (!order) {
@@ -198,6 +200,18 @@ export async function POST(req: NextRequest) {
           net: netValue,
           fee: feeValue,
         });
+        
+        // Envia e-mail de confirmação apenas quando o pagamento for aprovado
+        const giftNames = order.orderItems.map(item => item.name).join(", ");
+        sendGiftConfirmation(
+          order.gifterEmail,
+          order.gifterName,
+          order.code,
+          order.paymentMethod,
+          "approved",
+          giftNames
+        ).catch(console.error);
+
         console.log(`✔ Pedido ${order.code} aprovado via Webhook.`);
       } else if (status === "cancelled" || status === "rejected" || status === "refunded") {
         const targetStatus = status === "refunded" ? "refunded" : "cancelled";
