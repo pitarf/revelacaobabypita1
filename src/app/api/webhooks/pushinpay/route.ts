@@ -8,13 +8,11 @@ export async function POST(req: NextRequest) {
     const webhookToken = process.env.PUSHINPAY_WEBHOOK_TOKEN;
     
     if (webhookToken) {
-      const allHeaders = Object.fromEntries(req.headers.entries());
-      const headerValues = Object.values(allHeaders).join(" ");
-      const urlToken = req.nextUrl.searchParams.get("token");
+      const headerToken = req.headers.get("x-pushinpay-token");
 
-      if (!headerValues.includes(webhookToken) && urlToken !== webhookToken) {
-        console.error("[Webhook PushinPay] Token inválido ou ausente. Headers:", allHeaders);
-        // Removido temporariamente o bloqueio 401 para permitir que as requisições retidas passem
+      if (headerToken !== webhookToken) {
+        console.error("[Webhook PushinPay] Token inválido ou ausente. Recebido:", headerToken);
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       }
     }
 

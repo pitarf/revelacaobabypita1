@@ -17,6 +17,7 @@ export default function OrderCompletionPage() {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [simulating, setSimulating] = useState(false);
+  const [verifying, setVerifying] = useState(false);
 
   useEffect(() => {
     if (code) {
@@ -97,6 +98,28 @@ export default function OrderCompletionPage() {
       toast.error("Erro ao simular webhook.");
     } finally {
       setSimulating(false);
+    }
+  };
+
+  // Botão manual para consultar status real do PIX
+  const handleVerifyPayment = async () => {
+    if (!order) return;
+    try {
+      setVerifying(true);
+      const res = await fetch(`/api/payment/verify?orderCode=${order.code}`);
+      const data = await res.json();
+      
+      if (res.ok && data.status === "approved") {
+        toast.success("Pagamento confirmado com sucesso!");
+        fetchOrder(); // recarrega e lança os confetes
+      } else {
+        toast.error("Pagamento ainda não confirmado. Tente novamente em instantes.");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Erro ao verificar pagamento.");
+    } finally {
+      setVerifying(false);
     }
   };
 
@@ -233,19 +256,34 @@ export default function OrderCompletionPage() {
 
                 {/* Botão Copia e Cola */}
                 {mainPayment?.pixCopiaCola && (
-                  <div className="flex gap-2 max-w-md mx-auto">
-                    <input
-                      type="text"
-                      readOnly
-                      value={mainPayment.pixCopiaCola}
-                      className="flex-1 bg-white border border-baby-beige-dark rounded-xl px-4 py-3 text-sm font-mono truncate text-gray-700"
-                    />
+                  <div className="flex flex-col gap-3 max-w-md mx-auto">
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        readOnly
+                        value={mainPayment.pixCopiaCola}
+                        className="w-full bg-white border border-baby-beige-dark rounded-xl px-4 py-3 text-sm font-mono truncate text-gray-700"
+                      />
+                      <button
+                        onClick={handleCopyPix}
+                        className="flex-none flex items-center justify-center gap-1.5 px-4 py-2.5 bg-baby-blue text-white rounded-xl font-bold hover:bg-baby-blue-dark transition-all transform active:scale-95 text-xs shadow-md shadow-baby-blue/30"
+                      >
+                        {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                        {copied ? "Copiado!" : "Copiar"}
+                      </button>
+                    </div>
+                    
                     <button
-                      onClick={handleCopyPix}
-                      className="bg-baby-gold hover:bg-baby-gold-hover text-white px-5 py-3 rounded-xl text-sm font-bold transition-all active:scale-95 flex items-center gap-2 flex-none"
+                      onClick={handleVerifyPayment}
+                      disabled={verifying}
+                      className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 bg-white border-2 border-baby-blue text-baby-blue-dark rounded-xl font-bold hover:bg-baby-blue-light transition-all disabled:opacity-50 text-xs shadow-sm"
                     >
-                      {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-                      <span>{copied ? "Copiado" : "Copiar"}</span>
+                      {verifying ? (
+                        <div className="animate-spin h-4 w-4 border-2 border-baby-blue border-t-transparent rounded-full" />
+                      ) : (
+                        <Clock className="w-4 h-4" />
+                      )}
+                      {verifying ? "Verificando..." : "Já paguei, verificar agora"}
                     </button>
                   </div>
                 )}
