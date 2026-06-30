@@ -118,26 +118,35 @@ export default function GuestbookSection() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-            {messages.map((msg) => (
-              <div 
-                key={msg.id} 
-                className="bg-[#faf6f0]/40 rounded-3xl p-6 border border-baby-beige/70 shadow-sm flex flex-col justify-between hover:shadow-md transition-all hover:scale-[1.01]"
-              >
-                <p className="text-sm md:text-base text-gray-700 italic mb-5 whitespace-pre-wrap leading-relaxed">
-                  "{msg.message}"
-                </p>
-                <div className="flex items-center justify-between border-t border-baby-beige/50 pt-3">
-                  <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-                    {new Date(msg.createdAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })}
-                  </span>
-                  <span className="text-xs font-extrabold text-[#f6b26b] flex items-center gap-1.5 font-serif text-[13px]">
-                    <Heart className="h-3.5 w-3.5 fill-[#f6b26b]" />
-                    {msg.name}
-                  </span>
+          <div className="relative w-full max-w-5xl mx-auto">
+            <div className="flex overflow-x-auto gap-6 text-left pb-8 pt-4 px-4 snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth">
+              {messages.map((msg) => (
+                <div 
+                  key={msg.id} 
+                  className="bg-[#faf6f0]/40 rounded-3xl p-6 border border-baby-beige/70 shadow-sm flex flex-col justify-between hover:shadow-md transition-all min-w-[280px] sm:min-w-[320px] max-w-sm shrink-0 snap-center"
+                >
+                  <p className="text-sm md:text-base text-gray-700 italic mb-5 whitespace-pre-wrap leading-relaxed">
+                    "{msg.message}"
+                  </p>
+                  <div className="flex items-center justify-between border-t border-baby-beige/50 pt-3">
+                    <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                      {new Date(msg.createdAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })}
+                    </span>
+                    <span className="text-xs font-extrabold text-[#f6b26b] flex items-center gap-1.5 font-serif text-[13px]">
+                      <Heart className="h-3.5 w-3.5 fill-[#f6b26b]" />
+                      {msg.name}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+            
+            {/* Indicador visual de arrastar para o lado em mobile/desktop */}
+            <div className="text-center mt-2 opacity-50">
+              <span className="text-[10px] uppercase font-bold text-slate-400 tracking-widest flex items-center justify-center gap-2">
+                ← Deslize para ver mais →
+              </span>
+            </div>
           </div>
         )}
 

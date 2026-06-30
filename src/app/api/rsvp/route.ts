@@ -113,6 +113,16 @@ export async function POST(req: NextRequest) {
 
       sendRsvpConfirmation(updatedRsvp.email, updatedRsvp.fullName, eventTitle, eventDateStr, locationStr, googleMapsUrl, isAttending, true).catch(console.error);
 
+      // Sincronizar recado para o Mural de Recados se houver um novo recado
+      if (notes && notes.trim() && existingRsvp.notes !== notes.trim()) {
+        await prisma.guestMessage.create({
+          data: {
+            name: fullName.trim(),
+            message: notes.trim(),
+          }
+        });
+      }
+
       return NextResponse.json({
         success: true,
         message: isAttending ? "Sua confirmação de presença foi atualizada com sucesso!" : "Que pena que não poderá ir! Seu status foi atualizado.",
@@ -173,6 +183,16 @@ export async function POST(req: NextRequest) {
     });
 
     sendRsvpConfirmation(newRsvp.email, newRsvp.fullName, eventTitle, eventDateStr, locationStr, googleMapsUrl, isAttending, false).catch(console.error);
+
+    // Salvar recado no Mural de Recados
+    if (notes && notes.trim()) {
+      await prisma.guestMessage.create({
+        data: {
+          name: fullName.trim(),
+          message: notes.trim(),
+        }
+      });
+    }
 
     return NextResponse.json({
       success: true,
