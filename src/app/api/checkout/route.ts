@@ -33,14 +33,14 @@ export async function POST(req: NextRequest) {
     } = body;
 
     // 1. Validações de Identificação
-    if (!sessionId || !gifterName || !gifterEmail || !gifterPhone || !paymentMethod) {
+    if (!sessionId || !gifterName || !gifterEmail || !paymentMethod) {
       return NextResponse.json(
         { error: "Por favor, preencha todos os campos obrigatórios." },
         { status: 400 }
       );
     }
 
-    const cleanPhone = gifterPhone.replace(/\D/g, "");
+    const cleanPhone = gifterPhone ? gifterPhone.replace(/\D/g, "") : "";
 
     // 2. Transação no Banco de Dados: Valida estoque e cria o pedido de forma segura (Prevenção de Sobrevenda)
     const result = await prisma.$transaction(async (tx) => {

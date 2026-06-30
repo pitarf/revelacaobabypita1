@@ -134,16 +134,13 @@ export default function CartModal({ isOpen, onClose, initialStep }: CartModalPro
       toast.error("Nome completo é obrigatório.");
       return;
     }
-    if (!cpf.trim() || !isValidCPF(cpf)) {
-      toast.error("Por favor, insira um CPF válido para prosseguir.");
-      return;
-    }
     if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       toast.error("E-mail inválido ou obrigatório.");
       return;
     }
-    if (!phone.trim() || phone.replace(/\D/g, "").length < 10) {
-      toast.error("Celular/WhatsApp inválido ou incompleto.");
+    // WhatsApp agora é opcional, mas se preenchido, validamos
+    if (phone.trim() && phone.replace(/\D/g, "").length < 10) {
+      toast.error("Se inserir um WhatsApp, informe um número válido.");
       return;
     }
     setStep(3);
@@ -407,46 +404,29 @@ export default function CartModal({ isOpen, onClose, initialStep }: CartModalPro
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-extrabold text-slate-500 mb-1.5 uppercase tracking-wide">
-                        Seu CPF (obrigatório)
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="000.000.000-00"
-                        value={cpf}
-                        onChange={handleCpfChange}
-                        required
-                        className="w-full bg-white border border-slate-200 focus:border-[#f6b26b] rounded-xl px-4 py-3 text-sm focus:outline-none font-semibold transition-all shadow-sm"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-extrabold text-slate-500 mb-1.5 uppercase tracking-wide">
-                        Seu E-mail (obrigatório)
-                      </label>
-                      <input
-                        type="email"
-                        placeholder="exemplo@email.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                        className="w-full bg-white border border-slate-200 focus:border-[#f6b26b] rounded-xl px-4 py-3 text-sm focus:outline-none font-semibold transition-all shadow-sm"
-                      />
-                    </div>
+                  <div className="w-full">
+                    <label className="block text-xs font-extrabold text-slate-500 mb-1.5 uppercase tracking-wide">
+                      Seu E-mail (obrigatório)
+                    </label>
+                    <input
+                      type="email"
+                      placeholder="exemplo@email.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="w-full bg-white border border-slate-200 focus:border-[#f6b26b] rounded-xl px-4 py-3 text-sm focus:outline-none font-semibold transition-all shadow-sm"
+                    />
                   </div>
 
                   <div>
                     <label className="block text-xs font-extrabold text-slate-500 mb-1.5 uppercase tracking-wide">
-                      Seu Whatsapp (obrigatório)
+                      Seu Whatsapp (opcional)
                     </label>
                     <input
                       type="text"
                       placeholder="(00) 00000-0000"
                       value={phone}
                       onChange={handlePhoneChange}
-                      required
                       className="w-full bg-white border border-slate-200 focus:border-[#f6b26b] rounded-xl px-4 py-3 text-sm focus:outline-none font-semibold transition-all shadow-sm"
                     />
                   </div>
