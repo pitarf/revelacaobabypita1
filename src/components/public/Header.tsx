@@ -108,7 +108,7 @@ export default function Header({
           {/* Links Desktop */}
           <div className="hidden md:flex items-center gap-6 text-sm font-semibold text-white/95">
             <button onClick={() => scrollToSection("inicio")} className="hover:text-white hover:scale-105 transition-all">Início</button>
-            <button onClick={() => scrollToSection("recados")} className="hover:text-white hover:scale-105 transition-all">Recados</button>
+            <button onClick={() => { router.push("/recados"); setMobileMenuOpen(false); }} className="hover:text-white hover:scale-105 transition-all">Recados</button>
             <button onClick={() => scrollToSection("palpite")} className="hover:text-white hover:scale-105 transition-all">Palpite</button>
             <button onClick={() => scrollToSection("fotos")} className="hover:text-white hover:scale-105 transition-all">Fotos</button>
             <button onClick={() => scrollToSection("presentes")} className="hover:text-white hover:scale-105 transition-all">Presentes</button>
@@ -135,7 +135,7 @@ export default function Header({
             <X className="h-8 w-8 text-white" />
           </button>
           <button onClick={() => scrollToSection("inicio")} className="hover:text-white/80 transition-colors">Início</button>
-          <button onClick={() => scrollToSection("recados")} className="hover:text-white/80 transition-colors">Recados</button>
+          <button onClick={() => { router.push("/recados"); setMobileMenuOpen(false); }} className="hover:text-white/80 transition-colors">Recados</button>
           <button onClick={() => scrollToSection("palpite")} className="hover:text-white/80 transition-colors">Palpite</button>
           <button onClick={() => scrollToSection("fotos")} className="hover:text-white/80 transition-colors">Fotos</button>
           <button onClick={() => scrollToSection("presentes")} className="hover:text-white/80 transition-colors">Presentes</button>

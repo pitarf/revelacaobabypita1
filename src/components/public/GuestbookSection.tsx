@@ -170,11 +170,17 @@ export default function GuestbookSection() {
               ))}
             </div>
             
-            {/* Indicador visual de arrastar para o lado em mobile/desktop */}
-            <div className="text-center mt-2 opacity-50">
-              <span className="text-[10px] uppercase font-bold text-slate-400 tracking-widest flex items-center justify-center gap-2">
+            {/* Indicador visual e Botão Ver Mais */}
+            <div className="flex flex-col items-center gap-4 mt-4">
+              <span className="text-[10px] uppercase font-bold text-slate-400 tracking-widest flex items-center justify-center opacity-50">
                 ← Deslize para ver mais →
               </span>
+              <a 
+                href="/recados"
+                className="inline-flex items-center justify-center gap-2 px-6 py-2 rounded-full border-2 border-[#f6b26b] text-[#f6b26b] hover:bg-[#f6b26b] hover:text-white font-bold transition-all text-sm shadow-sm hover:shadow"
+              >
+                Ler Mural Completo
+              </a>
             </div>
           </div>
         )}
