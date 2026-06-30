@@ -148,7 +148,7 @@ export default function GuestbookSection() {
                   key={msg.id} 
                   className="bg-[#faf6f0]/40 rounded-3xl p-6 border border-baby-beige/70 shadow-sm flex flex-col justify-between hover:shadow-md transition-all min-w-[280px] sm:min-w-[320px] max-w-sm shrink-0 snap-center"
                 >
-                  <p className="text-sm md:text-base text-gray-700 italic mb-5 whitespace-pre-wrap leading-relaxed">
+                  <p className="text-xl md:text-2xl text-slate-800 mb-5 whitespace-pre-wrap leading-relaxed font-serif tracking-wide">
                     "{msg.message}"
                   </p>
                   <div className="flex items-center justify-between border-t border-baby-beige/50 pt-3">

@@ -22,6 +22,21 @@ export default function PhotoGallery() {
   
   const autoplayRef = useRef<NodeJS.Timeout | null>(null);
   const [autoplayActive, setAutoplayActive] = useState(true);
+  const [animClass, setAnimClass] = useState("animate-fade-in");
+
+  const animations = [
+    "animate-fade-in",
+    "animate-slide-in-right",
+    "animate-slide-in-left",
+    "animate-zoom-in-photo",
+    "animate-blur-in"
+  ];
+
+  const changeSlide = (newIndex: number) => {
+    const randomAnim = animations[Math.floor(Math.random() * animations.length)];
+    setAnimClass(randomAnim);
+    setCurrentIndex(newIndex);
+  };
 
   // Carrega as fotos da API
   useEffect(() => {
@@ -46,7 +61,7 @@ export default function PhotoGallery() {
     if (photos.length === 0 || !autoplayActive) return;
 
     autoplayRef.current = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % photos.length);
+      changeSlide((currentIndex + 1) % photos.length);
     }, 4500); // Avança a cada 4.5 segundos
 
     return () => {
@@ -56,12 +71,12 @@ export default function PhotoGallery() {
 
   const nextSlide = () => {
     if (photos.length === 0) return;
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % photos.length);
+    changeSlide((currentIndex + 1) % photos.length);
   };
 
   const prevSlide = () => {
     if (photos.length === 0) return;
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + photos.length) % photos.length);
+    changeSlide((currentIndex - 1 + photos.length) % photos.length);
   };
 
   // Detecção de Gestos de Toque (Swipe)
@@ -147,7 +162,7 @@ export default function PhotoGallery() {
                 key={currentIndex}
                 src={currentPhoto.imageUrl}
                 alt="Foto do Chá Revelação"
-                className="w-full h-full object-cover select-none animate-fade-in"
+                className={`w-full h-full object-cover select-none ${animClass}`}
               />
 
               {/* Ícone de zoom rápido */}

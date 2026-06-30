@@ -41,7 +41,7 @@ export const sendEmail = async (to: string, subject: string, html: string, exist
         "content-type": "application/json"
       },
       body: JSON.stringify({
-        sender: { name: "Chá Revelação", email: "charevelacao@babypita.com" },
+        sender: { name: "Chá Revelação", email: "rfpita.work@gmail.com" },
         to: [{ email: to }],
         subject: subject,
         htmlContent: html
