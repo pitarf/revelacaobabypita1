@@ -189,8 +189,6 @@ export default function AdminVotingPage() {
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {filteredVotes.map((vote) => {
-                    const identifier = vote.voterEmail || vote.voterPhone || "Hash Anônimo";
-
                     return (
                       <tr key={vote.id} className="hover:bg-slate-50/50">
                         {/* Bebê */}
@@ -205,8 +203,13 @@ export default function AdminVotingPage() {
                         </td>
                         
                         {/* Contato */}
-                        <td className="px-6 py-4.5 text-slate-700 font-extrabold">
-                          {identifier}
+                        <td className="px-6 py-4.5">
+                          <div className="text-slate-700 font-extrabold">{vote.voterName || "Hash Anônimo"}</div>
+                          {(vote.voterEmail || vote.voterPhone) && (
+                            <div className="text-[10px] font-medium text-slate-400 mt-0.5">
+                              {vote.voterEmail} {vote.voterEmail && vote.voterPhone && '•'} {vote.voterPhone}
+                            </div>
+                          )}
                         </td>
 
                         {/* Data */}
