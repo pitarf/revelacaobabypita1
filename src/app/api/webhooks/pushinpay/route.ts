@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
         where: { id: payment.id },
         data: {
           status: "approved",
-          netValue: Number(payment.value) - 1.99, // Considerando taxa de 1.99 da PushinPay por PIX
+          netValue: parseFloat(payment.value.toString()) - 1.99, // Considerando taxa de 1.99 da PushinPay por PIX
           feeValue: 1.99,
         }
       });
