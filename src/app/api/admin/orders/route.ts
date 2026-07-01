@@ -165,14 +165,12 @@ export async function DELETE(req: NextRequest) {
       if (!order) continue;
 
       await prisma.$transaction(async (tx) => {
-        // Devolver o estoque se o pedido estava aprovado
-        if (order.paymentStatus === "approved") {
-          for (const item of order.orderItems) {
-            await tx.gift.update({
-              where: { id: item.giftId },
-              data: { chosenQuantity: { decrement: item.quantity } },
-            });
-          }
+        // Devolver o estoque (reservado no checkout) independente do status de aprovação
+        for (const item of order.orderItems) {
+          await tx.gift.update({
+            where: { id: item.giftId },
+            data: { chosenQuantity: { decrement: item.quantity } },
+          });
         }
 
         await tx.orderItem.deleteMany({ where: { orderId: currentId } });
