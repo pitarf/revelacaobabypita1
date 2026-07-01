@@ -8,9 +8,10 @@ import { toast } from "sonner";
 interface Vote {
   id: string;
   babyName: string;
+  voterName: string | null;
   voterEmail: string | null;
   voterPhone: string | null;
-  ipAddress: string | null;
+  voterIp: string | null;
   createdAt: string;
 }
 
