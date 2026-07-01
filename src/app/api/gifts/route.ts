@@ -81,6 +81,7 @@ export async function GET(req: NextRequest) {
       // Por relevância/prioridade (ordem definida no painel e ordenado por destaque primeiro)
       orderOption = [
         { isFeatured: "desc" },
+        { category: { order: "asc" } },
         { order: "asc" },
         { name: "asc" },
       ];
