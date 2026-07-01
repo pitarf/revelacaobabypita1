@@ -376,10 +376,10 @@ export default function GiftList({ onOpenCart, onDirectCheckout }: GiftListProps
                       </div>
 
                       {/* Preço e Botão */}
-                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-2 mt-2">
-                        <div className="flex flex-col">
-                          <span className="text-[9px] text-gray-400 font-bold uppercase">Valor</span>
-                          <span className="text-base font-black text-gray-700">
+                      <div className="flex flex-wrap items-center justify-between gap-2 mt-2">
+                        <div className="flex flex-col min-w-0">
+                          <span className="text-[9px] text-gray-400 font-bold uppercase truncate">Valor</span>
+                          <span className="text-sm xl:text-base font-black text-gray-700 truncate">
                             {gift.value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
                           </span>
                         </div>
@@ -392,7 +392,7 @@ export default function GiftList({ onOpenCart, onDirectCheckout }: GiftListProps
                             }
                           }}
                           disabled={isEsgotado}
-                          className={`w-full sm:w-auto px-5 py-2.5 rounded-full text-xs font-black shadow-sm transition-all active:scale-95 ${
+                          className={`flex-shrink-0 px-3 py-2 rounded-full text-[11px] font-black shadow-sm transition-all active:scale-95 ${
                             isEsgotado
                               ? "bg-gray-150 text-gray-400 cursor-not-allowed shadow-none"
                               : "bg-gradient-to-r from-baby-blue to-baby-pink text-white hover:shadow-md hover:scale-105"
