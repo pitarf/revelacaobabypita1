@@ -76,8 +76,7 @@ export default function AdminSidebar() {
     { name: "Mídias & Galeria", path: "/admin/midias", icon: ImageIcon },
     { name: "Extrato Financeiro", path: "/admin/extrato", icon: DollarSign },
     { name: "Histórico de E-mails", path: "/admin/emails", icon: Mail },
-    { name: "Personalização", path: "/admin/personalizacao", icon: Paintbrush },
-    { name: "Configurações", path: "/admin/configuracoes", icon: Settings },
+    { name: "Configurações & Temas", path: "/admin/configuracoes", icon: Settings },
   ];
 
   return (
