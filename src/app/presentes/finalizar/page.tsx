@@ -301,13 +301,21 @@ export default function CheckoutPage() {
                   {cartItems.map((item) => (
                     <div key={item.id} className="flex justify-between items-center text-gray-600">
                       <span className="truncate pr-4 font-semibold">{item.name} <strong className="text-gray-400">x{item.quantity}</strong></span>
-                      <span className="font-extrabold">{item.subtotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                      <span className="font-extrabold">
+                        {item.subtotal % 1 === 0 
+                          ? `R$ ${item.subtotal.toLocaleString("pt-BR")}` 
+                          : item.subtotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                      </span>
                     </div>
                   ))}
                 </div>
                 <div className="border-t border-baby-beige mt-3 pt-3 flex justify-between items-center text-sm font-black text-gray-700">
                   <span>Valor Total</span>
-                  <span>{totalValue.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                  <span>
+                    {totalValue % 1 === 0 
+                      ? `R$ ${totalValue.toLocaleString("pt-BR")}` 
+                      : totalValue.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                  </span>
                 </div>
               </div>
 
