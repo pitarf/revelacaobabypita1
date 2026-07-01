@@ -114,11 +114,31 @@ export async function GET(req: NextRequest) {
     });
 
     // Formata os decimais para números para facilitar o consumo no React
-    const formattedGifts = filteredGifts.map((gift) => ({
+    let formattedGifts = filteredGifts.map((gift) => ({
       ...gift,
       value: parseFloat(gift.value.toString()),
       remainingQuantity: Math.max(0, gift.maxQuantity - gift.chosenQuantity),
     }));
+
+    // Regra de ordenação personalizada padrão
+    if (!orderBy) {
+      formattedGifts = formattedGifts.sort((a, b) => {
+        const aIsFralda = a.name.toLowerCase().includes('fralda') || (a.category && a.category.name.toLowerCase().includes('fralda'));
+        const bIsFralda = b.name.toLowerCase().includes('fralda') || (b.category && b.category.name.toLowerCase().includes('fralda'));
+
+        // 1. Fraldas primeiro
+        if (aIsFralda && !bIsFralda) return -1;
+        if (!aIsFralda && bIsFralda) return 1;
+
+        // 2. Se ambas são fraldas, menor valor primeiro
+        if (aIsFralda && bIsFralda) {
+          return a.value - b.value;
+        }
+
+        // 3. Se nenhuma é fralda, ordem alfabética
+        return a.name.localeCompare(b.name);
+      });
+    }
 
     return NextResponse.json({
       success: true,
