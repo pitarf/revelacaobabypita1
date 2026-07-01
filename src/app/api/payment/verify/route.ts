@@ -76,8 +76,8 @@ export async function GET(req: NextRequest) {
             where: { id: payment.id },
             data: {
               status: "approved",
-              netValue: Number(payment.value) - 1.99,
-              feeValue: 1.99,
+              netValue: parseFloat(payment.value.toString()) - 0.35,
+              feeValue: 0.35,
             }
           });
 
@@ -86,12 +86,8 @@ export async function GET(req: NextRequest) {
             data: { paymentStatus: "approved" }
           });
 
-          for (const item of order.orderItems) {
-            await tx.gift.update({
-              where: { id: item.giftId },
-              data: { chosenQuantity: { increment: item.quantity } }
-            });
-          }
+          // Nota: NÃO incrementamos o chosenQuantity aqui, pois o estoque 
+          // já foi garantido e reservado no momento da geração do PIX (Checkout).
         });
 
         // Enviar email
