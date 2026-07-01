@@ -265,7 +265,7 @@ export default function AdminDashboardPage() {
                       <td className="px-4 py-3 text-slate-800 font-extrabold">
                         {ord.totalValue.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
                       </td>
-                      <td className="px-4 py-3 uppercase text-[10px] font-bold">{ord.paymentMethod}</td>
+                      <td className="px-4 py-3 uppercase text-[10px] font-bold">{ord.paymentMethod === 'personal' ? 'PESSOALMENTE' : ord.paymentMethod}</td>
                       <td className="px-4 py-3">
                         <span className={`px-2 py-0.5 rounded-md text-[9px] font-bold ${
                           ord.paymentStatus === "approved"

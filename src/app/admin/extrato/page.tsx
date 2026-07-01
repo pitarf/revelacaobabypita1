@@ -618,7 +618,7 @@ export default function AdminLedgerPage() {
                         </td>
 
                         {/* Método */}
-                        <td className="px-6 py-4.5 uppercase text-[10px] font-bold text-slate-500">{ord.paymentMethod}</td>
+                        <td className="px-6 py-4.5 uppercase text-[10px] font-bold text-slate-500">{ord.paymentMethod === 'personal' ? 'PESSOALMENTE' : ord.paymentMethod}</td>
 
                         {/* Status Pagamento */}
                         <td className="px-6 py-4.5">
