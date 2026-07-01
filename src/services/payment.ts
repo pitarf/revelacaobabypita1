@@ -139,7 +139,7 @@ export async function createPushinPayPixPayment(
 
     const payload: any = {
       value: amountInCents,
-      webhook_url: `${appUrl}/api/webhooks/pushinpay`
+      webhook_url: `${appUrl}/api/webhooks/pushinpay?orderCode=${orderCode}`
     };
 
     if (process.env.PIX_PAYER_DOCUMENT) {

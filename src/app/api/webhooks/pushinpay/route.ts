@@ -28,27 +28,50 @@ export async function POST(req: NextRequest) {
 
     const transactionId = body.transaction_id || body.id;
     const status = body.status;
+    const orderCode = req.nextUrl.searchParams.get("orderCode");
 
-    if (!transactionId || !status) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    if (!status) {
+      return NextResponse.json({ error: "Missing status field" }, { status: 400 });
     }
 
     if (status !== "paid" && status !== "approved") {
       return NextResponse.json({ message: "Ignored status" }, { status: 200 });
     }
 
-    // Busca o pagamento
-    const payment = await prisma.payment.findFirst({
-      where: { transactionId },
-      include: {
-        order: {
-          include: { orderItems: { include: { gift: true } } }
-        }
+    // Busca o pagamento. Prioriza buscar pelo código do pedido que enviamos na URL do webhook
+    let payment = null;
+    
+    if (orderCode) {
+      const order = await prisma.order.findUnique({
+        where: { code: orderCode },
+        include: { payments: true }
+      });
+      if (order && order.payments.length > 0) {
+        payment = await prisma.payment.findUnique({
+          where: { id: order.payments[0].id },
+          include: {
+            order: {
+              include: { orderItems: { include: { gift: true } } }
+            }
+          }
+        });
       }
-    });
+    }
+
+    // Fallback para buscar pelo transactionId
+    if (!payment && transactionId) {
+      payment = await prisma.payment.findFirst({
+        where: { transactionId },
+        include: {
+          order: {
+            include: { orderItems: { include: { gift: true } } }
+          }
+        }
+      });
+    }
 
     if (!payment) {
-      return NextResponse.json({ error: "Payment not found", searchedTransactionId: transactionId, receivedBody: body }, { status: 404 });
+      return NextResponse.json({ error: "Payment not found", searchedTransactionId: transactionId, searchedOrderCode: orderCode, receivedBody: body }, { status: 404 });
     }
 
     if (payment.status === "approved") {
