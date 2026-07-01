@@ -84,8 +84,11 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch (error: any) {
     console.error("[Webhook PushinPay] Erro no processamento:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error", details: error?.message || String(error) }, 
+      { status: 500 }
+    );
   }
 }
