@@ -121,7 +121,7 @@ export async function GET(req: NextRequest) {
     }));
 
     // Regra de ordenação personalizada padrão
-    if (!orderBy) {
+    if (!orderBy || orderBy === "relevant") {
       formattedGifts = formattedGifts.sort((a, b) => {
         const aIsFralda = a.name.toLowerCase().includes('fralda') || (a.category && a.category.name.toLowerCase().includes('fralda'));
         const bIsFralda = b.name.toLowerCase().includes('fralda') || (b.category && b.category.name.toLowerCase().includes('fralda'));
