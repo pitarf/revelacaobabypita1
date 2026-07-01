@@ -376,11 +376,16 @@ export default function GiftList({ onOpenCart, onDirectCheckout }: GiftListProps
                       </div>
 
                       {/* Preço e Botão */}
-                      <div className="flex flex-wrap items-center justify-between gap-2 mt-2">
+                      <div className="flex items-center justify-between gap-1.5 mt-2">
                         <div className="flex flex-col min-w-0">
                           <span className="text-[9px] text-gray-400 font-bold uppercase truncate">Valor</span>
-                          <span className="text-sm xl:text-base font-black text-gray-700 truncate">
-                            {gift.value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                          <span className="text-sm font-black text-gray-700 truncate tracking-tight">
+                            {gift.value.toLocaleString("pt-BR", { 
+                              style: "currency", 
+                              currency: "BRL",
+                              minimumFractionDigits: gift.value % 1 === 0 ? 0 : 2,
+                              maximumFractionDigits: 2
+                            })}
                           </span>
                         </div>
 
