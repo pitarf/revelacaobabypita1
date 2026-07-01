@@ -110,6 +110,7 @@ model Gift {
   chosenQuantity       Int         @default(0)
   externalLink         String?
   isFeatured           Boolean     @default(false)
+  isGiftCard           Boolean     @default(false) // Vale Presente de valor variável
   order                Int         @default(0)
   status               String      @default("available") // available, reserved, out_of_stock, inactive
   allowedPaymentMethods String    @default("pix,card,personal,link") // separadas por vírgula
@@ -210,6 +211,7 @@ model CartItem {
   cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
   giftId    String
   quantity  Int      @default(1)
+  customPrice Decimal? @db.Decimal(10, 2) // Valor customizado (Ex: Vale Presente)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

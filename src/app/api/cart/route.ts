@@ -73,7 +73,11 @@ export async function GET(req: NextRequest) {
     // Calcula os totais do carrinho atualizados
     let totalValue = 0;
     const formattedItems = cleanedItems.map((item) => {
-      const price = parseFloat(item.gift.value.toString());
+      // Usa customPrice se for um Vale Presente
+      const price = item.customPrice 
+        ? parseFloat(item.customPrice.toString()) 
+        : parseFloat(item.gift.value.toString());
+      
       const subtotal = price * item.quantity;
       totalValue += subtotal;
 
@@ -86,6 +90,7 @@ export async function GET(req: NextRequest) {
         price,
         quantity: item.quantity,
         subtotal,
+        isGiftCard: item.gift.isGiftCard,
         available: Math.max(0, item.gift.maxQuantity - item.gift.chosenQuantity),
         externalLink: item.gift.externalLink,
         allowedPaymentMethods: item.gift.allowedPaymentMethods || "pix,card,personal,link",
@@ -107,7 +112,7 @@ export async function GET(req: NextRequest) {
 // POST /api/cart - Adiciona, atualiza ou remove itens do carrinho
 export async function POST(req: NextRequest) {
   try {
-    const { sessionId, giftId, action, quantity } = await req.json();
+    const { sessionId, giftId, action, quantity, customPrice } = await req.json();
 
     if (!sessionId || !giftId || !action) {
       return NextResponse.json({ error: "Parâmetros insuficientes." }, { status: 400 });
@@ -164,7 +169,10 @@ export async function POST(req: NextRequest) {
       if (existingItem) {
         await prisma.cartItem.update({
           where: { id: existingItem.id },
-          data: { quantity: targetQty },
+          data: { 
+            quantity: targetQty,
+            ...(customPrice !== undefined && { customPrice })
+          },
         });
       } else {
         await prisma.cartItem.create({
@@ -172,6 +180,7 @@ export async function POST(req: NextRequest) {
             cartId: cart.id,
             giftId: gift.id,
             quantity: targetQty,
+            ...(customPrice !== undefined && { customPrice })
           },
         });
       }
@@ -194,7 +203,10 @@ export async function POST(req: NextRequest) {
         if (existingItem) {
           await prisma.cartItem.update({
             where: { id: existingItem.id },
-            data: { quantity: targetQty },
+            data: { 
+              quantity: targetQty,
+              ...(customPrice !== undefined && { customPrice })
+            },
           });
         } else {
           await prisma.cartItem.create({
@@ -202,6 +214,7 @@ export async function POST(req: NextRequest) {
               cartId: cart.id,
               giftId: gift.id,
               quantity: targetQty,
+              ...(customPrice !== undefined && { customPrice })
             },
           });
         }

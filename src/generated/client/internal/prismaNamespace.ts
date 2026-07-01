@@ -2116,6 +2116,7 @@ export const GiftScalarFieldEnum = {
   chosenQuantity: 'chosenQuantity',
   externalLink: 'externalLink',
   isFeatured: 'isFeatured',
+  isGiftCard: 'isGiftCard',
   order: 'order',
   status: 'status',
   allowedPaymentMethods: 'allowedPaymentMethods',
@@ -2214,6 +2215,7 @@ export const CartItemScalarFieldEnum = {
   cartId: 'cartId',
   giftId: 'giftId',
   quantity: 'quantity',
+  customPrice: 'customPrice',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

@@ -22,6 +22,7 @@ interface GiftItem {
   remainingQuantity: number;
   externalLink: string | null;
   isFeatured: boolean;
+  isGiftCard?: boolean;
   status: string;
   category: Category;
 }
@@ -48,6 +49,10 @@ export default function GiftList({ onOpenCart, onDirectCheckout }: GiftListProps
   
   // Painel de Filtros Mobile
   const [filtersOpen, setFiltersOpen] = useState(false);
+
+  // Modal Vale Presente
+  const [giftCardOpen, setGiftCardOpen] = useState<{ id: string, name: string } | null>(null);
+  const [giftCardAmount, setGiftCardAmount] = useState<string>("50");
 
   // Estados temporários do modal de filtros
   const [tempCategory, setTempCategory] = useState("todos");
@@ -380,20 +385,28 @@ export default function GiftList({ onOpenCart, onDirectCheckout }: GiftListProps
                         <div className="flex flex-col min-w-0">
                           <span className="text-[9px] text-gray-400 font-bold uppercase truncate">Valor</span>
                           <span className="text-sm font-black text-gray-700 truncate tracking-tight">
-                            {gift.value.toLocaleString("pt-BR", { 
-                              style: "currency", 
-                              currency: "BRL",
-                              minimumFractionDigits: gift.value % 1 === 0 ? 0 : 2,
-                              maximumFractionDigits: 2
-                            })}
+                            {gift.isGiftCard ? (
+                              "Livre"
+                            ) : (
+                              gift.value.toLocaleString("pt-BR", { 
+                                style: "currency", 
+                                currency: "BRL",
+                                minimumFractionDigits: gift.value % 1 === 0 ? 0 : 2,
+                                maximumFractionDigits: 2
+                              })
+                            )}
                           </span>
                         </div>
 
                         <button
                           onClick={async () => {
-                            const success = await addToCart(gift.id);
-                            if (success && onDirectCheckout) {
-                              onDirectCheckout();
+                            if (gift.isGiftCard) {
+                              setGiftCardOpen({ id: gift.id, name: gift.name });
+                            } else {
+                              const success = await addToCart(gift.id);
+                              if (success && onDirectCheckout) {
+                                onDirectCheckout();
+                              }
                             }
                           }}
                           disabled={isEsgotado}
@@ -528,6 +541,59 @@ export default function GiftList({ onOpenCart, onDirectCheckout }: GiftListProps
               </button>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* Modal Vale Presente */}
+      {giftCardOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
+          <div className="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl relative animate-in fade-in zoom-in duration-200">
+            <h3 className="text-xl font-black text-gray-800 text-center mb-2">Vale Presente</h3>
+            <p className="text-sm text-gray-500 text-center mb-6 leading-relaxed">
+              Defina o valor inteiro (R$) com que deseja presentear.
+            </p>
+
+            <div className="relative mb-6">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-lg">
+                R$
+              </span>
+              <input
+                type="number"
+                min="10"
+                step="1"
+                value={giftCardAmount}
+                onChange={(e) => setGiftCardAmount(e.target.value.replace(/\D/g, ""))}
+                className="w-full bg-[#faf6f0] border-2 border-[#f6b26b] text-gray-800 px-4 py-4 pl-12 rounded-2xl font-extrabold text-2xl outline-none shadow-sm transition-all focus:ring-4 focus:ring-[#f6b26b]/20 text-center"
+                placeholder="Ex: 50"
+              />
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setGiftCardOpen(null)}
+                className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 rounded-full font-bold transition-all"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={async () => {
+                  const val = parseInt(giftCardAmount);
+                  if (val >= 10) {
+                    const success = await addToCart(giftCardOpen.id, 1, val);
+                    if (success) {
+                      setGiftCardOpen(null);
+                      if (onDirectCheckout) onDirectCheckout();
+                    }
+                  } else {
+                    toast.error("O valor mínimo para o Vale Presente é R$ 10,00.");
+                  }
+                }}
+                className="flex-1 bg-[#f6b26b] hover:bg-[#e09d56] text-white py-3 rounded-full font-bold shadow-md transition-all active:scale-95"
+              >
+                Confirmar
+              </button>
+            </div>
           </div>
         </div>
       )}

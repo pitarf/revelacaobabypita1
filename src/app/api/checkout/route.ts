@@ -80,11 +80,12 @@ export async function POST(req: NextRequest) {
           );
         }
 
-        totalValue += parseFloat(gift.value.toString()) * item.quantity;
+        const itemPrice = item.customPrice ? parseFloat(item.customPrice.toString()) : parseFloat(gift.value.toString());
+        totalValue += itemPrice * item.quantity;
         giftsToUpdate.push({
           giftId: gift.id,
           newChosenQuantity: gift.chosenQuantity + item.quantity,
-          price: parseFloat(gift.value.toString()),
+          price: itemPrice,
           name: gift.name,
           quantity: item.quantity,
         });

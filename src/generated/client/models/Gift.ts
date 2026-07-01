@@ -51,6 +51,7 @@ export type GiftMinAggregateOutputType = {
   chosenQuantity: number | null
   externalLink: string | null
   isFeatured: boolean | null
+  isGiftCard: boolean | null
   order: number | null
   status: string | null
   allowedPaymentMethods: string | null
@@ -69,6 +70,7 @@ export type GiftMaxAggregateOutputType = {
   chosenQuantity: number | null
   externalLink: string | null
   isFeatured: boolean | null
+  isGiftCard: boolean | null
   order: number | null
   status: string | null
   allowedPaymentMethods: string | null
@@ -87,6 +89,7 @@ export type GiftCountAggregateOutputType = {
   chosenQuantity: number
   externalLink: number
   isFeatured: number
+  isGiftCard: number
   order: number
   status: number
   allowedPaymentMethods: number
@@ -121,6 +124,7 @@ export type GiftMinAggregateInputType = {
   chosenQuantity?: true
   externalLink?: true
   isFeatured?: true
+  isGiftCard?: true
   order?: true
   status?: true
   allowedPaymentMethods?: true
@@ -139,6 +143,7 @@ export type GiftMaxAggregateInputType = {
   chosenQuantity?: true
   externalLink?: true
   isFeatured?: true
+  isGiftCard?: true
   order?: true
   status?: true
   allowedPaymentMethods?: true
@@ -157,6 +162,7 @@ export type GiftCountAggregateInputType = {
   chosenQuantity?: true
   externalLink?: true
   isFeatured?: true
+  isGiftCard?: true
   order?: true
   status?: true
   allowedPaymentMethods?: true
@@ -262,6 +268,7 @@ export type GiftGroupByOutputType = {
   chosenQuantity: number
   externalLink: string | null
   isFeatured: boolean
+  isGiftCard: boolean
   order: number
   status: string
   allowedPaymentMethods: string
@@ -303,6 +310,7 @@ export type GiftWhereInput = {
   chosenQuantity?: Prisma.IntFilter<"Gift"> | number
   externalLink?: Prisma.StringNullableFilter<"Gift"> | string | null
   isFeatured?: Prisma.BoolFilter<"Gift"> | boolean
+  isGiftCard?: Prisma.BoolFilter<"Gift"> | boolean
   order?: Prisma.IntFilter<"Gift"> | number
   status?: Prisma.StringFilter<"Gift"> | string
   allowedPaymentMethods?: Prisma.StringFilter<"Gift"> | string
@@ -323,6 +331,7 @@ export type GiftOrderByWithRelationInput = {
   chosenQuantity?: Prisma.SortOrder
   externalLink?: Prisma.SortOrderInput | Prisma.SortOrder
   isFeatured?: Prisma.SortOrder
+  isGiftCard?: Prisma.SortOrder
   order?: Prisma.SortOrder
   status?: Prisma.SortOrder
   allowedPaymentMethods?: Prisma.SortOrder
@@ -346,6 +355,7 @@ export type GiftWhereUniqueInput = Prisma.AtLeast<{
   chosenQuantity?: Prisma.IntFilter<"Gift"> | number
   externalLink?: Prisma.StringNullableFilter<"Gift"> | string | null
   isFeatured?: Prisma.BoolFilter<"Gift"> | boolean
+  isGiftCard?: Prisma.BoolFilter<"Gift"> | boolean
   order?: Prisma.IntFilter<"Gift"> | number
   status?: Prisma.StringFilter<"Gift"> | string
   allowedPaymentMethods?: Prisma.StringFilter<"Gift"> | string
@@ -366,6 +376,7 @@ export type GiftOrderByWithAggregationInput = {
   chosenQuantity?: Prisma.SortOrder
   externalLink?: Prisma.SortOrderInput | Prisma.SortOrder
   isFeatured?: Prisma.SortOrder
+  isGiftCard?: Prisma.SortOrder
   order?: Prisma.SortOrder
   status?: Prisma.SortOrder
   allowedPaymentMethods?: Prisma.SortOrder
@@ -392,6 +403,7 @@ export type GiftScalarWhereWithAggregatesInput = {
   chosenQuantity?: Prisma.IntWithAggregatesFilter<"Gift"> | number
   externalLink?: Prisma.StringNullableWithAggregatesFilter<"Gift"> | string | null
   isFeatured?: Prisma.BoolWithAggregatesFilter<"Gift"> | boolean
+  isGiftCard?: Prisma.BoolWithAggregatesFilter<"Gift"> | boolean
   order?: Prisma.IntWithAggregatesFilter<"Gift"> | number
   status?: Prisma.StringWithAggregatesFilter<"Gift"> | string
   allowedPaymentMethods?: Prisma.StringWithAggregatesFilter<"Gift"> | string
@@ -409,6 +421,7 @@ export type GiftCreateInput = {
   chosenQuantity?: number
   externalLink?: string | null
   isFeatured?: boolean
+  isGiftCard?: boolean
   order?: number
   status?: string
   allowedPaymentMethods?: string
@@ -429,6 +442,7 @@ export type GiftUncheckedCreateInput = {
   chosenQuantity?: number
   externalLink?: string | null
   isFeatured?: boolean
+  isGiftCard?: boolean
   order?: number
   status?: string
   allowedPaymentMethods?: string
@@ -447,6 +461,7 @@ export type GiftUpdateInput = {
   chosenQuantity?: Prisma.IntFieldUpdateOperationsInput | number
   externalLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGiftCard?: Prisma.BoolFieldUpdateOperationsInput | boolean
   order?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
   allowedPaymentMethods?: Prisma.StringFieldUpdateOperationsInput | string
@@ -467,6 +482,7 @@ export type GiftUncheckedUpdateInput = {
   chosenQuantity?: Prisma.IntFieldUpdateOperationsInput | number
   externalLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGiftCard?: Prisma.BoolFieldUpdateOperationsInput | boolean
   order?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
   allowedPaymentMethods?: Prisma.StringFieldUpdateOperationsInput | string
@@ -486,6 +502,7 @@ export type GiftCreateManyInput = {
   chosenQuantity?: number
   externalLink?: string | null
   isFeatured?: boolean
+  isGiftCard?: boolean
   order?: number
   status?: string
   allowedPaymentMethods?: string
@@ -503,6 +520,7 @@ export type GiftUpdateManyMutationInput = {
   chosenQuantity?: Prisma.IntFieldUpdateOperationsInput | number
   externalLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGiftCard?: Prisma.BoolFieldUpdateOperationsInput | boolean
   order?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
   allowedPaymentMethods?: Prisma.StringFieldUpdateOperationsInput | string
@@ -521,6 +539,7 @@ export type GiftUncheckedUpdateManyInput = {
   chosenQuantity?: Prisma.IntFieldUpdateOperationsInput | number
   externalLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGiftCard?: Prisma.BoolFieldUpdateOperationsInput | boolean
   order?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
   allowedPaymentMethods?: Prisma.StringFieldUpdateOperationsInput | string
@@ -549,6 +568,7 @@ export type GiftCountOrderByAggregateInput = {
   chosenQuantity?: Prisma.SortOrder
   externalLink?: Prisma.SortOrder
   isFeatured?: Prisma.SortOrder
+  isGiftCard?: Prisma.SortOrder
   order?: Prisma.SortOrder
   status?: Prisma.SortOrder
   allowedPaymentMethods?: Prisma.SortOrder
@@ -574,6 +594,7 @@ export type GiftMaxOrderByAggregateInput = {
   chosenQuantity?: Prisma.SortOrder
   externalLink?: Prisma.SortOrder
   isFeatured?: Prisma.SortOrder
+  isGiftCard?: Prisma.SortOrder
   order?: Prisma.SortOrder
   status?: Prisma.SortOrder
   allowedPaymentMethods?: Prisma.SortOrder
@@ -592,6 +613,7 @@ export type GiftMinOrderByAggregateInput = {
   chosenQuantity?: Prisma.SortOrder
   externalLink?: Prisma.SortOrder
   isFeatured?: Prisma.SortOrder
+  isGiftCard?: Prisma.SortOrder
   order?: Prisma.SortOrder
   status?: Prisma.SortOrder
   allowedPaymentMethods?: Prisma.SortOrder
@@ -685,6 +707,7 @@ export type GiftCreateWithoutCategoryInput = {
   chosenQuantity?: number
   externalLink?: string | null
   isFeatured?: boolean
+  isGiftCard?: boolean
   order?: number
   status?: string
   allowedPaymentMethods?: string
@@ -703,6 +726,7 @@ export type GiftUncheckedCreateWithoutCategoryInput = {
   chosenQuantity?: number
   externalLink?: string | null
   isFeatured?: boolean
+  isGiftCard?: boolean
   order?: number
   status?: string
   allowedPaymentMethods?: string
@@ -751,6 +775,7 @@ export type GiftScalarWhereInput = {
   chosenQuantity?: Prisma.IntFilter<"Gift"> | number
   externalLink?: Prisma.StringNullableFilter<"Gift"> | string | null
   isFeatured?: Prisma.BoolFilter<"Gift"> | boolean
+  isGiftCard?: Prisma.BoolFilter<"Gift"> | boolean
   order?: Prisma.IntFilter<"Gift"> | number
   status?: Prisma.StringFilter<"Gift"> | string
   allowedPaymentMethods?: Prisma.StringFilter<"Gift"> | string
@@ -768,6 +793,7 @@ export type GiftCreateWithoutOrderItemsInput = {
   chosenQuantity?: number
   externalLink?: string | null
   isFeatured?: boolean
+  isGiftCard?: boolean
   order?: number
   status?: string
   allowedPaymentMethods?: string
@@ -787,6 +813,7 @@ export type GiftUncheckedCreateWithoutOrderItemsInput = {
   chosenQuantity?: number
   externalLink?: string | null
   isFeatured?: boolean
+  isGiftCard?: boolean
   order?: number
   status?: string
   allowedPaymentMethods?: string
@@ -820,6 +847,7 @@ export type GiftUpdateWithoutOrderItemsInput = {
   chosenQuantity?: Prisma.IntFieldUpdateOperationsInput | number
   externalLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGiftCard?: Prisma.BoolFieldUpdateOperationsInput | boolean
   order?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
   allowedPaymentMethods?: Prisma.StringFieldUpdateOperationsInput | string
@@ -839,6 +867,7 @@ export type GiftUncheckedUpdateWithoutOrderItemsInput = {
   chosenQuantity?: Prisma.IntFieldUpdateOperationsInput | number
   externalLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGiftCard?: Prisma.BoolFieldUpdateOperationsInput | boolean
   order?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
   allowedPaymentMethods?: Prisma.StringFieldUpdateOperationsInput | string
@@ -856,6 +885,7 @@ export type GiftCreateManyCategoryInput = {
   chosenQuantity?: number
   externalLink?: string | null
   isFeatured?: boolean
+  isGiftCard?: boolean
   order?: number
   status?: string
   allowedPaymentMethods?: string
@@ -873,6 +903,7 @@ export type GiftUpdateWithoutCategoryInput = {
   chosenQuantity?: Prisma.IntFieldUpdateOperationsInput | number
   externalLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGiftCard?: Prisma.BoolFieldUpdateOperationsInput | boolean
   order?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
   allowedPaymentMethods?: Prisma.StringFieldUpdateOperationsInput | string
@@ -891,6 +922,7 @@ export type GiftUncheckedUpdateWithoutCategoryInput = {
   chosenQuantity?: Prisma.IntFieldUpdateOperationsInput | number
   externalLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGiftCard?: Prisma.BoolFieldUpdateOperationsInput | boolean
   order?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
   allowedPaymentMethods?: Prisma.StringFieldUpdateOperationsInput | string
@@ -909,6 +941,7 @@ export type GiftUncheckedUpdateManyWithoutCategoryInput = {
   chosenQuantity?: Prisma.IntFieldUpdateOperationsInput | number
   externalLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isGiftCard?: Prisma.BoolFieldUpdateOperationsInput | boolean
   order?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
   allowedPaymentMethods?: Prisma.StringFieldUpdateOperationsInput | string
@@ -958,6 +991,7 @@ export type GiftSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   chosenQuantity?: boolean
   externalLink?: boolean
   isFeatured?: boolean
+  isGiftCard?: boolean
   order?: boolean
   status?: boolean
   allowedPaymentMethods?: boolean
@@ -979,6 +1013,7 @@ export type GiftSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   chosenQuantity?: boolean
   externalLink?: boolean
   isFeatured?: boolean
+  isGiftCard?: boolean
   order?: boolean
   status?: boolean
   allowedPaymentMethods?: boolean
@@ -998,6 +1033,7 @@ export type GiftSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   chosenQuantity?: boolean
   externalLink?: boolean
   isFeatured?: boolean
+  isGiftCard?: boolean
   order?: boolean
   status?: boolean
   allowedPaymentMethods?: boolean
@@ -1017,6 +1053,7 @@ export type GiftSelectScalar = {
   chosenQuantity?: boolean
   externalLink?: boolean
   isFeatured?: boolean
+  isGiftCard?: boolean
   order?: boolean
   status?: boolean
   allowedPaymentMethods?: boolean
@@ -1024,7 +1061,7 @@ export type GiftSelectScalar = {
   updatedAt?: boolean
 }
 
-export type GiftOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "imageUrl" | "categoryId" | "value" | "maxQuantity" | "chosenQuantity" | "externalLink" | "isFeatured" | "order" | "status" | "allowedPaymentMethods" | "createdAt" | "updatedAt", ExtArgs["result"]["gift"]>
+export type GiftOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "imageUrl" | "categoryId" | "value" | "maxQuantity" | "chosenQuantity" | "externalLink" | "isFeatured" | "isGiftCard" | "order" | "status" | "allowedPaymentMethods" | "createdAt" | "updatedAt", ExtArgs["result"]["gift"]>
 export type GiftInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
   orderItems?: boolean | Prisma.Gift$orderItemsArgs<ExtArgs>
@@ -1054,6 +1091,7 @@ export type $GiftPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     chosenQuantity: number
     externalLink: string | null
     isFeatured: boolean
+    isGiftCard: boolean
     order: number
     status: string
     allowedPaymentMethods: string
@@ -1494,6 +1532,7 @@ export interface GiftFieldRefs {
   readonly chosenQuantity: Prisma.FieldRef<"Gift", 'Int'>
   readonly externalLink: Prisma.FieldRef<"Gift", 'String'>
   readonly isFeatured: Prisma.FieldRef<"Gift", 'Boolean'>
+  readonly isGiftCard: Prisma.FieldRef<"Gift", 'Boolean'>
   readonly order: Prisma.FieldRef<"Gift", 'Int'>
   readonly status: Prisma.FieldRef<"Gift", 'String'>
   readonly allowedPaymentMethods: Prisma.FieldRef<"Gift", 'String'>

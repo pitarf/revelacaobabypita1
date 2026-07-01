@@ -23,7 +23,7 @@ interface CartContextType {
   loading: boolean;
   sessionId: string;
   cartCount: number;
-  addToCart: (giftId: string, quantity?: number) => Promise<boolean>;
+  addToCart: (giftId: string, quantity?: number, customPrice?: number) => Promise<boolean>;
   updateQuantity: (giftId: string, quantity: number) => Promise<boolean>;
   removeFromCart: (giftId: string) => Promise<boolean>;
   refreshCart: () => Promise<void>;
@@ -80,14 +80,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const addToCart = async (giftId: string, quantity = 1): Promise<boolean> => {
+  const addToCart = async (giftId: string, quantity = 1, customPrice?: number): Promise<boolean> => {
     if (!sessionId) return false;
     try {
       setLoading(true);
       const res = await fetch("/api/cart", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionId, giftId, action: "add", quantity }),
+        body: JSON.stringify({ sessionId, giftId, action: "add", quantity, customPrice }),
       });
 
       const data = await res.json();
