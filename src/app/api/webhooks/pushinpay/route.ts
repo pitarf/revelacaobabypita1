@@ -16,7 +16,14 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const body = await req.json();
+    const rawBody = await req.text();
+    let body: any;
+    try {
+      body = JSON.parse(rawBody);
+    } catch {
+      const searchParams = new URLSearchParams(rawBody);
+      body = Object.fromEntries(searchParams.entries());
+    }
     console.log("[Webhook PushinPay] Notificação recebida:", body);
 
     const transactionId = body.transaction_id || body.id;
