@@ -363,7 +363,7 @@ export default function OrderCompletionPage() {
 
             {isPersonal && (
               <div className="space-y-2.5 text-left text-xs font-semibold text-gray-500">
-                <h4 className="text-sm font-extrabold text-gray-700 font-serif text-center mb-1">Entrega Pessoal</h4>
+                <h4 className="text-sm font-extrabold text-gray-700 font-serif text-center mb-1">Pessoalmente</h4>
                 <p>✔ O presente físico foi reservado no seu nome.</p>
                 <p>✔ Você poderá comprar em qualquer loja de sua preferência e levá-lo no dia da festa.</p>
                 <div className="mt-3 bg-white p-3.5 border border-baby-beige rounded-2xl shadow-inner text-gray-600">

@@ -351,7 +351,7 @@ export default function CheckoutPage() {
                   </button>
                 )}
 
-                {/* Opção 3: Levar Pessoalmente */}
+                {/* Opção 3: Pessoalmente */}
                 {availablePaymentMethods.includes("personal") && (
                   <button
                     type="button"
@@ -364,7 +364,7 @@ export default function CheckoutPage() {
                   >
                     <span className="text-2xl mt-0.5">🎁</span>
                     <div>
-                      <h4 className="text-xs font-black text-gray-700">Levar Pessoalmente</h4>
+                      <h4 className="text-xs font-black text-gray-700">Pessoalmente</h4>
                       <p className="text-[10px] text-gray-400 mt-0.5 font-medium leading-snug">Você mesmo compra o presente físico e entrega pessoalmente no dia e local do Chá Revelação.</p>
                     </div>
                   </button>

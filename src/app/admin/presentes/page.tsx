@@ -629,7 +629,7 @@ export default function AdminGiftsPage() {
                     {[
                       { id: 'pix', label: 'Pix' },
                       { id: 'card', label: 'Cartão de Crédito' },
-                      { id: 'personal', label: 'Entrega Pessoal' },
+                      { id: 'personal', label: 'Pessoalmente' },
                       { id: 'link', label: 'Link de Compra' }
                     ].map(method => (
                       <div key={method.id} className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg p-2.5">

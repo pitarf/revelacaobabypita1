@@ -437,7 +437,7 @@ export default function AdminLedgerPage() {
               <option value="all">Todos os Métodos</option>
               <option value="pix">Pix (Online)</option>
               <option value="card">Cartão de Crédito</option>
-              <option value="personal">Levar Pessoalmente</option>
+              <option value="personal">Pessoalmente</option>
               <option value="link">Comprar pelo Link</option>
             </select>
           </div>

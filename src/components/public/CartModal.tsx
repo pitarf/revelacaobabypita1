@@ -598,7 +598,7 @@ export default function CartModal({ isOpen, onClose, initialStep }: CartModalPro
                       <MapPin className="h-5 w-5" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-extrabold text-slate-800">Levar no dia do Evento</h4>
+                      <h4 className="text-sm font-extrabold text-slate-800">Pessoalmente</h4>
                       <p className="text-xs text-slate-400 font-semibold mt-0.5 leading-normal">
                         Você compra o presente físico e o entrega pessoalmente no Espaço Kolina.
                       </p>
