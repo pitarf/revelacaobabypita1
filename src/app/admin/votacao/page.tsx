@@ -221,7 +221,7 @@ export default function AdminVotingPage() {
                         {/* Ações */}
                         <td className="px-6 py-4.5 text-right flex justify-end gap-2">
                           <button
-                            onClick={() => handleDeleteVote(vote.id, identifier)}
+                            onClick={() => handleDeleteVote(vote.id, vote.voterName || vote.voterEmail || vote.voterPhone || "Hash Anônimo")}
                             className="p-2 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-500 hover:text-rose-700 transition-colors border border-rose-100"
                             title="Remover voto falso/spam"
                           >
