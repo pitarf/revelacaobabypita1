@@ -111,7 +111,7 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      sendRsvpConfirmation(updatedRsvp.email, updatedRsvp.fullName, eventTitle, eventDateStr, locationStr, googleMapsUrl, isAttending, true).catch(console.error);
+      sendRsvpConfirmation(updatedRsvp.email, updatedRsvp.fullName, eventTitle, eventDateStr, locationStr, googleMapsUrl, updatedRsvp.accessCode, isAttending, true).catch(console.error);
 
       // Sincronizar recado para o Mural de Recados se houver um novo recado
       if (notes && notes.trim() && existingRsvp.notes !== notes.trim()) {
@@ -182,7 +182,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    sendRsvpConfirmation(newRsvp.email, newRsvp.fullName, eventTitle, eventDateStr, locationStr, googleMapsUrl, isAttending, false).catch(console.error);
+    sendRsvpConfirmation(newRsvp.email, newRsvp.fullName, eventTitle, eventDateStr, locationStr, googleMapsUrl, newRsvp.accessCode, isAttending, false).catch(console.error);
 
     // Salvar recado no Mural de Recados
     if (notes && notes.trim()) {

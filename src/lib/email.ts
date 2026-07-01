@@ -85,7 +85,7 @@ export const sendEmail = async (to: string, subject: string, html: string, exist
 // Templates
 // ==========================================
 
-export const sendRsvpConfirmation = async (email: string, name: string, eventTitle: string, eventDateStr: string, locationStr: string, googleMapsUrl: string | null, isAttending: boolean = true, isUpdate: boolean = false) => {
+export const sendRsvpConfirmation = async (email: string, name: string, eventTitle: string, eventDateStr: string, locationStr: string, googleMapsUrl: string | null, accessCode: string, isAttending: boolean = true, isUpdate: boolean = false) => {
   let subject = "Recebemos sua confirmação de presença! 🎉";
   if (!isAttending) subject = "Atualização sobre sua presença 😢";
   else if (isUpdate) subject = "Sua confirmação de presença foi atualizada! 🎉";
@@ -98,6 +98,14 @@ export const sendRsvpConfirmation = async (email: string, name: string, eventTit
         </ul>
   ` : '';
 
+  const accessCodeHtml = `
+        <div style="margin: 30px 0; padding: 20px; background-color: #fcf8f2; border-radius: 8px; text-align: center; border: 2px dashed #f6b26b;">
+          <h3 style="color: #f6b26b; margin-top: 0; font-size: 18px;">Seu Código VIP de Acesso</h3>
+          <p style="font-size: 24px; font-weight: 900; letter-spacing: 2px; color: #333; margin: 10px 0;">${accessCode}</p>
+          <p style="font-size: 14px; margin-bottom: 0;">Guarde este código com carinho! Caso você precise alterar alguma informação da sua presença no futuro, basta usar este código no site.</p>
+        </div>
+  `;
+
   const attendingHtml = `
       <div style="text-align: center; padding: 20px; background-color: #fcf8f2; border-radius: 10px 10px 0 0;">
         <h2 style="color: #f6b26b; margin: 0;">${isUpdate ? 'Dados Atualizados!' : 'Obrigado por confirmar!'}</h2>
@@ -107,6 +115,7 @@ export const sendRsvpConfirmation = async (email: string, name: string, eventTit
         <p>${isUpdate ? `Os dados da sua presença no ${eventTitle || "nosso Chá Revelação (Miguel ou Rafaella?)"} foram atualizados com sucesso!` : `Sua presença no ${eventTitle || "nosso Chá Revelação (Miguel ou Rafaella?)"} está confirmadíssima! Estamos muito felizes que você vai compartilhar esse momento especial conosco.`}</p>
         
         ${locationHtml}
+        ${accessCodeHtml}
         
         <div style="margin: 30px 0; padding: 20px; background-color: #f0f8ff; border-radius: 8px; text-align: center;">
           <h3 style="color: #6fa8dc; margin-top: 0;">Ainda não escolheu um presente? 🎁</h3>
