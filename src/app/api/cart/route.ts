@@ -248,7 +248,9 @@ export async function POST(req: NextRequest) {
     let totalValue = 0;
     const formattedItems = (updatedCart?.items || []).map((item) => {
       const g = updatedGiftsMap.get(item.giftId)!;
-      const price = parseFloat(g.value.toString());
+      const price = item.customPrice 
+        ? parseFloat(item.customPrice.toString()) 
+        : parseFloat(g.value.toString());
       const subtotal = price * item.quantity;
       totalValue += subtotal;
 
@@ -261,8 +263,10 @@ export async function POST(req: NextRequest) {
         price,
         quantity: item.quantity,
         subtotal,
+        isGiftCard: g.isGiftCard,
         available: Math.max(0, g.maxQuantity - g.chosenQuantity),
         externalLink: g.externalLink,
+        allowedPaymentMethods: g.allowedPaymentMethods || "pix,card,personal,link",
       };
     });
 
