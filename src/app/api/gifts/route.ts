@@ -123,6 +123,10 @@ export async function GET(req: NextRequest) {
     // Regra de ordenação personalizada padrão
     if (!orderBy || orderBy === "relevant") {
       formattedGifts = formattedGifts.sort((a, b) => {
+        // 0. Destaques (Estrelas) sempre absoluto no topo
+        if (a.isFeatured && !b.isFeatured) return -1;
+        if (!a.isFeatured && b.isFeatured) return 1;
+
         const aIsFralda = a.name.toLowerCase().includes('fralda') || (a.category && a.category.name.toLowerCase().includes('fralda'));
         const bIsFralda = b.name.toLowerCase().includes('fralda') || (b.category && b.category.name.toLowerCase().includes('fralda'));
 
