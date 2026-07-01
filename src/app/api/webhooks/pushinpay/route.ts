@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (!payment) {
-      return NextResponse.json({ error: "Payment not found" }, { status: 404 });
+      return NextResponse.json({ error: "Payment not found", searchedTransactionId: transactionId, receivedBody: body }, { status: 404 });
     }
 
     if (payment.status === "approved") {
