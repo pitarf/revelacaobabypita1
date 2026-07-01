@@ -256,7 +256,9 @@ export default function CartModal({ isOpen, onClose, initialStep }: CartModalPro
                                 {item.name}
                               </h4>
                               <p className="text-sm font-black text-[#5c5bd5] mt-1">
-                                {item.price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                                {item.price % 1 === 0 
+                                  ? `R$ ${item.price.toLocaleString("pt-BR")}` 
+                                  : item.price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
                               </p>
                             </div>
                           </div>
@@ -302,8 +304,10 @@ export default function CartModal({ isOpen, onClose, initialStep }: CartModalPro
                     <div className="space-y-4">
                       <div className="flex justify-between items-baseline">
                         <span className="text-lg font-bold text-slate-500">Total</span>
-                        <span className="text-3xl font-black text-slate-800">
-                          {totalValue.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                        <span className="text-xl sm:text-2xl font-black text-[#5c5bd5]">
+                          {totalValue % 1 === 0 
+                            ? `R$ ${totalValue.toLocaleString("pt-BR")}` 
+                            : totalValue.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
                         </span>
                       </div>
                       <p className="text-xs text-slate-400 font-semibold leading-relaxed">

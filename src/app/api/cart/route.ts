@@ -112,7 +112,9 @@ export async function GET(req: NextRequest) {
 // POST /api/cart - Adiciona, atualiza ou remove itens do carrinho
 export async function POST(req: NextRequest) {
   try {
-    const { sessionId, giftId, action, quantity, customPrice } = await req.json();
+    const payload = await req.json();
+    console.log("CART POST PAYLOAD:", payload);
+    const { sessionId, giftId, action, quantity, customPrice } = payload;
 
     if (!sessionId || !giftId || !action) {
       return NextResponse.json({ error: "Parâmetros insuficientes." }, { status: 400 });
