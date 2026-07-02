@@ -10,6 +10,7 @@ interface Rsvp {
   fullName: string;
   adultsCount: number;
   childrenCount: number;
+  totalGuests: number;
   status: string;
 }
 
