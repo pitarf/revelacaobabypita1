@@ -68,6 +68,7 @@ export default function AdminSidebar() {
 
   const menuItems = [
     { name: "Dashboard", path: "/admin/dashboard", icon: LayoutDashboard },
+    { name: "Lista de Convidados", path: "/admin/convidados", icon: UserCheck },
     { name: "Confirmados (RSVP)", path: "/admin/confirmacoes", icon: Users },
     { name: "Presentes", path: "/admin/presentes", icon: Gift },
     { name: "Categorias", path: "/admin/categorias", icon: Tags },

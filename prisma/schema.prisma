@@ -190,8 +190,22 @@ model Rsvp {
   accessCode      String   @unique // Código seguro para edição/cancelamento
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  guests          Guest[]
 
   @@map("rsvps")
+}
+
+// 11.5. Lista de Convidados Mestra
+model Guest {
+  id        String   @id @default(uuid())
+  name      String
+  group     String?  // Ex: 'Família Rafael', 'Amigos'
+  rsvpId    String?
+  rsvp      Rsvp?    @relation(fields: [rsvpId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("guests")
 }
 
 // 12. Carrinhos (Persistência básica de sessão, caso necessário)
