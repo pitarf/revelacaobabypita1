@@ -18,7 +18,8 @@ import {
   X,
   UserCheck,
   MessageSquare,
-  Mail
+  Mail,
+  ExternalLink
 } from "lucide-react";
 
 export default function AdminSidebar() {
@@ -93,10 +94,10 @@ export default function AdminSidebar() {
       </div>
 
       {/* Sidebar Lateral */}
-      <aside className={`fixed top-0 bottom-0 left-0 z-40 bg-slate-900 text-slate-300 w-64 border-r border-slate-800 p-5 flex flex-col justify-between transition-transform duration-300 md:translate-x-0 ${
+      <aside className={`fixed top-0 bottom-0 left-0 z-40 bg-slate-900 text-slate-300 w-64 border-r border-slate-800 p-5 flex flex-col justify-between transition-transform duration-300 md:translate-x-0 overflow-y-auto ${
         mobileOpen ? "translate-x-0" : "-translate-x-full"
       }`}>
-        <div>
+        <div className="flex-1">
           {/* Cabeçalho do menu */}
           <div className="mb-8 pt-4 pb-4 border-b border-slate-800 text-center">
             <span className="text-lg font-black bg-gradient-to-r from-baby-blue to-baby-pink bg-clip-text text-transparent">
@@ -109,14 +110,14 @@ export default function AdminSidebar() {
           </div>
 
           {/* Links do Menu */}
-          <nav className="space-y-1">
+          <nav className="space-y-1.5">
             {menuItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.path;
 
               return (
                 <button
-                  key={item.path}
+                  key={item.name}
                   onClick={() => {
                     setMobileOpen(false);
                     router.push(item.path);
@@ -135,8 +136,19 @@ export default function AdminSidebar() {
           </nav>
         </div>
 
-        {/* Botão de Logout */}
-        <div className="border-t border-slate-800 pt-4">
+        {/* Rodapé da Sidebar */}
+        <div className="mt-8 pt-4 border-t border-slate-800 space-y-2">
+          <button
+            onClick={() => {
+              setMobileOpen(false);
+              window.open("/", "_blank");
+            }}
+            className="w-full flex items-center gap-3 px-4 py-3 text-xs font-black uppercase tracking-wider rounded-xl text-baby-blue hover:bg-baby-blue/10 transition-all"
+          >
+            <ExternalLink className="h-4.5 w-4.5 flex-none" />
+            <span>Ver Site Público</span>
+          </button>
+
           <button
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-3 text-xs font-black uppercase tracking-wider rounded-xl text-rose-400 hover:bg-rose-950/20 hover:text-rose-300 transition-all active:scale-95"
