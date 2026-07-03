@@ -322,7 +322,7 @@ export default function GuestListPage() {
                   className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c5bd5]/50"
                 >
                   <option value="">-- Não associado / Aguardando --</option>
-                  {rsvps.map(r => (
+                  {[...rsvps].sort((a, b) => a.fullName.localeCompare(b.fullName)).map(r => (
                     <option key={r.id} value={r.id}>
                       {r.fullName} (Confirma {r.totalGuests} pessoa{r.totalGuests > 1 ? 's' : ''}) {r.status !== 'confirmed' ? '- ' + r.status : ''}
                     </option>
