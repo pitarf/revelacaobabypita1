@@ -272,23 +272,23 @@ export default function GuestListPage() {
                                 Confirmado por: {guest.rsvp.fullName}
                               </div>
                             ) : (
-                              <div className="flex items-center gap-2 text-slate-400 text-sm bg-slate-100 px-3 py-1.5 rounded-lg w-fit mb-2">
-                                <Unlink size={14} />
-                                Aguardando Associação
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <div className="flex items-center gap-2 text-slate-400 text-sm bg-slate-100 px-3 py-1.5 rounded-lg w-fit">
+                                  <Unlink size={14} />
+                                  Aguardando
+                                </div>
+                                
+                                <button 
+                                  onClick={() => toggleManualConfirm(guest)}
+                                  className={`flex items-center gap-2 text-sm font-bold px-3 py-1.5 rounded-lg w-fit transition-colors ${guest.isManuallyConfirmed ? 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100' : 'text-slate-500 bg-slate-100 hover:bg-slate-200'}`}
+                                >
+                                  {guest.isManuallyConfirmed ? (
+                                    <><ToggleRight size={18} className="text-emerald-500" /> Confirmado</>
+                                  ) : (
+                                    <><ToggleLeft size={18} /> Confirmar</>
+                                  )}
+                                </button>
                               </div>
-                            )}
-                            
-                            {!guest.rsvp && (
-                              <button 
-                                onClick={() => toggleManualConfirm(guest)}
-                                className={`flex items-center gap-2 text-sm font-bold px-3 py-1.5 rounded-lg w-fit transition-colors ${guest.isManuallyConfirmed ? 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100' : 'text-slate-500 bg-slate-100 hover:bg-slate-200'}`}
-                              >
-                                {guest.isManuallyConfirmed ? (
-                                  <><ToggleRight size={18} className="text-emerald-500" /> Confirmado (Manual)</>
-                                ) : (
-                                  <><ToggleLeft size={18} /> Confirmar (Manual)</>
-                                )}
-                              </button>
                             )}
                           </td>
                           <td className="px-6 py-4 text-right">
@@ -350,30 +350,30 @@ export default function GuestListPage() {
                         </div>
                       </div>
                       
-                      <div className="pt-2 border-t border-slate-100 space-y-2">
+                      <div className="pt-2 border-t border-slate-100">
                         {guest.rsvp ? (
                           <div className="flex items-center gap-2 text-emerald-600 text-sm font-semibold bg-emerald-50 px-3 py-2.5 rounded-lg w-full">
                             <LinkIcon size={14} className="shrink-0" />
                             <span className="truncate">Conf: {guest.rsvp.fullName}</span>
                           </div>
                         ) : (
-                          <div className="flex items-center gap-2 text-slate-400 text-sm font-semibold bg-slate-100 px-3 py-2.5 rounded-lg w-full">
-                            <Unlink size={14} className="shrink-0" />
-                            <span>Aguardando Associação</span>
-                          </div>
-                        )}
+                          <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1.5 text-slate-400 text-sm font-semibold bg-slate-100 px-2 py-2.5 rounded-lg flex-1 justify-center">
+                              <Unlink size={14} className="shrink-0" />
+                              <span className="truncate text-xs">Aguardando</span>
+                            </div>
 
-                        {!guest.rsvp && (
-                          <button 
-                            onClick={() => toggleManualConfirm(guest)}
-                            className={`flex items-center justify-center gap-2 text-sm font-bold px-3 py-2.5 rounded-lg w-full transition-colors ${guest.isManuallyConfirmed ? 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100' : 'text-slate-500 bg-slate-100 hover:bg-slate-200'}`}
-                          >
-                            {guest.isManuallyConfirmed ? (
-                              <><ToggleRight size={18} className="text-emerald-500" /> Confirmado (Manual)</>
-                            ) : (
-                              <><ToggleLeft size={18} /> Confirmar (Manual)</>
-                            )}
-                          </button>
+                            <button 
+                              onClick={() => toggleManualConfirm(guest)}
+                              className={`flex items-center justify-center gap-1.5 text-sm font-bold px-2 py-2.5 rounded-lg flex-1 transition-colors ${guest.isManuallyConfirmed ? 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100' : 'text-slate-500 bg-slate-100 hover:bg-slate-200'}`}
+                            >
+                              {guest.isManuallyConfirmed ? (
+                                <><ToggleRight size={18} className="text-emerald-500 shrink-0" /> <span className="truncate text-xs">Confirmado</span></>
+                              ) : (
+                                <><ToggleLeft size={18} className="shrink-0" /> <span className="truncate text-xs">Confirmar</span></>
+                              )}
+                            </button>
+                          </div>
                         )}
                       </div>
                     </div>
