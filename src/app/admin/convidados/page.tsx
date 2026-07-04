@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import AdminSidebar from "@/components/admin/AdminSidebar";
-import { Plus, Edit2, Trash2, Search, Users, Link as LinkIcon, Unlink } from "lucide-react";
+import { Plus, Edit2, Trash2, Search, Users, Link as LinkIcon, Unlink, ToggleLeft, ToggleRight } from "lucide-react";
 import { toast } from "sonner";
 
 interface Rsvp {
@@ -20,6 +20,7 @@ interface Guest {
   group: string | null;
   rsvpId: string | null;
   rsvp: Rsvp | null;
+  isManuallyConfirmed: boolean;
 }
 
 export default function GuestListPage() {
@@ -148,6 +149,37 @@ export default function GuestListPage() {
     }
   };
 
+  const toggleManualConfirm = async (guest: Guest) => {
+    // If associated, they are already confirmed. Ignore toggle.
+    if (guest.rsvpId) return;
+
+    const previousGuests = [...guests];
+    const newStatus = !guest.isManuallyConfirmed;
+    
+    // Optimistic update
+    setGuests(guests.map(g => g.id === guest.id ? { ...g, isManuallyConfirmed: newStatus } : g));
+
+    try {
+      const res = await fetch(`/api/admin/guests/${guest.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isManuallyConfirmed: newStatus })
+      });
+
+      if (!res.ok) {
+        setGuests(previousGuests);
+        toast.error("Erro ao atualizar confirmação.");
+      } else {
+        if (newStatus) {
+          toast.success("Presença confirmada manualmente!");
+        }
+      }
+    } catch (err) {
+      setGuests(previousGuests);
+      toast.error("Erro de conexão.");
+    }
+  };
+
   return (
     <div className="flex flex-col md:flex-row bg-slate-50 min-h-screen">
       <AdminSidebar />
@@ -233,17 +265,30 @@ export default function GuestListPage() {
                               {guest.group || "Sem Grupo"}
                             </span>
                           </td>
-                          <td className="px-6 py-4">
+                          <td className="px-6 py-4 space-y-2">
                             {guest.rsvp ? (
                               <div className="flex items-center gap-2 text-emerald-600 text-sm font-semibold bg-emerald-50 px-3 py-1.5 rounded-lg w-fit">
                                 <LinkIcon size={14} />
                                 Confirmado por: {guest.rsvp.fullName}
                               </div>
                             ) : (
-                              <div className="flex items-center gap-2 text-slate-400 text-sm bg-slate-100 px-3 py-1.5 rounded-lg w-fit">
+                              <div className="flex items-center gap-2 text-slate-400 text-sm bg-slate-100 px-3 py-1.5 rounded-lg w-fit mb-2">
                                 <Unlink size={14} />
                                 Aguardando Associação
                               </div>
+                            )}
+                            
+                            {!guest.rsvp && (
+                              <button 
+                                onClick={() => toggleManualConfirm(guest)}
+                                className={`flex items-center gap-2 text-sm font-bold px-3 py-1.5 rounded-lg w-fit transition-colors ${guest.isManuallyConfirmed ? 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100' : 'text-slate-500 bg-slate-100 hover:bg-slate-200'}`}
+                              >
+                                {guest.isManuallyConfirmed ? (
+                                  <><ToggleRight size={18} className="text-emerald-500" /> Confirmado (Manual)</>
+                                ) : (
+                                  <><ToggleLeft size={18} /> Confirmar (Manual)</>
+                                )}
+                              </button>
                             )}
                           </td>
                           <td className="px-6 py-4 text-right">
@@ -305,7 +350,7 @@ export default function GuestListPage() {
                         </div>
                       </div>
                       
-                      <div className="pt-2 border-t border-slate-100">
+                      <div className="pt-2 border-t border-slate-100 space-y-2">
                         {guest.rsvp ? (
                           <div className="flex items-center gap-2 text-emerald-600 text-sm font-semibold bg-emerald-50 px-3 py-2.5 rounded-lg w-full">
                             <LinkIcon size={14} className="shrink-0" />
@@ -316,6 +361,19 @@ export default function GuestListPage() {
                             <Unlink size={14} className="shrink-0" />
                             <span>Aguardando Associação</span>
                           </div>
+                        )}
+
+                        {!guest.rsvp && (
+                          <button 
+                            onClick={() => toggleManualConfirm(guest)}
+                            className={`flex items-center justify-center gap-2 text-sm font-bold px-3 py-2.5 rounded-lg w-full transition-colors ${guest.isManuallyConfirmed ? 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100' : 'text-slate-500 bg-slate-100 hover:bg-slate-200'}`}
+                          >
+                            {guest.isManuallyConfirmed ? (
+                              <><ToggleRight size={18} className="text-emerald-500" /> Confirmado (Manual)</>
+                            ) : (
+                              <><ToggleLeft size={18} /> Confirmar (Manual)</>
+                            )}
+                          </button>
                         )}
                       </div>
                     </div>

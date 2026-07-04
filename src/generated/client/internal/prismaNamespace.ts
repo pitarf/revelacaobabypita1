@@ -2355,6 +2355,7 @@ export const GuestScalarFieldEnum = {
   name: 'name',
   group: 'group',
   rsvpId: 'rsvpId',
+  isManuallyConfirmed: 'isManuallyConfirmed',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

@@ -202,6 +202,7 @@ model Guest {
   group     String?  // Ex: 'Família Rafael', 'Amigos'
   rsvpId    String?
   rsvp      Rsvp?    @relation(fields: [rsvpId], references: [id], onDelete: SetNull)
+  isManuallyConfirmed Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
