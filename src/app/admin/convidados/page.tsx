@@ -202,70 +202,127 @@ export default function GuestListPage() {
           {loading ? (
             <div className="text-center py-20 text-slate-400">Carregando lista mestra...</div>
           ) : (
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
-              <table className="w-full text-left min-w-[700px]">
-                <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 text-sm">
-                  <tr>
-                    <th className="px-6 py-4 font-semibold">Convidado</th>
-                    <th className="px-6 py-4 font-semibold">Grupo</th>
-                    <th className="px-6 py-4 font-semibold">Associação RSVP</th>
-                    <th className="px-6 py-4 font-semibold text-right">Ações</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {filteredGuests.length === 0 ? (
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+              
+              {/* === VISÃO DESKTOP (Tabela) === */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-left min-w-[700px]">
+                  <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 text-sm">
                     <tr>
-                      <td colSpan={4} className="text-center py-10 text-slate-400">
-                        Nenhum convidado encontrado.
-                      </td>
+                      <th className="px-6 py-4 font-semibold">Convidado</th>
+                      <th className="px-6 py-4 font-semibold">Grupo</th>
+                      <th className="px-6 py-4 font-semibold">Associação RSVP</th>
+                      <th className="px-6 py-4 font-semibold text-right">Ações</th>
                     </tr>
-                  ) : (
-                    filteredGuests.map((guest) => (
-                      <tr key={guest.id} className="hover:bg-slate-50 transition-colors">
-                        <td className="px-6 py-4">
-                          <div className="font-bold text-slate-800">{guest.name}</div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="inline-block px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-semibold">
-                            {guest.group || "Sem Grupo"}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          {guest.rsvp ? (
-                            <div className="flex items-center gap-2 text-emerald-600 text-sm font-semibold bg-emerald-50 px-3 py-1.5 rounded-lg w-fit">
-                              <LinkIcon size={14} />
-                              Confirmado por: {guest.rsvp.fullName}
-                            </div>
-                          ) : (
-                            <div className="flex items-center gap-2 text-slate-400 text-sm bg-slate-100 px-3 py-1.5 rounded-lg w-fit">
-                              <Unlink size={14} />
-                              Aguardando Associação
-                            </div>
-                          )}
-                        </td>
-                        <td className="px-6 py-4 text-right">
-                          <div className="flex justify-end gap-2">
-                            <button
-                              onClick={() => handleOpenForm(guest)}
-                              className="p-2 text-slate-400 hover:text-[#5c5bd5] hover:bg-[#5c5bd5]/10 rounded-lg transition-colors"
-                              title="Editar"
-                            >
-                              <Edit2 size={16} />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(guest.id)}
-                              className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                              title="Excluir"
-                            >
-                              <Trash2 size={16} />
-                            </button>
-                          </div>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {filteredGuests.length === 0 ? (
+                      <tr>
+                        <td colSpan={4} className="text-center py-10 text-slate-400">
+                          Nenhum convidado encontrado.
                         </td>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+                    ) : (
+                      filteredGuests.map((guest) => (
+                        <tr key={guest.id} className="hover:bg-slate-50 transition-colors">
+                          <td className="px-6 py-4">
+                            <div className="font-bold text-slate-800">{guest.name}</div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className="inline-block px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-semibold">
+                              {guest.group || "Sem Grupo"}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            {guest.rsvp ? (
+                              <div className="flex items-center gap-2 text-emerald-600 text-sm font-semibold bg-emerald-50 px-3 py-1.5 rounded-lg w-fit">
+                                <LinkIcon size={14} />
+                                Confirmado por: {guest.rsvp.fullName}
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-2 text-slate-400 text-sm bg-slate-100 px-3 py-1.5 rounded-lg w-fit">
+                                <Unlink size={14} />
+                                Aguardando Associação
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <div className="flex justify-end gap-2">
+                              <button
+                                onClick={() => handleOpenForm(guest)}
+                                className="p-2 text-slate-400 hover:text-[#5c5bd5] hover:bg-[#5c5bd5]/10 rounded-lg transition-colors"
+                                title="Editar"
+                              >
+                                <Edit2 size={16} />
+                              </button>
+                              <button
+                                onClick={() => handleDelete(guest.id)}
+                                className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                title="Excluir"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* === VISÃO MOBILE (Cards) === */}
+              <div className="md:hidden divide-y divide-slate-100">
+                {filteredGuests.length === 0 ? (
+                  <div className="text-center py-10 text-slate-400">
+                    Nenhum convidado encontrado.
+                  </div>
+                ) : (
+                  filteredGuests.map((guest) => (
+                    <div key={guest.id} className="p-4 flex flex-col gap-3 hover:bg-slate-50 transition-colors">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <div className="font-bold text-slate-800 text-lg">{guest.name}</div>
+                          <span className="inline-block px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-[10px] font-bold mt-1 uppercase">
+                            {guest.group || "Sem Grupo"}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1 shrink-0">
+                          <button
+                            onClick={() => handleOpenForm(guest)}
+                            className="p-2 text-slate-400 hover:text-[#5c5bd5] bg-slate-50 hover:bg-[#5c5bd5]/10 rounded-lg transition-colors"
+                            title="Editar"
+                          >
+                            <Edit2 size={18} />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(guest.id)}
+                            className="p-2 text-slate-400 hover:text-red-500 bg-slate-50 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Excluir"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      </div>
+                      
+                      <div className="pt-2 border-t border-slate-100">
+                        {guest.rsvp ? (
+                          <div className="flex items-center gap-2 text-emerald-600 text-sm font-semibold bg-emerald-50 px-3 py-2.5 rounded-lg w-full">
+                            <LinkIcon size={14} className="shrink-0" />
+                            <span className="truncate">Conf: {guest.rsvp.fullName}</span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2 text-slate-400 text-sm font-semibold bg-slate-100 px-3 py-2.5 rounded-lg w-full">
+                            <Unlink size={14} className="shrink-0" />
+                            <span>Aguardando Associação</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
             </div>
           )}
         </div>

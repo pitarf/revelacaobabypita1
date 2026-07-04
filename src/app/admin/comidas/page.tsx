@@ -181,84 +181,157 @@ export default function FoodListPage() {
           {loading ? (
             <div className="text-center py-20 text-slate-400">Carregando lista...</div>
           ) : (
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
-              <table className="w-full text-left min-w-[900px]">
-                <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 text-sm">
-                  <tr>
-                    <th className="px-6 py-4 font-semibold">Item & Qtd</th>
-                    <th className="px-6 py-4 font-semibold">Gasto</th>
-                    <th className="px-6 py-4 font-semibold">Comprado / Pronto?</th>
-                    <th className="px-6 py-4 font-semibold">Fornecedor & Entrega</th>
-                    <th className="px-6 py-4 font-semibold text-right">Ações</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {filteredItems.length === 0 ? (
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+              
+              {/* === VISÃO DESKTOP (Tabela) === */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-left min-w-[900px]">
+                  <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 text-sm">
                     <tr>
-                      <td colSpan={5} className="text-center py-10 text-slate-400">
-                        Nenhum item adicionado ainda.
-                      </td>
+                      <th className="px-6 py-4 font-semibold">Item & Qtd</th>
+                      <th className="px-6 py-4 font-semibold">Gasto</th>
+                      <th className="px-6 py-4 font-semibold">Comprado / Pronto?</th>
+                      <th className="px-6 py-4 font-semibold">Fornecedor & Entrega</th>
+                      <th className="px-6 py-4 font-semibold text-right">Ações</th>
                     </tr>
-                  ) : (
-                    filteredItems.map((item) => (
-                      <tr key={item.id} className="hover:bg-slate-50 transition-colors">
-                        <td className="px-6 py-4">
-                          <div className="font-bold text-slate-800 text-base">{item.name}</div>
-                          <div className="text-sm text-slate-500">{item.quantity}</div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="font-semibold text-slate-700">
-                            {item.amountSpent ? `R$ ${Number(item.amountSpent).toFixed(2).replace('.', ',')}` : '-'}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 space-y-2">
-                          <div className="flex items-center gap-2 text-sm">
-                            {item.isPurchased ? (
-                              <span className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md font-semibold"><CheckCircle2 size={14}/> Comprado</span>
-                            ) : (
-                              <span className="flex items-center gap-1 text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md font-semibold"><Circle size={14}/> A comprar</span>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-2 text-sm">
-                            {item.isReady ? (
-                              <span className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md font-semibold"><CheckCircle2 size={14}/> Tá pronto</span>
-                            ) : (
-                              <span className="flex items-center gap-1 text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md font-semibold"><Clock size={14}/> Pendente</span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="text-sm text-slate-700 font-semibold flex items-center gap-1.5 mb-1">
-                            <Truck size={14} className="text-slate-400"/> {item.supplier || "Sem fornecedor"}
-                          </div>
-                          <div className="text-xs text-slate-500 flex items-center gap-1.5">
-                            <Calendar size={14} className="text-slate-400"/> 
-                            {item.deliveryDate ? new Date(item.deliveryDate).toLocaleString('pt-BR') : "Data não definida"}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-right">
-                          <div className="flex justify-end gap-2">
-                            <button
-                              onClick={() => handleOpenForm(item)}
-                              className="p-2 text-slate-400 hover:text-[#5c5bd5] hover:bg-[#5c5bd5]/10 rounded-lg transition-colors"
-                              title="Editar"
-                            >
-                              <Edit2 size={18} />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(item.id)}
-                              className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
-                              title="Excluir"
-                            >
-                              <Trash2 size={18} />
-                            </button>
-                          </div>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {filteredItems.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="text-center py-10 text-slate-400">
+                          Nenhum item adicionado ainda.
                         </td>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+                    ) : (
+                      filteredItems.map((item) => (
+                        <tr key={item.id} className="hover:bg-slate-50 transition-colors">
+                          <td className="px-6 py-4">
+                            <div className="font-bold text-slate-800 text-base">{item.name}</div>
+                            <div className="text-sm text-slate-500">{item.quantity}</div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className="font-semibold text-slate-700">
+                              {item.amountSpent ? `R$ ${Number(item.amountSpent).toFixed(2).replace('.', ',')}` : '-'}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 space-y-2">
+                            <div className="flex items-center gap-2 text-sm">
+                              {item.isPurchased ? (
+                                <span className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md font-semibold"><CheckCircle2 size={14}/> Comprado</span>
+                              ) : (
+                                <span className="flex items-center gap-1 text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md font-semibold"><Circle size={14}/> A comprar</span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2 text-sm">
+                              {item.isReady ? (
+                                <span className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md font-semibold"><CheckCircle2 size={14}/> Tá pronto</span>
+                              ) : (
+                                <span className="flex items-center gap-1 text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md font-semibold"><Clock size={14}/> Pendente</span>
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="text-sm text-slate-700 font-semibold flex items-center gap-1.5 mb-1">
+                              <Truck size={14} className="text-slate-400"/> {item.supplier || "Sem fornecedor"}
+                            </div>
+                            <div className="text-xs text-slate-500 flex items-center gap-1.5">
+                              <Calendar size={14} className="text-slate-400"/> 
+                              {item.deliveryDate ? new Date(item.deliveryDate).toLocaleString('pt-BR') : "Data não definida"}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <div className="flex justify-end gap-2">
+                              <button
+                                onClick={() => handleOpenForm(item)}
+                                className="p-2 text-slate-400 hover:text-[#5c5bd5] hover:bg-[#5c5bd5]/10 rounded-lg transition-colors"
+                                title="Editar"
+                              >
+                                <Edit2 size={18} />
+                              </button>
+                              <button
+                                onClick={() => handleDelete(item.id)}
+                                className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
+                                title="Excluir"
+                              >
+                                <Trash2 size={18} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* === VISÃO MOBILE (Cards) === */}
+              <div className="md:hidden divide-y divide-slate-100">
+                {filteredItems.length === 0 ? (
+                  <div className="text-center py-10 text-slate-400">
+                    Nenhum item adicionado ainda.
+                  </div>
+                ) : (
+                  filteredItems.map((item) => (
+                    <div key={item.id} className="p-4 flex flex-col gap-3 hover:bg-slate-50 transition-colors">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <div className="font-bold text-slate-800 text-lg">{item.name}</div>
+                          <div className="text-sm text-slate-500 mt-0.5">{item.quantity}</div>
+                        </div>
+                        <div className="flex items-center gap-1 shrink-0">
+                          <button
+                            onClick={() => handleOpenForm(item)}
+                            className="p-2 text-slate-400 hover:text-[#5c5bd5] bg-slate-50 hover:bg-[#5c5bd5]/10 rounded-lg transition-colors"
+                            title="Editar"
+                          >
+                            <Edit2 size={18} />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(item.id)}
+                            className="p-2 text-slate-400 hover:text-rose-500 bg-slate-50 hover:bg-rose-50 rounded-lg transition-colors"
+                            title="Excluir"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
+                        {item.isPurchased ? (
+                          <div className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-2 rounded-lg text-xs font-bold justify-center"><CheckCircle2 size={14}/> Comprado</div>
+                        ) : (
+                          <div className="flex items-center gap-1 text-amber-600 bg-amber-50 px-2 py-2 rounded-lg text-xs font-bold justify-center"><Circle size={14}/> A comprar</div>
+                        )}
+                        {item.isReady ? (
+                          <div className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-2 rounded-lg text-xs font-bold justify-center"><CheckCircle2 size={14}/> Tá pronto</div>
+                        ) : (
+                          <div className="flex items-center gap-1 text-amber-600 bg-amber-50 px-2 py-2 rounded-lg text-xs font-bold justify-center"><Clock size={14}/> Pendente</div>
+                        )}
+                      </div>
+
+                      <div className="bg-slate-50 p-3 rounded-lg space-y-1 mt-1">
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-slate-500">Gasto:</span>
+                          <span className="font-bold text-slate-700">
+                            {item.amountSpent ? `R$ ${Number(item.amountSpent).toFixed(2).replace('.', ',')}` : '-'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-slate-500">Fornecedor:</span>
+                          <span className="font-medium text-slate-700 truncate max-w-[150px]">{item.supplier || "-"}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-slate-500">Entrega:</span>
+                          <span className="font-medium text-slate-700">
+                            {item.deliveryDate ? new Date(item.deliveryDate).toLocaleDateString('pt-BR') : "-"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
             </div>
           )}
         </div>
