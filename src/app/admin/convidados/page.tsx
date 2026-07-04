@@ -149,7 +149,7 @@ export default function GuestListPage() {
   };
 
   return (
-    <div className="flex bg-slate-50 min-h-screen">
+    <div className="flex flex-col md:flex-row bg-slate-50 min-h-screen">
       <AdminSidebar />
       <div className="flex-1 p-6 md:pl-72 md:pr-8 md:py-8 overflow-x-hidden">
         <div className="max-w-6xl mx-auto space-y-6">
