@@ -202,8 +202,8 @@ export default function GuestListPage() {
           {loading ? (
             <div className="text-center py-20 text-slate-400">Carregando lista mestra...</div>
           ) : (
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-              <table className="w-full text-left">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+              <table className="w-full text-left min-w-[700px]">
                 <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 text-sm">
                   <tr>
                     <th className="px-6 py-4 font-semibold">Convidado</th>
