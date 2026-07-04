@@ -351,3 +351,19 @@ model EmailLog {
 
   @@map("email_logs")
 }
+
+// 20. Lista de Comidas e Bebidas
+model FoodAndDrink {
+  id           String    @id @default(uuid())
+  name         String
+  quantity     String
+  isPurchased  Boolean   @default(false)
+  amountSpent  Decimal?  @db.Decimal(10, 2)
+  isReady      Boolean   @default(false)
+  supplier     String?
+  deliveryDate DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@map("food_and_drinks")
+}
