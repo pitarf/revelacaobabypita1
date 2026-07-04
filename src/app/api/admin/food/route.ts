@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { name, quantity, isPurchased, amountSpent, isReady, supplier, deliveryDate } = body;
+    const { name, quantity, isPurchased, amountSpent, isReady, supplier, deliveryDate, isMarketList, marketItems } = body;
 
     if (!name || !quantity) {
       return NextResponse.json({ error: "Nome e Quantidade são obrigatórios." }, { status: 400 });
@@ -45,6 +45,8 @@ export async function POST(request: Request) {
         isReady: Boolean(isReady),
         supplier: supplier || null,
         deliveryDate: deliveryDate ? new Date(deliveryDate) : null,
+        isMarketList: Boolean(isMarketList),
+        marketItems: marketItems || null,
       },
     });
 

@@ -395,6 +395,7 @@ export const ModelName = {
   MusicSetting: 'MusicSetting',
   Vote: 'Vote',
   Rsvp: 'Rsvp',
+  Guest: 'Guest',
   Cart: 'Cart',
   CartItem: 'CartItem',
   Order: 'Order',
@@ -404,7 +405,8 @@ export const ModelName = {
   UploadedReceipt: 'UploadedReceipt',
   AuditLog: 'AuditLog',
   GuestMessage: 'GuestMessage',
-  EmailLog: 'EmailLog'
+  EmailLog: 'EmailLog',
+  FoodAndDrink: 'FoodAndDrink'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -420,7 +422,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "administrator" | "siteSetting" | "eventSetting" | "paymentSetting" | "category" | "gift" | "galleryImage" | "video" | "musicSetting" | "vote" | "rsvp" | "cart" | "cartItem" | "order" | "orderItem" | "payment" | "paymentEvent" | "uploadedReceipt" | "auditLog" | "guestMessage" | "emailLog"
+    modelProps: "administrator" | "siteSetting" | "eventSetting" | "paymentSetting" | "category" | "gift" | "galleryImage" | "video" | "musicSetting" | "vote" | "rsvp" | "guest" | "cart" | "cartItem" | "order" | "orderItem" | "payment" | "paymentEvent" | "uploadedReceipt" | "auditLog" | "guestMessage" | "emailLog" | "foodAndDrink"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1238,6 +1240,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Guest: {
+      payload: Prisma.$GuestPayload<ExtArgs>
+      fields: Prisma.GuestFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.GuestFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GuestPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.GuestFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GuestPayload>
+        }
+        findFirst: {
+          args: Prisma.GuestFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GuestPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.GuestFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GuestPayload>
+        }
+        findMany: {
+          args: Prisma.GuestFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GuestPayload>[]
+        }
+        create: {
+          args: Prisma.GuestCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GuestPayload>
+        }
+        createMany: {
+          args: Prisma.GuestCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.GuestCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GuestPayload>[]
+        }
+        delete: {
+          args: Prisma.GuestDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GuestPayload>
+        }
+        update: {
+          args: Prisma.GuestUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GuestPayload>
+        }
+        deleteMany: {
+          args: Prisma.GuestDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.GuestUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.GuestUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GuestPayload>[]
+        }
+        upsert: {
+          args: Prisma.GuestUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GuestPayload>
+        }
+        aggregate: {
+          args: Prisma.GuestAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateGuest>
+        }
+        groupBy: {
+          args: Prisma.GuestGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.GuestGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.GuestCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.GuestCountAggregateOutputType> | number
+        }
+      }
+    }
     Cart: {
       payload: Prisma.$CartPayload<ExtArgs>
       fields: Prisma.CartFieldRefs
@@ -1978,6 +2054,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    FoodAndDrink: {
+      payload: Prisma.$FoodAndDrinkPayload<ExtArgs>
+      fields: Prisma.FoodAndDrinkFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.FoodAndDrinkFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FoodAndDrinkPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.FoodAndDrinkFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FoodAndDrinkPayload>
+        }
+        findFirst: {
+          args: Prisma.FoodAndDrinkFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FoodAndDrinkPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.FoodAndDrinkFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FoodAndDrinkPayload>
+        }
+        findMany: {
+          args: Prisma.FoodAndDrinkFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FoodAndDrinkPayload>[]
+        }
+        create: {
+          args: Prisma.FoodAndDrinkCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FoodAndDrinkPayload>
+        }
+        createMany: {
+          args: Prisma.FoodAndDrinkCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.FoodAndDrinkCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FoodAndDrinkPayload>[]
+        }
+        delete: {
+          args: Prisma.FoodAndDrinkDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FoodAndDrinkPayload>
+        }
+        update: {
+          args: Prisma.FoodAndDrinkUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FoodAndDrinkPayload>
+        }
+        deleteMany: {
+          args: Prisma.FoodAndDrinkDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.FoodAndDrinkUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.FoodAndDrinkUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FoodAndDrinkPayload>[]
+        }
+        upsert: {
+          args: Prisma.FoodAndDrinkUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FoodAndDrinkPayload>
+        }
+        aggregate: {
+          args: Prisma.FoodAndDrinkAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFoodAndDrink>
+        }
+        groupBy: {
+          args: Prisma.FoodAndDrinkGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FoodAndDrinkGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.FoodAndDrinkCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FoodAndDrinkCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2200,6 +2350,18 @@ export const RsvpScalarFieldEnum = {
 export type RsvpScalarFieldEnum = (typeof RsvpScalarFieldEnum)[keyof typeof RsvpScalarFieldEnum]
 
 
+export const GuestScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  group: 'group',
+  rsvpId: 'rsvpId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type GuestScalarFieldEnum = (typeof GuestScalarFieldEnum)[keyof typeof GuestScalarFieldEnum]
+
+
 export const CartScalarFieldEnum = {
   id: 'id',
   sessionId: 'sessionId',
@@ -2334,12 +2496,38 @@ export const EmailLogScalarFieldEnum = {
 export type EmailLogScalarFieldEnum = (typeof EmailLogScalarFieldEnum)[keyof typeof EmailLogScalarFieldEnum]
 
 
+export const FoodAndDrinkScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  quantity: 'quantity',
+  isPurchased: 'isPurchased',
+  amountSpent: 'amountSpent',
+  isReady: 'isReady',
+  supplier: 'supplier',
+  deliveryDate: 'deliveryDate',
+  isMarketList: 'isMarketList',
+  marketItems: 'marketItems',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FoodAndDrinkScalarFieldEnum = (typeof FoodAndDrinkScalarFieldEnum)[keyof typeof FoodAndDrinkScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {
@@ -2356,6 +2544,15 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
 
@@ -2438,6 +2635,20 @@ export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, '
  * Reference to a field of type 'Float[]'
  */
 export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 /**
@@ -2561,6 +2772,7 @@ export type GlobalOmitConfig = {
   musicSetting?: Prisma.MusicSettingOmit
   vote?: Prisma.VoteOmit
   rsvp?: Prisma.RsvpOmit
+  guest?: Prisma.GuestOmit
   cart?: Prisma.CartOmit
   cartItem?: Prisma.CartItemOmit
   order?: Prisma.OrderOmit
@@ -2571,6 +2783,7 @@ export type GlobalOmitConfig = {
   auditLog?: Prisma.AuditLogOmit
   guestMessage?: Prisma.GuestMessageOmit
   emailLog?: Prisma.EmailLogOmit
+  foodAndDrink?: Prisma.FoodAndDrinkOmit
 }
 
 /* Types for Logging */

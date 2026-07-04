@@ -62,6 +62,7 @@ export const ModelName = {
   MusicSetting: 'MusicSetting',
   Vote: 'Vote',
   Rsvp: 'Rsvp',
+  Guest: 'Guest',
   Cart: 'Cart',
   CartItem: 'CartItem',
   Order: 'Order',
@@ -71,7 +72,8 @@ export const ModelName = {
   UploadedReceipt: 'UploadedReceipt',
   AuditLog: 'AuditLog',
   GuestMessage: 'GuestMessage',
-  EmailLog: 'EmailLog'
+  EmailLog: 'EmailLog',
+  FoodAndDrink: 'FoodAndDrink'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -273,6 +275,18 @@ export const RsvpScalarFieldEnum = {
 export type RsvpScalarFieldEnum = (typeof RsvpScalarFieldEnum)[keyof typeof RsvpScalarFieldEnum]
 
 
+export const GuestScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  group: 'group',
+  rsvpId: 'rsvpId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type GuestScalarFieldEnum = (typeof GuestScalarFieldEnum)[keyof typeof GuestScalarFieldEnum]
+
+
 export const CartScalarFieldEnum = {
   id: 'id',
   sessionId: 'sessionId',
@@ -407,12 +421,38 @@ export const EmailLogScalarFieldEnum = {
 export type EmailLogScalarFieldEnum = (typeof EmailLogScalarFieldEnum)[keyof typeof EmailLogScalarFieldEnum]
 
 
+export const FoodAndDrinkScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  quantity: 'quantity',
+  isPurchased: 'isPurchased',
+  amountSpent: 'amountSpent',
+  isReady: 'isReady',
+  supplier: 'supplier',
+  deliveryDate: 'deliveryDate',
+  isMarketList: 'isMarketList',
+  marketItems: 'marketItems',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FoodAndDrinkScalarFieldEnum = (typeof FoodAndDrinkScalarFieldEnum)[keyof typeof FoodAndDrinkScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {
@@ -429,4 +469,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

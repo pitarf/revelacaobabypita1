@@ -97,6 +97,11 @@ export type Vote = Prisma.VoteModel
  */
 export type Rsvp = Prisma.RsvpModel
 /**
+ * Model Guest
+ * 
+ */
+export type Guest = Prisma.GuestModel
+/**
  * Model Cart
  * 
  */
@@ -146,3 +151,8 @@ export type GuestMessage = Prisma.GuestMessageModel
  * 
  */
 export type EmailLog = Prisma.EmailLogModel
+/**
+ * Model FoodAndDrink
+ * 
+ */
+export type FoodAndDrink = Prisma.FoodAndDrinkModel

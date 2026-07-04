@@ -5,6 +5,14 @@ import AdminSidebar from "@/components/admin/AdminSidebar";
 import { Plus, Edit2, Trash2, Search, Utensils, CheckCircle2, Circle, Clock, DollarSign, Calendar, Truck } from "lucide-react";
 import { toast } from "sonner";
 
+interface MarketItem {
+  id: string;
+  name: string;
+  quantity: string;
+  price: string;
+  isPurchased: boolean;
+}
+
 interface FoodItem {
   id: string;
   name: string;
@@ -14,6 +22,8 @@ interface FoodItem {
   isReady: boolean;
   supplier: string | null;
   deliveryDate: string | null;
+  isMarketList: boolean;
+  marketItems: MarketItem[] | null;
 }
 
 export default function FoodListPage() {
@@ -34,6 +44,8 @@ export default function FoodListPage() {
   const [isReady, setIsReady] = useState(false);
   const [supplier, setSupplier] = useState("");
   const [deliveryDate, setDeliveryDate] = useState("");
+  const [isMarketList, setIsMarketList] = useState(false);
+  const [marketItems, setMarketItems] = useState<MarketItem[]>([]);
 
   const fetchData = async () => {
     try {
@@ -66,6 +78,8 @@ export default function FoodListPage() {
       setIsReady(item.isReady);
       setSupplier(item.supplier || "");
       setDeliveryDate(item.deliveryDate ? new Date(item.deliveryDate).toISOString().slice(0, 16) : "");
+      setIsMarketList(item.isMarketList);
+      setMarketItems(item.marketItems || []);
     } else {
       setEditingId(null);
       setName("");
@@ -75,6 +89,8 @@ export default function FoodListPage() {
       setIsReady(false);
       setSupplier("");
       setDeliveryDate("");
+      setIsMarketList(false);
+      setMarketItems([]);
     }
     setFormOpen(true);
   };
@@ -91,6 +107,8 @@ export default function FoodListPage() {
       isReady,
       supplier,
       deliveryDate: deliveryDate ? new Date(deliveryDate).toISOString() : null,
+      isMarketList,
+      marketItems: isMarketList ? marketItems : null,
     };
 
     try {
@@ -154,6 +172,45 @@ export default function FoodListPage() {
       if (!res.ok) {
         setItems(previousItems);
         toast.error("Erro ao atualizar status.");
+      }
+    } catch (err) {
+      setItems(previousItems);
+      toast.error("Erro de conexão ao servidor.");
+    }
+  };
+
+  const toggleSubItemStatus = async (item: FoodItem, subItemId: string) => {
+    if (!item.marketItems) return;
+    
+    const previousItems = [...items];
+    const newMarketItems = item.marketItems.map(mi => mi.id === subItemId ? { ...mi, isPurchased: !mi.isPurchased } : mi);
+    
+    // Auto-calculate the total amountSpent from purchased sub-items
+    const newAmountSpent = newMarketItems
+      .filter(mi => mi.isPurchased && mi.price && !isNaN(parseFloat(mi.price)))
+      .reduce((acc, curr) => acc + parseFloat(curr.price), 0);
+
+    const newItem = { 
+      ...item, 
+      marketItems: newMarketItems, 
+      amountSpent: newAmountSpent > 0 ? newAmountSpent : null 
+    };
+
+    setItems(items.map(i => i.id === item.id ? newItem : i));
+
+    try {
+      const payload = { ...newItem };
+      if (payload.deliveryDate) payload.deliveryDate = new Date(payload.deliveryDate).toISOString();
+      
+      const res = await fetch(`/api/admin/food/${item.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        setItems(previousItems);
+        toast.error("Erro ao atualizar sub-item.");
       }
     } catch (err) {
       setItems(previousItems);
@@ -258,20 +315,38 @@ export default function FoodListPage() {
                             </span>
                           </td>
                           <td className="px-6 py-4 space-y-2">
-                            <div className="flex items-center gap-2 text-sm">
-                              {item.isPurchased ? (
-                                <button onClick={() => toggleStatus(item, 'isPurchased')} className="flex items-center gap-1 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 rounded-md font-semibold transition-colors"><CheckCircle2 size={14}/> Comprado</button>
-                              ) : (
-                                <button onClick={() => toggleStatus(item, 'isPurchased')} className="flex items-center gap-1 text-amber-600 bg-amber-50 hover:bg-amber-100 px-2 py-0.5 rounded-md font-semibold transition-colors"><Circle size={14}/> A comprar</button>
-                              )}
-                            </div>
-                            <div className="flex items-center gap-2 text-sm">
-                              {item.isReady ? (
-                                <button onClick={() => toggleStatus(item, 'isReady')} className="flex items-center gap-1 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 rounded-md font-semibold transition-colors"><CheckCircle2 size={14}/> Tá pronto</button>
-                              ) : (
-                                <button onClick={() => toggleStatus(item, 'isReady')} className="flex items-center gap-1 text-amber-600 bg-amber-50 hover:bg-amber-100 px-2 py-0.5 rounded-md font-semibold transition-colors"><Clock size={14}/> Pendente</button>
-                              )}
-                            </div>
+                            {item.isMarketList ? (
+                              <div className="space-y-1.5 max-h-[150px] overflow-y-auto pr-1">
+                                {item.marketItems?.map(mi => (
+                                  <button 
+                                    key={mi.id} 
+                                    onClick={() => toggleSubItemStatus(item, mi.id)} 
+                                    className={`flex items-center gap-2 text-xs font-semibold px-2 py-1.5 rounded-md w-full transition-colors ${mi.isPurchased ? 'text-emerald-700 bg-emerald-50 hover:bg-emerald-100' : 'text-slate-600 bg-slate-100 hover:bg-slate-200'}`}
+                                  >
+                                    {mi.isPurchased ? <CheckCircle2 size={14} className="shrink-0 text-emerald-500" /> : <Circle size={14} className="shrink-0 text-slate-400" />}
+                                    <span className="truncate flex-1 text-left">{mi.name} ({mi.quantity})</span>
+                                  </button>
+                                ))}
+                                {(!item.marketItems || item.marketItems.length === 0) && <span className="text-xs text-slate-400 italic">Sem itens</span>}
+                              </div>
+                            ) : (
+                              <>
+                                <div className="flex items-center gap-2 text-sm">
+                                  {item.isPurchased ? (
+                                    <button onClick={() => toggleStatus(item, 'isPurchased')} className="flex items-center gap-1 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 rounded-md font-semibold transition-colors"><CheckCircle2 size={14}/> Comprado</button>
+                                  ) : (
+                                    <button onClick={() => toggleStatus(item, 'isPurchased')} className="flex items-center gap-1 text-amber-600 bg-amber-50 hover:bg-amber-100 px-2 py-0.5 rounded-md font-semibold transition-colors"><Circle size={14}/> A comprar</button>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-2 text-sm">
+                                  {item.isReady ? (
+                                    <button onClick={() => toggleStatus(item, 'isReady')} className="flex items-center gap-1 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 rounded-md font-semibold transition-colors"><CheckCircle2 size={14}/> Tá pronto</button>
+                                  ) : (
+                                    <button onClick={() => toggleStatus(item, 'isReady')} className="flex items-center gap-1 text-amber-600 bg-amber-50 hover:bg-amber-100 px-2 py-0.5 rounded-md font-semibold transition-colors"><Clock size={14}/> Pendente</button>
+                                  )}
+                                </div>
+                              </>
+                            )}
                           </td>
                           <td className="px-6 py-4">
                             <div className="text-sm text-slate-700 font-semibold flex items-center gap-1.5 mb-1">
@@ -339,18 +414,35 @@ export default function FoodListPage() {
                         </div>
                       </div>
                       
-                      <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
-                        {item.isPurchased ? (
-                          <button onClick={() => toggleStatus(item, 'isPurchased')} className="flex items-center gap-1 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-2 py-2 rounded-lg text-xs font-bold justify-center transition-colors w-full"><CheckCircle2 size={14}/> Comprado</button>
-                        ) : (
-                          <button onClick={() => toggleStatus(item, 'isPurchased')} className="flex items-center gap-1 text-amber-600 bg-amber-50 hover:bg-amber-100 px-2 py-2 rounded-lg text-xs font-bold justify-center transition-colors w-full"><Circle size={14}/> A comprar</button>
-                        )}
-                        {item.isReady ? (
-                          <button onClick={() => toggleStatus(item, 'isReady')} className="flex items-center gap-1 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-2 py-2 rounded-lg text-xs font-bold justify-center transition-colors w-full"><CheckCircle2 size={14}/> Tá pronto</button>
-                        ) : (
-                          <button onClick={() => toggleStatus(item, 'isReady')} className="flex items-center gap-1 text-amber-600 bg-amber-50 hover:bg-amber-100 px-2 py-2 rounded-lg text-xs font-bold justify-center transition-colors w-full"><Clock size={14}/> Pendente</button>
-                        )}
-                      </div>
+                      {item.isMarketList ? (
+                        <div className="pt-2 border-t border-slate-100 space-y-1.5">
+                          <h4 className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wide">Itens da Lista</h4>
+                          {item.marketItems?.map(mi => (
+                            <button 
+                              key={mi.id} 
+                              onClick={() => toggleSubItemStatus(item, mi.id)} 
+                              className={`flex items-center gap-3 text-xs font-semibold px-3 py-2.5 rounded-lg w-full transition-colors ${mi.isPurchased ? 'text-emerald-700 bg-emerald-50 hover:bg-emerald-100' : 'text-slate-600 bg-slate-100 hover:bg-slate-200'}`}
+                            >
+                              {mi.isPurchased ? <CheckCircle2 size={16} className="shrink-0 text-emerald-500" /> : <Circle size={16} className="shrink-0 text-slate-400" />}
+                              <span className="truncate flex-1 text-left text-[13px]">{mi.name} <span className="opacity-70 font-normal">({mi.quantity})</span></span>
+                            </button>
+                          ))}
+                          {(!item.marketItems || item.marketItems.length === 0) && <span className="text-sm text-slate-400 italic">Lista vazia</span>}
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
+                          {item.isPurchased ? (
+                            <button onClick={() => toggleStatus(item, 'isPurchased')} className="flex items-center gap-1 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-2 py-2 rounded-lg text-xs font-bold justify-center transition-colors w-full"><CheckCircle2 size={14}/> Comprado</button>
+                          ) : (
+                            <button onClick={() => toggleStatus(item, 'isPurchased')} className="flex items-center gap-1 text-amber-600 bg-amber-50 hover:bg-amber-100 px-2 py-2 rounded-lg text-xs font-bold justify-center transition-colors w-full"><Circle size={14}/> A comprar</button>
+                          )}
+                          {item.isReady ? (
+                            <button onClick={() => toggleStatus(item, 'isReady')} className="flex items-center gap-1 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-2 py-2 rounded-lg text-xs font-bold justify-center transition-colors w-full"><CheckCircle2 size={14}/> Tá pronto</button>
+                          ) : (
+                            <button onClick={() => toggleStatus(item, 'isReady')} className="flex items-center gap-1 text-amber-600 bg-amber-50 hover:bg-amber-100 px-2 py-2 rounded-lg text-xs font-bold justify-center transition-colors w-full"><Clock size={14}/> Pendente</button>
+                          )}
+                        </div>
+                      )}
 
                       <div className="bg-slate-50 p-3 rounded-lg space-y-1 mt-1">
                         <div className="flex justify-between items-center text-sm">
@@ -415,18 +507,103 @@ export default function FoodListPage() {
                 />
               </div>
               
-              <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1">Valor Gasto (R$)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={amountSpent}
-                  onChange={e => setAmountSpent(e.target.value)}
-                  placeholder="0.00"
-                  className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c5bd5]/50"
-                />
+              <div className="pt-2 border-t border-slate-100">
+                <label className="flex items-center gap-3 p-3 bg-amber-50 border border-amber-200 rounded-lg cursor-pointer hover:bg-amber-100 transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={isMarketList}
+                    onChange={e => setIsMarketList(e.target.checked)}
+                    className="w-5 h-5 text-amber-600 rounded focus:ring-amber-500"
+                  />
+                  <span className="font-bold text-amber-800 text-sm">É uma Lista de Mercado (com sub-itens)</span>
+                </label>
               </div>
+
+              {!isMarketList ? (
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-1">Valor Gasto (R$)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={amountSpent}
+                    onChange={e => setAmountSpent(e.target.value)}
+                    placeholder="0.00"
+                    className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c5bd5]/50"
+                  />
+                </div>
+              ) : (
+                <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                  <h3 className="text-sm font-bold text-slate-800">Itens da Lista de Mercado</h3>
+                  
+                  {marketItems.length === 0 ? (
+                    <p className="text-xs text-slate-500 italic">Nenhum item adicionado. Clique no botão abaixo para adicionar.</p>
+                  ) : (
+                    <div className="space-y-2 max-h-[200px] overflow-y-auto pr-1">
+                      {marketItems.map((mi, idx) => (
+                        <div key={mi.id} className="flex flex-wrap md:flex-nowrap items-center gap-2 bg-white p-2 border border-slate-200 rounded-lg">
+                          <input 
+                            type="text" 
+                            placeholder="Item (ex: Água)" 
+                            value={mi.name}
+                            onChange={(e) => {
+                              const newArr = [...marketItems];
+                              newArr[idx].name = e.target.value;
+                              setMarketItems(newArr);
+                            }}
+                            className="flex-1 min-w-[120px] px-2 py-1 text-sm bg-slate-50 border border-slate-200 rounded focus:outline-none"
+                            required
+                          />
+                          <input 
+                            type="text" 
+                            placeholder="Qtd (ex: 2L)" 
+                            value={mi.quantity}
+                            onChange={(e) => {
+                              const newArr = [...marketItems];
+                              newArr[idx].quantity = e.target.value;
+                              setMarketItems(newArr);
+                            }}
+                            className="w-[80px] px-2 py-1 text-sm bg-slate-50 border border-slate-200 rounded focus:outline-none"
+                            required
+                          />
+                          <input 
+                            type="number" 
+                            step="0.01"
+                            placeholder="R$" 
+                            value={mi.price}
+                            onChange={(e) => {
+                              const newArr = [...marketItems];
+                              newArr[idx].price = e.target.value;
+                              setMarketItems(newArr);
+                            }}
+                            className="w-[80px] px-2 py-1 text-sm bg-slate-50 border border-slate-200 rounded focus:outline-none"
+                          />
+                          <button 
+                            type="button"
+                            onClick={() => {
+                              setMarketItems(marketItems.filter((_, i) => i !== idx));
+                            }}
+                            className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors"
+                          >
+                            <Trash2 size={16}/>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMarketItems([...marketItems, { id: Math.random().toString(36).substring(7), name: '', quantity: '', price: '', isPurchased: false }]);
+                    }}
+                    className="flex items-center gap-1 text-sm font-bold text-[#5c5bd5] hover:text-[#4a49ac] hover:bg-[#5c5bd5]/10 px-3 py-1.5 rounded-lg transition-colors w-fit"
+                  >
+                    <Plus size={16}/>
+                    Adicionar Sub-item
+                  </button>
+                </div>
+              )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <label className="flex items-center gap-3 p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">

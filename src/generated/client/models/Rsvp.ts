@@ -296,6 +296,7 @@ export type RsvpWhereInput = {
   accessCode?: Prisma.StringFilter<"Rsvp"> | string
   createdAt?: Prisma.DateTimeFilter<"Rsvp"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Rsvp"> | Date | string
+  guests?: Prisma.GuestListRelationFilter
 }
 
 export type RsvpOrderByWithRelationInput = {
@@ -313,6 +314,7 @@ export type RsvpOrderByWithRelationInput = {
   accessCode?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  guests?: Prisma.GuestOrderByRelationAggregateInput
 }
 
 export type RsvpWhereUniqueInput = Prisma.AtLeast<{
@@ -333,6 +335,7 @@ export type RsvpWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.StringFilter<"Rsvp"> | string
   createdAt?: Prisma.DateTimeFilter<"Rsvp"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Rsvp"> | Date | string
+  guests?: Prisma.GuestListRelationFilter
 }, "id" | "accessCode">
 
 export type RsvpOrderByWithAggregationInput = {
@@ -392,6 +395,7 @@ export type RsvpCreateInput = {
   accessCode: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  guests?: Prisma.GuestCreateNestedManyWithoutRsvpInput
 }
 
 export type RsvpUncheckedCreateInput = {
@@ -409,6 +413,7 @@ export type RsvpUncheckedCreateInput = {
   accessCode: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  guests?: Prisma.GuestUncheckedCreateNestedManyWithoutRsvpInput
 }
 
 export type RsvpUpdateInput = {
@@ -426,6 +431,7 @@ export type RsvpUpdateInput = {
   accessCode?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  guests?: Prisma.GuestUpdateManyWithoutRsvpNestedInput
 }
 
 export type RsvpUncheckedUpdateInput = {
@@ -443,6 +449,7 @@ export type RsvpUncheckedUpdateInput = {
   accessCode?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  guests?: Prisma.GuestUncheckedUpdateManyWithoutRsvpNestedInput
 }
 
 export type RsvpCreateManyInput = {
@@ -559,6 +566,140 @@ export type RsvpSumOrderByAggregateInput = {
   totalGuests?: Prisma.SortOrder
 }
 
+export type RsvpNullableScalarRelationFilter = {
+  is?: Prisma.RsvpWhereInput | null
+  isNot?: Prisma.RsvpWhereInput | null
+}
+
+export type RsvpCreateNestedOneWithoutGuestsInput = {
+  create?: Prisma.XOR<Prisma.RsvpCreateWithoutGuestsInput, Prisma.RsvpUncheckedCreateWithoutGuestsInput>
+  connectOrCreate?: Prisma.RsvpCreateOrConnectWithoutGuestsInput
+  connect?: Prisma.RsvpWhereUniqueInput
+}
+
+export type RsvpUpdateOneWithoutGuestsNestedInput = {
+  create?: Prisma.XOR<Prisma.RsvpCreateWithoutGuestsInput, Prisma.RsvpUncheckedCreateWithoutGuestsInput>
+  connectOrCreate?: Prisma.RsvpCreateOrConnectWithoutGuestsInput
+  upsert?: Prisma.RsvpUpsertWithoutGuestsInput
+  disconnect?: Prisma.RsvpWhereInput | boolean
+  delete?: Prisma.RsvpWhereInput | boolean
+  connect?: Prisma.RsvpWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.RsvpUpdateToOneWithWhereWithoutGuestsInput, Prisma.RsvpUpdateWithoutGuestsInput>, Prisma.RsvpUncheckedUpdateWithoutGuestsInput>
+}
+
+export type RsvpCreateWithoutGuestsInput = {
+  id?: string
+  fullName: string
+  email: string
+  phone: string
+  adultsCount?: number
+  childrenCount?: number
+  totalGuests?: number
+  companionsNames?: string | null
+  foodRestriction?: string | null
+  notes?: string | null
+  status?: string
+  accessCode: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type RsvpUncheckedCreateWithoutGuestsInput = {
+  id?: string
+  fullName: string
+  email: string
+  phone: string
+  adultsCount?: number
+  childrenCount?: number
+  totalGuests?: number
+  companionsNames?: string | null
+  foodRestriction?: string | null
+  notes?: string | null
+  status?: string
+  accessCode: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type RsvpCreateOrConnectWithoutGuestsInput = {
+  where: Prisma.RsvpWhereUniqueInput
+  create: Prisma.XOR<Prisma.RsvpCreateWithoutGuestsInput, Prisma.RsvpUncheckedCreateWithoutGuestsInput>
+}
+
+export type RsvpUpsertWithoutGuestsInput = {
+  update: Prisma.XOR<Prisma.RsvpUpdateWithoutGuestsInput, Prisma.RsvpUncheckedUpdateWithoutGuestsInput>
+  create: Prisma.XOR<Prisma.RsvpCreateWithoutGuestsInput, Prisma.RsvpUncheckedCreateWithoutGuestsInput>
+  where?: Prisma.RsvpWhereInput
+}
+
+export type RsvpUpdateToOneWithWhereWithoutGuestsInput = {
+  where?: Prisma.RsvpWhereInput
+  data: Prisma.XOR<Prisma.RsvpUpdateWithoutGuestsInput, Prisma.RsvpUncheckedUpdateWithoutGuestsInput>
+}
+
+export type RsvpUpdateWithoutGuestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  adultsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  childrenCount?: Prisma.IntFieldUpdateOperationsInput | number
+  totalGuests?: Prisma.IntFieldUpdateOperationsInput | number
+  companionsNames?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodRestriction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  accessCode?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type RsvpUncheckedUpdateWithoutGuestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  adultsCount?: Prisma.IntFieldUpdateOperationsInput | number
+  childrenCount?: Prisma.IntFieldUpdateOperationsInput | number
+  totalGuests?: Prisma.IntFieldUpdateOperationsInput | number
+  companionsNames?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  foodRestriction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  accessCode?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+
+/**
+ * Count Type RsvpCountOutputType
+ */
+
+export type RsvpCountOutputType = {
+  guests: number
+}
+
+export type RsvpCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  guests?: boolean | RsvpCountOutputTypeCountGuestsArgs
+}
+
+/**
+ * RsvpCountOutputType without action
+ */
+export type RsvpCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the RsvpCountOutputType
+   */
+  select?: Prisma.RsvpCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * RsvpCountOutputType without action
+ */
+export type RsvpCountOutputTypeCountGuestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.GuestWhereInput
+}
 
 
 export type RsvpSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -576,6 +717,8 @@ export type RsvpSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   accessCode?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  guests?: boolean | Prisma.Rsvp$guestsArgs<ExtArgs>
+  _count?: boolean | Prisma.RsvpCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["rsvp"]>
 
 export type RsvpSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -630,10 +773,18 @@ export type RsvpSelectScalar = {
 }
 
 export type RsvpOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "fullName" | "email" | "phone" | "adultsCount" | "childrenCount" | "totalGuests" | "companionsNames" | "foodRestriction" | "notes" | "status" | "accessCode" | "createdAt" | "updatedAt", ExtArgs["result"]["rsvp"]>
+export type RsvpInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  guests?: boolean | Prisma.Rsvp$guestsArgs<ExtArgs>
+  _count?: boolean | Prisma.RsvpCountOutputTypeDefaultArgs<ExtArgs>
+}
+export type RsvpIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type RsvpIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 
 export type $RsvpPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Rsvp"
-  objects: {}
+  objects: {
+    guests: Prisma.$GuestPayload<ExtArgs>[]
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     fullName: string
@@ -1043,6 +1194,7 @@ readonly fields: RsvpFieldRefs;
  */
 export interface Prisma__RsvpClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  guests<T extends Prisma.Rsvp$guestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Rsvp$guestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GuestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1103,6 +1255,10 @@ export type RsvpFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.Internal
    */
   omit?: Prisma.RsvpOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RsvpInclude<ExtArgs> | null
+  /**
    * Filter, which Rsvp to fetch.
    */
   where: Prisma.RsvpWhereUniqueInput
@@ -1121,6 +1277,10 @@ export type RsvpFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.RsvpOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RsvpInclude<ExtArgs> | null
+  /**
    * Filter, which Rsvp to fetch.
    */
   where: Prisma.RsvpWhereUniqueInput
@@ -1138,6 +1298,10 @@ export type RsvpFindFirstArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Omit specific fields from the Rsvp
    */
   omit?: Prisma.RsvpOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RsvpInclude<ExtArgs> | null
   /**
    * Filter, which Rsvp to fetch.
    */
@@ -1187,6 +1351,10 @@ export type RsvpFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   omit?: Prisma.RsvpOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RsvpInclude<ExtArgs> | null
+  /**
    * Filter, which Rsvp to fetch.
    */
   where?: Prisma.RsvpWhereInput
@@ -1234,6 +1402,10 @@ export type RsvpFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    * Omit specific fields from the Rsvp
    */
   omit?: Prisma.RsvpOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RsvpInclude<ExtArgs> | null
   /**
    * Filter, which Rsvps to fetch.
    */
@@ -1283,6 +1455,10 @@ export type RsvpCreateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    */
   omit?: Prisma.RsvpOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RsvpInclude<ExtArgs> | null
+  /**
    * The data needed to create a Rsvp.
    */
   data: Prisma.XOR<Prisma.RsvpCreateInput, Prisma.RsvpUncheckedCreateInput>
@@ -1330,6 +1506,10 @@ export type RsvpUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    * Omit specific fields from the Rsvp
    */
   omit?: Prisma.RsvpOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RsvpInclude<ExtArgs> | null
   /**
    * The data needed to update a Rsvp.
    */
@@ -1397,6 +1577,10 @@ export type RsvpUpsertArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    */
   omit?: Prisma.RsvpOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RsvpInclude<ExtArgs> | null
+  /**
    * The filter to search for the Rsvp to update in case it exists.
    */
   where: Prisma.RsvpWhereUniqueInput
@@ -1423,6 +1607,10 @@ export type RsvpDeleteArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    */
   omit?: Prisma.RsvpOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RsvpInclude<ExtArgs> | null
+  /**
    * Filter which Rsvp to delete.
    */
   where: Prisma.RsvpWhereUniqueInput
@@ -1443,6 +1631,30 @@ export type RsvpDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
 }
 
 /**
+ * Rsvp.guests
+ */
+export type Rsvp$guestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Guest
+   */
+  select?: Prisma.GuestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Guest
+   */
+  omit?: Prisma.GuestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GuestInclude<ExtArgs> | null
+  where?: Prisma.GuestWhereInput
+  orderBy?: Prisma.GuestOrderByWithRelationInput | Prisma.GuestOrderByWithRelationInput[]
+  cursor?: Prisma.GuestWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.GuestScalarFieldEnum | Prisma.GuestScalarFieldEnum[]
+}
+
+/**
  * Rsvp without action
  */
 export type RsvpDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1454,4 +1666,8 @@ export type RsvpDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Omit specific fields from the Rsvp
    */
   omit?: Prisma.RsvpOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RsvpInclude<ExtArgs> | null
 }

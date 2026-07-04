@@ -15,7 +15,7 @@ export async function PUT(
 
     const { id } = await params;
     const body = await request.json();
-    const { name, quantity, isPurchased, amountSpent, isReady, supplier, deliveryDate } = body;
+    const { name, quantity, isPurchased, amountSpent, isReady, supplier, deliveryDate, isMarketList, marketItems } = body;
 
     const updatedItem = await prisma.foodAndDrink.update({
       where: { id },
@@ -27,6 +27,8 @@ export async function PUT(
         isReady: Boolean(isReady),
         supplier: supplier || null,
         deliveryDate: deliveryDate ? new Date(deliveryDate) : null,
+        isMarketList: Boolean(isMarketList),
+        marketItems: marketItems !== undefined ? marketItems : undefined,
       },
     });
 
