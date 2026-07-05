@@ -5,16 +5,33 @@ import AdminSidebar from "@/components/admin/AdminSidebar";
 import { Plus, Edit2, Trash2, Search, Utensils, CheckCircle2, Circle, Clock, DollarSign, Calendar, Truck } from "lucide-react";
 import { toast } from "sonner";
 
-const evaluateMath = (expression: string): string => {
-  if (!expression) return "";
+const getMathPreview = (expression: string): string | null => {
+  if (!expression) return null;
   try {
-    const sanitized = expression.replace(/,/g, '.');
-    if (!/^[0-9+\-*/().\s]+$/.test(sanitized)) return expression;
-    const result = new Function(`return ${sanitized}`)();
-    if (typeof result === 'number' && !isNaN(result)) {
-      return result.toFixed(2);
+    let sanitized = expression.replace(/,/g, '.').replace(/[xX]/g, '*').replace(/:/g, '/');
+    if (!/^[0-9+\-*/().\s]+$/.test(sanitized)) return null;
+    
+    if (/[\+\-\*\/]/.test(sanitized)) {
+      const result = new Function(`return ${sanitized}`)();
+      if (typeof result === 'number' && !isNaN(result) && isFinite(result)) {
+        return result.toFixed(2);
+      }
     }
   } catch { }
+  return null;
+};
+
+const evaluateMath = (expression: string): string => {
+  const preview = getMathPreview(expression);
+  if (preview !== null) return preview;
+  
+  try {
+    const sanitized = expression.replace(/,/g, '.').replace(/[xX]/g, '*').replace(/:/g, '/');
+    if (/^[0-9.\s]+$/.test(sanitized)) {
+      const num = parseFloat(sanitized);
+      if (!isNaN(num)) return num.toFixed(2);
+    }
+  } catch {}
   return expression;
 };
 
@@ -534,13 +551,20 @@ export default function FoodListPage() {
 
               {!isMarketList ? (
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-1">Valor Gasto (R$)</label>
+                  <div className="flex justify-between items-center mb-1">
+                    <label className="block text-sm font-bold text-slate-700">Valor Gasto (R$)</label>
+                    {getMathPreview(amountSpent) && (
+                      <span className="text-xs font-bold text-[#5c5bd5] bg-[#5c5bd5]/10 px-2 py-0.5 rounded">
+                        = R$ {getMathPreview(amountSpent)}
+                      </span>
+                    )}
+                  </div>
                   <input
                     type="text"
                     value={amountSpent}
                     onChange={e => setAmountSpent(e.target.value)}
                     onBlur={(e) => setAmountSpent(evaluateMath(e.target.value))}
-                    placeholder="0.00 (Aceita contas, ex: 10 + 5.50)"
+                    placeholder="Ex: 10 + 5.50 ou 50 / 2"
                     className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c5bd5]/50"
                   />
                 </div>
@@ -578,22 +602,29 @@ export default function FoodListPage() {
                             className="w-[80px] px-2 py-1 text-sm bg-slate-50 border border-slate-200 rounded focus:outline-none"
                             required
                           />
-                          <input 
-                            type="text" 
-                            placeholder="R$" 
-                            value={mi.price}
-                            onChange={(e) => {
-                              const newArr = [...marketItems];
-                              newArr[idx].price = e.target.value;
-                              setMarketItems(newArr);
-                            }}
-                            onBlur={(e) => {
-                              const newArr = [...marketItems];
-                              newArr[idx].price = evaluateMath(e.target.value);
-                              setMarketItems(newArr);
-                            }}
-                            className="w-[80px] px-2 py-1 text-sm bg-slate-50 border border-slate-200 rounded focus:outline-none"
-                          />
+                          <div className="relative">
+                            <input 
+                              type="text" 
+                              placeholder="R$" 
+                              value={mi.price}
+                              onChange={(e) => {
+                                const newArr = [...marketItems];
+                                newArr[idx].price = e.target.value;
+                                setMarketItems(newArr);
+                              }}
+                              onBlur={(e) => {
+                                const newArr = [...marketItems];
+                                newArr[idx].price = evaluateMath(e.target.value);
+                                setMarketItems(newArr);
+                              }}
+                              className="w-[80px] px-2 py-1 text-sm bg-slate-50 border border-slate-200 rounded focus:outline-none"
+                            />
+                            {getMathPreview(mi.price) && (
+                              <div className="absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap bg-slate-800 text-white text-[10px] font-bold px-2 py-1 rounded shadow-md z-10 pointer-events-none after:content-[''] after:absolute after:top-full after:left-1/2 after:-translate-x-1/2 after:border-4 after:border-transparent after:border-t-slate-800">
+                                = R$ {getMathPreview(mi.price)}
+                              </div>
+                            )}
+                          </div>
                           <button 
                             type="button"
                             onClick={() => {
