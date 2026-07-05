@@ -179,6 +179,13 @@ export default function GuestListTab() {
     }
   };
 
+  const totalGuests = guests.length;
+  const groupCounts = guests.reduce((acc, guest) => {
+    const g = guest.group || "Sem Grupo";
+    acc[g] = (acc[g] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
   return (
     <>
       <div className="space-y-6 animate-fade-in">
@@ -194,6 +201,21 @@ export default function GuestListTab() {
               <Plus size={20} />
               Novo Convidado
             </button>
+          </div>
+
+          {/* Métricas */}
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+            <div className="bg-white p-3 rounded-xl border border-[#5c5bd5]/20 shadow-sm flex flex-col justify-center relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-1 h-full bg-[#5c5bd5]"></div>
+              <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Total</span>
+              <span className="text-2xl font-black text-[#5c5bd5]">{totalGuests}</span>
+            </div>
+            {Object.entries(groupCounts).sort((a, b) => b[1] - a[1]).map(([groupName, count]) => (
+              <div key={groupName} className="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-center">
+                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider truncate" title={groupName}>{groupName}</span>
+                <span className="text-xl font-black text-slate-700">{count}</span>
+              </div>
+            ))}
           </div>
 
           <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4">
