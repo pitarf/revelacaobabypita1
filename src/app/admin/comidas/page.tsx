@@ -5,6 +5,19 @@ import AdminSidebar from "@/components/admin/AdminSidebar";
 import { Plus, Edit2, Trash2, Search, Utensils, CheckCircle2, Circle, Clock, DollarSign, Calendar, Truck } from "lucide-react";
 import { toast } from "sonner";
 
+const evaluateMath = (expression: string): string => {
+  if (!expression) return "";
+  try {
+    const sanitized = expression.replace(/,/g, '.');
+    if (!/^[0-9+\-*/().\s]+$/.test(sanitized)) return expression;
+    const result = new Function(`return ${sanitized}`)();
+    if (typeof result === 'number' && !isNaN(result)) {
+      return result.toFixed(2);
+    }
+  } catch { }
+  return expression;
+};
+
 interface MarketItem {
   id: string;
   name: string;
@@ -523,12 +536,11 @@ export default function FoodListPage() {
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-1">Valor Gasto (R$)</label>
                   <input
-                    type="number"
-                    step="0.01"
-                    min="0"
+                    type="text"
                     value={amountSpent}
                     onChange={e => setAmountSpent(e.target.value)}
-                    placeholder="0.00"
+                    onBlur={(e) => setAmountSpent(evaluateMath(e.target.value))}
+                    placeholder="0.00 (Aceita contas, ex: 10 + 5.50)"
                     className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c5bd5]/50"
                   />
                 </div>
@@ -567,13 +579,17 @@ export default function FoodListPage() {
                             required
                           />
                           <input 
-                            type="number" 
-                            step="0.01"
+                            type="text" 
                             placeholder="R$" 
                             value={mi.price}
                             onChange={(e) => {
                               const newArr = [...marketItems];
                               newArr[idx].price = e.target.value;
+                              setMarketItems(newArr);
+                            }}
+                            onBlur={(e) => {
+                              const newArr = [...marketItems];
+                              newArr[idx].price = evaluateMath(e.target.value);
                               setMarketItems(newArr);
                             }}
                             className="w-[80px] px-2 py-1 text-sm bg-slate-50 border border-slate-200 rounded focus:outline-none"
