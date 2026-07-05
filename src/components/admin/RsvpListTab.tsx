@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import AdminSidebar from "@/components/admin/AdminSidebar";
 import { Plus, Edit2, Trash2, CheckCircle, XCircle, Search, Download, HelpCircle, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 
@@ -21,7 +20,7 @@ interface Rsvp {
   createdAt: string;
 }
 
-export default function AdminConfirmationsPage() {
+export default function RsvpListTab() {
   const [rsvps, setRsvps] = useState<Rsvp[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -275,11 +274,7 @@ export default function AdminConfirmationsPage() {
   const totChildren = confirmedOnly.reduce((acc, curr) => acc + curr.childrenCount, 0);
 
   return (
-    <div className="bg-slate-50 min-h-screen flex flex-col md:flex-row">
-      <AdminSidebar />
-
-      <main className="flex-1 p-6 md:pl-72 md:pr-8 md:py-8 space-y-6 overflow-x-hidden">
-        
+    <div className="space-y-6 animate-fade-in">
         {/* Cabeçalho */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200 pb-4">
           <div>
@@ -607,8 +602,6 @@ export default function AdminConfirmationsPage() {
             </div>
           </div>
         )}
-
-      </main>
     </div>
   );
 }
