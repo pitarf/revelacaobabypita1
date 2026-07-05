@@ -21,6 +21,7 @@ export async function GET() {
       recentOrders,
       recentRsvps,
       topGifts,
+      manualGuestsCount,
     ] = await Promise.all([
       prisma.eventSetting.findFirst(),
       
@@ -80,6 +81,11 @@ export async function GET() {
         where: { chosenQuantity: { gt: 0 } },
         include: { category: true },
       }),
+      
+      // Convidados confirmados manualmente (sem RSVP associado)
+      prisma.guest.count({
+        where: { isManuallyConfirmed: true, rsvpId: null },
+      }),
     ]);
 
     // 3. Processamento das Configurações de Bebê
@@ -104,6 +110,11 @@ export async function GET() {
         confirmedChildren = children;
       }
     });
+
+    // Adiciona os convidados manuais (1 adulto cada)
+    confirmedGuests += manualGuestsCount;
+    confirmedAdults += manualGuestsCount;
+    totalRsvps += manualGuestsCount;
 
     // 5. Processamento dos Totais Financeiros
     const grossRevenue = parseFloat(financialAggregates._sum.value?.toString() || "0");
