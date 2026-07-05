@@ -439,12 +439,15 @@ export default function GuestListTab() {
                   value={group}
                   onChange={e => setGroup(e.target.value)}
                   className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c5bd5]/50"
-                  placeholder="Ex: Família Rafael"
+                  placeholder="Selecione ou digite um novo grupo..."
                   list="group-options"
                 />
                 <datalist id="group-options">
                   {groups.map((g: any) => <option key={g} value={g} />)}
                 </datalist>
+                <p className="text-xs text-slate-500 mt-1">
+                  Digite um nome inédito para <strong>criar um novo grupo</strong> automaticamente.
+                </p>
               </div>
 
               <div>
