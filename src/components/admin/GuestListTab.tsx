@@ -180,7 +180,8 @@ export default function GuestListTab() {
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <>
+      <div className="space-y-6 animate-fade-in">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h1 className="text-3xl font-black text-slate-800">Lista de Convidados</h1>
@@ -380,7 +381,6 @@ export default function GuestListTab() {
             </div>
           )}
         </div>
-      </div>
 
       {formOpen && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
@@ -434,6 +434,7 @@ export default function GuestListTab() {
                 >
                   <option value="">-- Não associado / Aguardando --</option>
                   {[...rsvps].sort((a, b) => a.fullName.localeCompare(b.fullName)).map(r => (
+                    <option key={r.id} value={r.id}>
                       {r.fullName} (Confirma {r.totalGuests} pessoa{r.totalGuests > 1 ? 's' : ''}) {r.status !== 'confirmed' ? '- ' + r.status : ''}
                     </option>
                   ))}
@@ -463,6 +464,6 @@ export default function GuestListTab() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

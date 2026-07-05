@@ -274,7 +274,8 @@ export default function RsvpListTab() {
   const totChildren = confirmedOnly.reduce((acc, curr) => acc + curr.childrenCount, 0);
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <>
+      <div className="space-y-6 animate-fade-in">
         {/* Cabeçalho */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200 pb-4">
           <div>
@@ -602,6 +603,6 @@ export default function RsvpListTab() {
             </div>
           </div>
         )}
-    </div>
+    </>
   );
 }
