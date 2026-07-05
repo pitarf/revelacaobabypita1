@@ -51,13 +51,43 @@ export default function AdminConfirmationsPage() {
   const fetchRsvps = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/admin/rsvp");
-      const json = await res.json();
-      if (res.ok) {
-        setRsvps(json.data || []);
+      const [rsvpsRes, guestsRes] = await Promise.all([
+        fetch("/api/admin/rsvp"),
+        fetch("/api/admin/guests")
+      ]);
+
+      let loadedRsvps: Rsvp[] = [];
+      
+      if (rsvpsRes.ok) {
+        const json = await rsvpsRes.json();
+        loadedRsvps = json.data || [];
       } else {
-        toast.error(json.error || "Erro ao obter confirmações.");
+        toast.error("Erro ao obter confirmações RSVP.");
       }
+
+      if (guestsRes.ok) {
+        const guestsJson = await guestsRes.json();
+        const manualGuests = guestsJson
+          .filter((g: any) => g.isManuallyConfirmed && !g.rsvpId)
+          .map((g: any) => ({
+            id: g.id,
+            fullName: g.name + " (Mestra)",
+            email: "-",
+            phone: "-",
+            adultsCount: 1,
+            childrenCount: 0,
+            totalGuests: 1,
+            companionsNames: "",
+            foodRestriction: "",
+            notes: "Confirmado manualmente na lista mestra.",
+            accessCode: "MANUAL-GUEST",
+            status: "confirmed",
+            createdAt: g.createdAt
+          }));
+        loadedRsvps = [...loadedRsvps, ...manualGuests];
+      }
+
+      setRsvps(loadedRsvps);
     } catch (err) {
       console.error(err);
       toast.error("Erro ao conectar.");
@@ -401,20 +431,28 @@ export default function AdminConfirmationsPage() {
 
                       {/* Ações */}
                       <td className="px-6 py-4 text-right flex justify-end gap-2">
-                        <button
-                          onClick={() => handleOpenEdit(rsvp)}
-                          className="p-2 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors"
-                          title="Editar"
-                        >
-                          <Edit2 className="h-3.5 w-3.5" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(rsvp.id, rsvp.fullName)}
-                          className="p-2 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-500 hover:text-rose-700 transition-colors border border-rose-100"
-                          title="Excluir"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
+                        {rsvp.accessCode !== "MANUAL-GUEST" ? (
+                          <>
+                            <button
+                              onClick={() => handleOpenEdit(rsvp)}
+                              className="p-2 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors"
+                              title="Editar"
+                            >
+                              <Edit2 className="h-3.5 w-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(rsvp.id, rsvp.fullName)}
+                              className="p-2 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-500 hover:text-rose-700 transition-colors border border-rose-100"
+                              title="Excluir"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          </>
+                        ) : (
+                          <div className="text-[9px] text-slate-400 font-bold px-2 py-1 bg-slate-50 rounded-md border border-slate-100 flex items-center justify-center">
+                            GERIR NA MESTRA
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ))}
