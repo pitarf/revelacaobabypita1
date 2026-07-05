@@ -218,36 +218,42 @@ export default function GuestListTab() {
             ))}
           </div>
 
-          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-3 text-slate-400" size={18} />
-              <input
-                type="text"
-                placeholder="Buscar por nome..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5c5bd5]/50"
-              />
+          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col gap-4">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-3 text-slate-400" size={18} />
+                <input
+                  type="text"
+                  placeholder="Buscar por nome..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5c5bd5]/50"
+                />
+              </div>
+              <select
+                value={filterGroup}
+                onChange={(e) => setFilterGroup(e.target.value)}
+                className="px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5c5bd5]/50"
+              >
+                <option value="all">Todos os Grupos</option>
+                {groups.map((g: any) => (
+                  <option key={g} value={g}>{g}</option>
+                ))}
+              </select>
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+                className="px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5c5bd5]/50"
+              >
+                <option value="all">Todos os Status</option>
+                <option value="associated">✅ Associados (Confirmados)</option>
+                <option value="pending">⏳ Pendentes (Sem RSVP)</option>
+              </select>
             </div>
-            <select
-              value={filterGroup}
-              onChange={(e) => setFilterGroup(e.target.value)}
-              className="px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5c5bd5]/50"
-            >
-              <option value="all">Todos os Grupos</option>
-              {groups.map((g: any) => (
-                <option key={g} value={g}>{g}</option>
-              ))}
-            </select>
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#5c5bd5]/50"
-            >
-              <option value="all">Todos os Status</option>
-              <option value="associated">✅ Associados (Confirmados)</option>
-              <option value="pending">⏳ Pendentes (Sem RSVP)</option>
-            </select>
+            
+            <div className="text-xs font-semibold text-slate-500">
+              Exibindo <strong className="text-[#5c5bd5]">{filteredGuests.length}</strong> de {guests.length} convidado{guests.length !== 1 ? 's' : ''}
+            </div>
           </div>
 
           {loading ? (
