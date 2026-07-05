@@ -603,6 +603,7 @@ export default function RsvpListTab() {
             </div>
           </div>
         )}
+      </div>
     </>
   );
 }
