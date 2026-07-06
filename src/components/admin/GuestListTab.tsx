@@ -464,11 +464,23 @@ export default function GuestListTab() {
                   className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c5bd5]/50"
                 >
                   <option value="">-- Não associado / Aguardando --</option>
-                  {[...rsvps].sort((a, b) => a.fullName.localeCompare(b.fullName)).map(r => (
-                    <option key={r.id} value={r.id}>
-                      {r.fullName} (Confirma {r.totalGuests} pessoa{r.totalGuests > 1 ? 's' : ''}) {r.status !== 'confirmed' ? '- ' + r.status : ''}
-                    </option>
-                  ))}
+                  {[...rsvps]
+                    .filter(r => {
+                      if (r.id === rsvpId) return true; // Mantém se já for o selecionado
+                      const associatedCount = guests.filter(g => g.rsvpId === r.id).length;
+                      return associatedCount < r.totalGuests; // Mostra apenas se ainda tiver vagas
+                    })
+                    .sort((a, b) => a.fullName.localeCompare(b.fullName))
+                    .map(r => {
+                      const associatedCount = guests.filter(g => g.rsvpId === r.id).length;
+                      const remaining = r.totalGuests - associatedCount;
+                      return (
+                        <option key={r.id} value={r.id}>
+                          {r.fullName} (Vagas: {remaining} de {r.totalGuests}) {r.status !== 'confirmed' ? '- ' + r.status : ''}
+                        </option>
+                      );
+                    })
+                  }
                 </select>
                 <p className="text-xs text-slate-500 mt-1">
                   Selecione quem confirmou a presença para essa pessoa.
