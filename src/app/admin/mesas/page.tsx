@@ -275,15 +275,28 @@ export default function MesasAdmin() {
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                 {tables.map(table => (
                   <div key={table.id} className="bg-white border rounded-xl shadow-sm overflow-hidden flex flex-col border-slate-200 h-[350px]">
-                    <div className="p-4 border-b flex justify-between items-start bg-slate-50 border-slate-100 shrink-0">
-                      <div>
+                    <div className="p-4 border-b bg-slate-50 border-slate-100 shrink-0 relative">
+                      <div className="w-full pr-16">
                         <h3 className="font-bold text-slate-800 line-clamp-1" title={table.name}>{table.name}</h3>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="text-xs font-bold text-slate-600 bg-slate-200 pl-2 pr-1 py-0.5 rounded-full flex items-center gap-1">
+                        
+                        <div className="flex flex-col gap-2.5 mt-2">
+                          <div className="flex items-center gap-1.5 text-[11px] leading-none">
+                            <span className="font-semibold text-slate-600 bg-white px-2 py-1.5 rounded border border-slate-200 shadow-sm">
+                              <span className="text-slate-800 font-black">{table.guests.length}</span> na mesa
+                            </span>
+                            <span className="font-semibold text-green-700 bg-green-50 px-2 py-1.5 rounded border border-green-200 shadow-sm flex items-center gap-1">
+                              <CheckCircle2 size={12} className="text-green-600"/>
+                              <span className="font-black">{table.guests.filter(g => g.rsvpId || g.isManuallyConfirmed).length}</span> conf.
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-1 bg-white w-fit rounded-lg p-0.5 border border-slate-200 shadow-sm">
+                            <button onClick={() => updateTableCount(table.id, table.capacity, -1)} className="p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-md transition-colors"><Minus size={14}/></button>
                             <input
                               type="number"
                               min="1"
-                              className="w-10 bg-white/50 text-center focus:outline-none focus:bg-white rounded border border-slate-300 py-0.5"
+                              className="w-8 text-center bg-transparent font-bold text-slate-700 text-sm focus:outline-none focus:ring-1 focus:ring-[#5c5bd5] rounded hide-arrows"
+                              style={{ MozAppearance: 'textfield' }}
                               value={table.capacity}
                               onChange={(e) => {
                                 const val = parseInt(e.target.value);
@@ -292,20 +305,17 @@ export default function MesasAdmin() {
                                 }
                               }}
                             />
-                            mesa(s)
-                            <button onClick={() => updateTableCount(table.id, table.capacity, -1)} className="hover:text-slate-900 ml-1"><Minus size={12}/></button>
-                            <button onClick={() => updateTableCount(table.id, table.capacity, 1)} className="hover:text-slate-900"><Plus size={12}/></button>
-                          </span>
-                          <span className="text-xs text-slate-500">
-                            ({table.guests.length} pessoas, {table.guests.filter(g => g.rsvpId || g.isManuallyConfirmed).length} confirmados)
-                          </span>
+                            <span className="text-xs font-bold text-slate-400 uppercase tracking-wide pr-1">Mesa(s)</span>
+                            <button onClick={() => updateTableCount(table.id, table.capacity, 1)} className="p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-md transition-colors"><Plus size={14}/></button>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <button onClick={() => openForm(table)} className="p-1.5 text-slate-400 hover:text-blue-600 bg-white rounded-md border border-slate-200 hover:border-blue-200 shadow-sm" title="Editar Nome do Grupo">
+
+                      <div className="flex items-center gap-1 absolute top-4 right-4">
+                        <button onClick={() => openForm(table)} className="p-1.5 text-slate-400 hover:text-[#5c5bd5] bg-white rounded-md border border-slate-200 hover:border-blue-200 shadow-sm transition-colors" title="Editar Nome do Grupo">
                           <Edit2 size={14} />
                         </button>
-                        <button onClick={() => handleDeleteTable(table.id)} className="p-1.5 text-slate-400 hover:text-rose-600 bg-white rounded-md border border-slate-200 hover:border-rose-200 shadow-sm" title="Excluir Grupo">
+                        <button onClick={() => handleDeleteTable(table.id)} className="p-1.5 text-slate-400 hover:text-rose-600 bg-white rounded-md border border-slate-200 hover:border-rose-200 shadow-sm transition-colors" title="Excluir Grupo">
                           <Trash2 size={14} />
                         </button>
                       </div>

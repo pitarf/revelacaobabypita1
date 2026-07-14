@@ -183,3 +183,10 @@ strong, b {
   align-items: center;
   text-align: center;
 }
+
+/* Esconder as setinhas do input number */
+.hide-arrows::-webkit-outer-spin-button,
+.hide-arrows::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
