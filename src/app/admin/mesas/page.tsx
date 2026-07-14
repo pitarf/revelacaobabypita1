@@ -10,6 +10,8 @@ interface Guest {
   name: string;
   group: string | null;
   tableId: string | null;
+  rsvpId: string | null;
+  isManuallyConfirmed: boolean;
 }
 
 interface Table {
@@ -295,7 +297,7 @@ export default function MesasAdmin() {
                             <button onClick={() => updateTableCount(table.id, table.capacity, 1)} className="hover:text-slate-900"><Plus size={12}/></button>
                           </span>
                           <span className="text-xs text-slate-500">
-                            ({table.guests.length} pessoas)
+                            ({table.guests.length} pessoas, {table.guests.filter(g => g.rsvpId || g.isManuallyConfirmed).length} confirmados)
                           </span>
                         </div>
                       </div>
@@ -316,9 +318,14 @@ export default function MesasAdmin() {
                         <div className="space-y-1.5">
                           {table.guests.map(g => (
                             <div key={g.id} className="flex justify-between items-center bg-white border border-slate-100 p-2 rounded-md shadow-sm">
-                              <div className="overflow-hidden">
-                                <p className="text-sm font-semibold text-slate-700 line-clamp-1">{g.name}</p>
-                                <p className="text-[10px] text-slate-400 line-clamp-1">{g.group || "Sem Grupo"}</p>
+                              <div className="overflow-hidden flex items-center gap-2">
+                                <div title={(g.rsvpId || g.isManuallyConfirmed) ? "Confirmado" : "Pendente"}>
+                                  <CheckCircle2 size={16} className={(g.rsvpId || g.isManuallyConfirmed) ? "text-green-500" : "text-slate-200"} />
+                                </div>
+                                <div>
+                                  <p className="text-sm font-semibold text-slate-700 line-clamp-1">{g.name}</p>
+                                  <p className="text-[10px] text-slate-400 line-clamp-1">{g.group || "Sem Grupo"}</p>
+                                </div>
                               </div>
                               <button 
                                 onClick={() => assignGuestToTable(g.id, null)}
