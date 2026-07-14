@@ -187,45 +187,26 @@ export default function MesasAdmin() {
         </header>
 
         {/* Dashboard Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
-            <div>
-              <p className="text-sm text-slate-500 font-bold mb-1">Total de Mesas</p>
-              <p className="text-3xl font-black text-slate-800">{loading ? "-" : totalTables}</p>
-            </div>
-            <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
-              <LayoutGrid size={24} />
-            </div>
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-6">
+          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">
+            <p className="text-[10px] uppercase text-slate-500 font-bold mb-1">Mesas p/ Alugar</p>
+            <p className="text-2xl font-black text-slate-800">{loading ? "-" : totalTables}</p>
           </div>
-          
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
-            <div>
-              <p className="text-sm text-slate-500 font-bold mb-1">Cadeiras p/ Alugar</p>
-              <p className="text-3xl font-black text-amber-600">{loading ? "-" : totalChairsToRent}</p>
-            </div>
-            <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">
-              <Users size={24} />
-            </div>
+          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">
+            <p className="text-[10px] uppercase text-slate-500 font-bold mb-1">Total de Cadeiras</p>
+            <p className="text-2xl font-black text-amber-600">{loading ? "-" : totalChairsToRent}</p>
           </div>
-          
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
-            <div>
-              <p className="text-sm text-slate-500 font-bold mb-1">Convidados Sentados</p>
-              <p className="text-3xl font-black text-green-600">{loading ? "-" : totalAssignedGuests}</p>
-            </div>
-            <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600">
-              <CheckCircle2 size={24} />
-            </div>
+          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">
+            <p className="text-[10px] uppercase text-slate-500 font-bold mb-1">Convidados Sentados</p>
+            <p className="text-2xl font-black text-green-600">{loading ? "-" : totalAssignedGuests}</p>
           </div>
-          
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
-            <div>
-              <p className="text-sm text-slate-500 font-bold mb-1">Sem Assento</p>
-              <p className="text-3xl font-black text-rose-600">{loading ? "-" : unassignedGuests.length}</p>
-            </div>
-            <div className="w-12 h-12 rounded-full bg-rose-100 flex items-center justify-center text-rose-600">
-              <AlertCircle size={24} />
-            </div>
+          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">
+            <p className="text-[10px] uppercase text-slate-500 font-bold mb-1">Convidados sem Lugar</p>
+            <p className="text-2xl font-black text-rose-600">{loading ? "-" : unassignedGuests.length}</p>
+          </div>
+          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">
+            <p className="text-[10px] uppercase text-slate-500 font-bold mb-1">Qtd de Grupos</p>
+            <p className="text-2xl font-black text-blue-600">{loading ? "-" : tables.length}</p>
           </div>
         </div>
 
