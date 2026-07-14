@@ -27,7 +27,6 @@ export default function MesasAdmin() {
   const [formOpen, setFormOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [tableName, setTableName] = useState("");
-  const [tableCapacity, setTableCapacity] = useState("4");
   
   const [guestSearch, setGuestSearch] = useState("");
 
@@ -59,11 +58,9 @@ export default function MesasAdmin() {
     if (table) {
       setEditingId(table.id);
       setTableName(table.name);
-      setTableCapacity(table.capacity.toString());
     } else {
       setEditingId(null);
       setTableName("");
-      setTableCapacity("4");
     }
     setFormOpen(true);
   };
@@ -72,7 +69,7 @@ export default function MesasAdmin() {
     e.preventDefault();
     if (!tableName) return toast.error("Preencha o nome da mesa.");
 
-    const payload = { name: tableName, capacity: Number(tableCapacity) };
+    const payload = { name: tableName, capacity: 100 };
 
     try {
       const method = editingId ? "PUT" : "POST";
@@ -143,8 +140,8 @@ export default function MesasAdmin() {
   );
 
   const totalTables = tables.length;
-  const totalChairsToRent = tables.reduce((acc, t) => acc + t.capacity, 0);
   const totalAssignedGuests = guests.length - unassignedGuests.length;
+  const totalChairsToRent = totalAssignedGuests;
 
   return (
     <div className="flex h-screen bg-slate-50 font-sans text-slate-900">
@@ -247,8 +244,8 @@ export default function MesasAdmin() {
                       >
                         <option value="" disabled>Colocar na mesa...</option>
                         {tables.map(t => (
-                          <option key={t.id} value={t.id} disabled={t.guests.length >= t.capacity}>
-                            {t.name} ({t.guests.length}/{t.capacity})
+                          <option key={t.id} value={t.id}>
+                            {t.name} ({t.guests.length} pessoas)
                           </option>
                         ))}
                       </select>
@@ -272,12 +269,12 @@ export default function MesasAdmin() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                 {tables.map(table => (
-                  <div key={table.id} className={`bg-white border rounded-xl shadow-sm overflow-hidden flex flex-col ${table.guests.length >= table.capacity ? 'border-amber-200' : 'border-slate-200'}`}>
-                    <div className={`p-4 border-b flex justify-between items-start ${table.guests.length >= table.capacity ? 'bg-amber-50 border-amber-100' : 'bg-slate-50 border-slate-100'}`}>
+                  <div key={table.id} className="bg-white border rounded-xl shadow-sm overflow-hidden flex flex-col border-slate-200">
+                    <div className="p-4 border-b flex justify-between items-start bg-slate-50 border-slate-100">
                       <div>
                         <h3 className="font-bold text-slate-800 line-clamp-1" title={table.name}>{table.name}</h3>
                         <p className="text-xs text-slate-500 mt-0.5">
-                          {table.guests.length} de {table.capacity} lugares ocupados
+                          {table.guests.length} pessoa(s) nesta mesa
                         </p>
                       </div>
                       <div className="flex items-center gap-1">
@@ -313,16 +310,6 @@ export default function MesasAdmin() {
                         </div>
                       )}
                       
-                      {/* Empty slots visual indicator */}
-                      {table.guests.length < table.capacity && (
-                        <div className="mt-2 space-y-1.5">
-                          {Array.from({ length: table.capacity - table.guests.length }).map((_, i) => (
-                            <div key={`empty-${i}`} className="flex items-center h-[46px] border border-dashed border-slate-200 bg-slate-50/50 rounded-md">
-                              <p className="text-xs text-slate-400 w-full text-center">Lugar vago</p>
-                            </div>
-                          ))}
-                        </div>
-                      )}
                     </div>
                   </div>
                 ))}
@@ -360,18 +347,6 @@ export default function MesasAdmin() {
                     className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c5bd5]/50"
                     placeholder="Ex: Família Silva ou Mesa 1"
                   />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-1">Capacidade (Lugares)</label>
-                  <input
-                    type="number"
-                    min="1"
-                    required
-                    value={tableCapacity}
-                    onChange={e => setTableCapacity(e.target.value)}
-                    className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5c5bd5]/50"
-                  />
-                  <p className="text-xs text-slate-500 mt-1">Quantas cadeiras essa mesa terá no total.</p>
                 </div>
               </div>
 
