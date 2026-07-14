@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import AdminSidebar from "@/components/admin/AdminSidebar";
-import { Plus, Edit2, Trash2, Search, Users, LayoutGrid, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Plus, Edit2, Trash2, Search, Users, LayoutGrid, AlertCircle, CheckCircle2, X } from "lucide-react";
 import { toast } from "sonner";
 
 interface Guest {
