@@ -229,6 +229,26 @@ export default function MesasAdmin() {
           </div>
         </div>
 
+        {/* Resumo por Grupo */}
+        {tables.length > 0 && (
+          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm mb-6">
+            <h2 className="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
+              <LayoutGrid size={16} className="text-[#5c5bd5]" />
+              Resumo por Grupo
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {tables.map(t => (
+                <div key={`summary-${t.id}`} className="bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg text-sm flex items-center gap-2">
+                  <span className="font-semibold text-slate-700">{t.name}</span>
+                  <span className="text-xs bg-slate-200 text-slate-700 font-bold px-2 py-0.5 rounded-full">
+                    {t.capacity} {t.capacity === 1 ? 'mesa' : 'mesas'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Content Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
           
