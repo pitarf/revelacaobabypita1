@@ -203,6 +203,8 @@ model Guest {
   rsvpId    String?
   rsvp      Rsvp?    @relation(fields: [rsvpId], references: [id], onDelete: SetNull)
   isManuallyConfirmed Boolean @default(false)
+  tableId   String?
+  table     Table?   @relation(fields: [tableId], references: [id], onDelete: SetNull)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
@@ -369,4 +371,16 @@ model FoodAndDrink {
   updatedAt    DateTime  @updatedAt
 
   @@map("food_and_drinks")
+}
+
+// 21. Organização de Mesas
+model Table {
+  id        String   @id @default(uuid())
+  name      String   // Ex: Mesa Família da Noiva
+  capacity  Int      @default(4)
+  guests    Guest[]  // Guests allocated to this table
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("tables")
 }

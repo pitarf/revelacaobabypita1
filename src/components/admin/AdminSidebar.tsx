@@ -20,7 +20,8 @@ import {
   MessageSquare,
   Mail,
   ExternalLink,
-  Utensils
+  Utensils,
+  LayoutGrid
 } from "lucide-react";
 
 export default function AdminSidebar() {
@@ -79,6 +80,7 @@ export default function AdminSidebar() {
     { name: "Extrato Financeiro", path: "/admin/extrato", icon: DollarSign },
     { name: "Histórico de E-mails", path: "/admin/emails", icon: Mail },
     { name: "Comidas & Bebidas", path: "/admin/comidas", icon: Utensils },
+    { name: "Organização de Mesas", path: "/admin/mesas", icon: LayoutGrid },
     { name: "Configurações & Temas", path: "/admin/configuracoes", icon: Settings },
   ];
 

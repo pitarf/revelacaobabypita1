@@ -8,7 +8,7 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
-    const { name, group, rsvpId, isManuallyConfirmed } = body;
+    const { name, group, rsvpId, isManuallyConfirmed, tableId } = body;
 
     const updatedGuest = await prisma.guest.update({
       where: { id },
@@ -17,9 +17,11 @@ export async function PUT(
         group: group !== undefined ? group : undefined,
         rsvpId: rsvpId !== undefined ? (rsvpId === null ? null : rsvpId) : undefined,
         isManuallyConfirmed: isManuallyConfirmed !== undefined ? Boolean(isManuallyConfirmed) : undefined,
+        tableId: tableId !== undefined ? (tableId === null ? null : tableId) : undefined,
       },
       include: {
-        rsvp: true
+        rsvp: true,
+        table: true
       }
     });
 
