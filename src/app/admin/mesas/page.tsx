@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import AdminSidebar from "@/components/admin/AdminSidebar";
-import { Plus, Edit2, Trash2, Search, Users, LayoutGrid, AlertCircle, CheckCircle2, X } from "lucide-react";
+import { Plus, Edit2, Trash2, Search, Users, LayoutGrid, AlertCircle, CheckCircle2, X, Minus } from "lucide-react";
 import { toast } from "sonner";
 
 interface Guest {
@@ -69,7 +69,7 @@ export default function MesasAdmin() {
     e.preventDefault();
     if (!tableName) return toast.error("Preencha o nome da mesa.");
 
-    const payload = { name: tableName, capacity: 100 };
+    const payload = { name: tableName, capacity: editingId ? undefined : 1 }; // Default 1 mesa
 
     try {
       const method = editingId ? "PUT" : "POST";
@@ -133,13 +133,35 @@ export default function MesasAdmin() {
     }
   };
 
+  const updateTableCount = async (id: string, currentCount: number, change: number) => {
+    const newCount = Math.max(1, currentCount + change);
+    if (newCount === currentCount) return;
+
+    try {
+      setTables(tables.map(t => t.id === id ? { ...t, capacity: newCount } : t));
+      
+      const res = await fetch(`/api/admin/tables/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ capacity: newCount })
+      });
+      if (!res.ok) {
+        toast.error("Erro ao atualizar quantidade de mesas.");
+        fetchData(); 
+      }
+    } catch (err) {
+      toast.error("Erro de conexão.");
+      fetchData(); 
+    }
+  };
+
   const unassignedGuests = guests.filter(g => !g.tableId);
   const filteredUnassigned = unassignedGuests.filter(g => 
     g.name.toLowerCase().includes(guestSearch.toLowerCase()) || 
     (g.group && g.group.toLowerCase().includes(guestSearch.toLowerCase()))
   );
 
-  const totalTables = tables.length;
+  const totalTables = tables.reduce((acc, t) => acc + t.capacity, 0);
   const totalAssignedGuests = guests.length - unassignedGuests.length;
   const totalChairsToRent = totalAssignedGuests;
 
@@ -273,15 +295,22 @@ export default function MesasAdmin() {
                     <div className="p-4 border-b flex justify-between items-start bg-slate-50 border-slate-100 shrink-0">
                       <div>
                         <h3 className="font-bold text-slate-800 line-clamp-1" title={table.name}>{table.name}</h3>
-                        <p className="text-xs text-slate-500 mt-0.5">
-                          {table.guests.length} pessoa(s) nesta mesa
-                        </p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-xs font-bold text-slate-600 bg-slate-200 px-2 py-0.5 rounded-full flex items-center gap-1">
+                            {table.capacity} mesa(s)
+                            <button onClick={() => updateTableCount(table.id, table.capacity, -1)} className="hover:text-slate-900 ml-1"><Minus size={12}/></button>
+                            <button onClick={() => updateTableCount(table.id, table.capacity, 1)} className="hover:text-slate-900"><Plus size={12}/></button>
+                          </span>
+                          <span className="text-xs text-slate-500">
+                            ({table.guests.length} pessoas)
+                          </span>
+                        </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <button onClick={() => openForm(table)} className="p-1.5 text-slate-400 hover:text-blue-600 bg-white rounded-md border border-slate-200 hover:border-blue-200 shadow-sm" title="Editar Mesa">
+                        <button onClick={() => openForm(table)} className="p-1.5 text-slate-400 hover:text-blue-600 bg-white rounded-md border border-slate-200 hover:border-blue-200 shadow-sm" title="Editar Nome do Grupo">
                           <Edit2 size={14} />
                         </button>
-                        <button onClick={() => handleDeleteTable(table.id)} className="p-1.5 text-slate-400 hover:text-rose-600 bg-white rounded-md border border-slate-200 hover:border-rose-200 shadow-sm" title="Excluir Mesa">
+                        <button onClick={() => handleDeleteTable(table.id)} className="p-1.5 text-slate-400 hover:text-rose-600 bg-white rounded-md border border-slate-200 hover:border-rose-200 shadow-sm" title="Excluir Grupo">
                           <Trash2 size={14} />
                         </button>
                       </div>
