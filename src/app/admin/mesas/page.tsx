@@ -269,8 +269,8 @@ export default function MesasAdmin() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                 {tables.map(table => (
-                  <div key={table.id} className="bg-white border rounded-xl shadow-sm overflow-hidden flex flex-col border-slate-200">
-                    <div className="p-4 border-b flex justify-between items-start bg-slate-50 border-slate-100">
+                  <div key={table.id} className="bg-white border rounded-xl shadow-sm overflow-hidden flex flex-col border-slate-200 h-[350px]">
+                    <div className="p-4 border-b flex justify-between items-start bg-slate-50 border-slate-100 shrink-0">
                       <div>
                         <h3 className="font-bold text-slate-800 line-clamp-1" title={table.name}>{table.name}</h3>
                         <p className="text-xs text-slate-500 mt-0.5">
@@ -287,7 +287,7 @@ export default function MesasAdmin() {
                       </div>
                     </div>
                     
-                    <div className="flex-1 p-3 bg-slate-50/30">
+                    <div className="flex-1 p-3 bg-slate-50/30 overflow-y-auto custom-scrollbar">
                       {table.guests.length === 0 ? (
                         <div className="h-24 flex items-center justify-center text-xs text-slate-400 italic">Mesa Vazia</div>
                       ) : (
