@@ -297,8 +297,20 @@ export default function MesasAdmin() {
                       <div>
                         <h3 className="font-bold text-slate-800 line-clamp-1" title={table.name}>{table.name}</h3>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="text-xs font-bold text-slate-600 bg-slate-200 px-2 py-0.5 rounded-full flex items-center gap-1">
-                            {table.capacity} mesa(s)
+                          <span className="text-xs font-bold text-slate-600 bg-slate-200 pl-2 pr-1 py-0.5 rounded-full flex items-center gap-1">
+                            <input
+                              type="number"
+                              min="1"
+                              className="w-10 bg-white/50 text-center focus:outline-none focus:bg-white rounded border border-slate-300 py-0.5"
+                              value={table.capacity}
+                              onChange={(e) => {
+                                const val = parseInt(e.target.value);
+                                if (!isNaN(val) && val > 0) {
+                                  updateTableCount(table.id, table.capacity, val - table.capacity);
+                                }
+                              }}
+                            />
+                            mesa(s)
                             <button onClick={() => updateTableCount(table.id, table.capacity, -1)} className="hover:text-slate-900 ml-1"><Minus size={12}/></button>
                             <button onClick={() => updateTableCount(table.id, table.capacity, 1)} className="hover:text-slate-900"><Plus size={12}/></button>
                           </span>
