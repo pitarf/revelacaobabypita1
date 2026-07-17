@@ -30,6 +30,7 @@ export type GuestMinAggregateOutputType = {
   group: string | null
   rsvpId: string | null
   isManuallyConfirmed: boolean | null
+  tableId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -40,6 +41,7 @@ export type GuestMaxAggregateOutputType = {
   group: string | null
   rsvpId: string | null
   isManuallyConfirmed: boolean | null
+  tableId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -50,6 +52,7 @@ export type GuestCountAggregateOutputType = {
   group: number
   rsvpId: number
   isManuallyConfirmed: number
+  tableId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -62,6 +65,7 @@ export type GuestMinAggregateInputType = {
   group?: true
   rsvpId?: true
   isManuallyConfirmed?: true
+  tableId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -72,6 +76,7 @@ export type GuestMaxAggregateInputType = {
   group?: true
   rsvpId?: true
   isManuallyConfirmed?: true
+  tableId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -82,6 +87,7 @@ export type GuestCountAggregateInputType = {
   group?: true
   rsvpId?: true
   isManuallyConfirmed?: true
+  tableId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -165,6 +171,7 @@ export type GuestGroupByOutputType = {
   group: string | null
   rsvpId: string | null
   isManuallyConfirmed: boolean
+  tableId: string | null
   createdAt: Date
   updatedAt: Date
   _count: GuestCountAggregateOutputType | null
@@ -196,9 +203,11 @@ export type GuestWhereInput = {
   group?: Prisma.StringNullableFilter<"Guest"> | string | null
   rsvpId?: Prisma.StringNullableFilter<"Guest"> | string | null
   isManuallyConfirmed?: Prisma.BoolFilter<"Guest"> | boolean
+  tableId?: Prisma.StringNullableFilter<"Guest"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Guest"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Guest"> | Date | string
   rsvp?: Prisma.XOR<Prisma.RsvpNullableScalarRelationFilter, Prisma.RsvpWhereInput> | null
+  table?: Prisma.XOR<Prisma.TableNullableScalarRelationFilter, Prisma.TableWhereInput> | null
 }
 
 export type GuestOrderByWithRelationInput = {
@@ -207,9 +216,11 @@ export type GuestOrderByWithRelationInput = {
   group?: Prisma.SortOrderInput | Prisma.SortOrder
   rsvpId?: Prisma.SortOrderInput | Prisma.SortOrder
   isManuallyConfirmed?: Prisma.SortOrder
+  tableId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   rsvp?: Prisma.RsvpOrderByWithRelationInput
+  table?: Prisma.TableOrderByWithRelationInput
 }
 
 export type GuestWhereUniqueInput = Prisma.AtLeast<{
@@ -221,9 +232,11 @@ export type GuestWhereUniqueInput = Prisma.AtLeast<{
   group?: Prisma.StringNullableFilter<"Guest"> | string | null
   rsvpId?: Prisma.StringNullableFilter<"Guest"> | string | null
   isManuallyConfirmed?: Prisma.BoolFilter<"Guest"> | boolean
+  tableId?: Prisma.StringNullableFilter<"Guest"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Guest"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Guest"> | Date | string
   rsvp?: Prisma.XOR<Prisma.RsvpNullableScalarRelationFilter, Prisma.RsvpWhereInput> | null
+  table?: Prisma.XOR<Prisma.TableNullableScalarRelationFilter, Prisma.TableWhereInput> | null
 }, "id">
 
 export type GuestOrderByWithAggregationInput = {
@@ -232,6 +245,7 @@ export type GuestOrderByWithAggregationInput = {
   group?: Prisma.SortOrderInput | Prisma.SortOrder
   rsvpId?: Prisma.SortOrderInput | Prisma.SortOrder
   isManuallyConfirmed?: Prisma.SortOrder
+  tableId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.GuestCountOrderByAggregateInput
@@ -248,6 +262,7 @@ export type GuestScalarWhereWithAggregatesInput = {
   group?: Prisma.StringNullableWithAggregatesFilter<"Guest"> | string | null
   rsvpId?: Prisma.StringNullableWithAggregatesFilter<"Guest"> | string | null
   isManuallyConfirmed?: Prisma.BoolWithAggregatesFilter<"Guest"> | boolean
+  tableId?: Prisma.StringNullableWithAggregatesFilter<"Guest"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Guest"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Guest"> | Date | string
 }
@@ -260,6 +275,7 @@ export type GuestCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   rsvp?: Prisma.RsvpCreateNestedOneWithoutGuestsInput
+  table?: Prisma.TableCreateNestedOneWithoutGuestsInput
 }
 
 export type GuestUncheckedCreateInput = {
@@ -268,6 +284,7 @@ export type GuestUncheckedCreateInput = {
   group?: string | null
   rsvpId?: string | null
   isManuallyConfirmed?: boolean
+  tableId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -280,6 +297,7 @@ export type GuestUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   rsvp?: Prisma.RsvpUpdateOneWithoutGuestsNestedInput
+  table?: Prisma.TableUpdateOneWithoutGuestsNestedInput
 }
 
 export type GuestUncheckedUpdateInput = {
@@ -288,6 +306,7 @@ export type GuestUncheckedUpdateInput = {
   group?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rsvpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isManuallyConfirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tableId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -298,6 +317,7 @@ export type GuestCreateManyInput = {
   group?: string | null
   rsvpId?: string | null
   isManuallyConfirmed?: boolean
+  tableId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -317,6 +337,7 @@ export type GuestUncheckedUpdateManyInput = {
   group?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rsvpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isManuallyConfirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tableId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -337,6 +358,7 @@ export type GuestCountOrderByAggregateInput = {
   group?: Prisma.SortOrder
   rsvpId?: Prisma.SortOrder
   isManuallyConfirmed?: Prisma.SortOrder
+  tableId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -347,6 +369,7 @@ export type GuestMaxOrderByAggregateInput = {
   group?: Prisma.SortOrder
   rsvpId?: Prisma.SortOrder
   isManuallyConfirmed?: Prisma.SortOrder
+  tableId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -357,6 +380,7 @@ export type GuestMinOrderByAggregateInput = {
   group?: Prisma.SortOrder
   rsvpId?: Prisma.SortOrder
   isManuallyConfirmed?: Prisma.SortOrder
+  tableId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -403,6 +427,48 @@ export type GuestUncheckedUpdateManyWithoutRsvpNestedInput = {
   deleteMany?: Prisma.GuestScalarWhereInput | Prisma.GuestScalarWhereInput[]
 }
 
+export type GuestCreateNestedManyWithoutTableInput = {
+  create?: Prisma.XOR<Prisma.GuestCreateWithoutTableInput, Prisma.GuestUncheckedCreateWithoutTableInput> | Prisma.GuestCreateWithoutTableInput[] | Prisma.GuestUncheckedCreateWithoutTableInput[]
+  connectOrCreate?: Prisma.GuestCreateOrConnectWithoutTableInput | Prisma.GuestCreateOrConnectWithoutTableInput[]
+  createMany?: Prisma.GuestCreateManyTableInputEnvelope
+  connect?: Prisma.GuestWhereUniqueInput | Prisma.GuestWhereUniqueInput[]
+}
+
+export type GuestUncheckedCreateNestedManyWithoutTableInput = {
+  create?: Prisma.XOR<Prisma.GuestCreateWithoutTableInput, Prisma.GuestUncheckedCreateWithoutTableInput> | Prisma.GuestCreateWithoutTableInput[] | Prisma.GuestUncheckedCreateWithoutTableInput[]
+  connectOrCreate?: Prisma.GuestCreateOrConnectWithoutTableInput | Prisma.GuestCreateOrConnectWithoutTableInput[]
+  createMany?: Prisma.GuestCreateManyTableInputEnvelope
+  connect?: Prisma.GuestWhereUniqueInput | Prisma.GuestWhereUniqueInput[]
+}
+
+export type GuestUpdateManyWithoutTableNestedInput = {
+  create?: Prisma.XOR<Prisma.GuestCreateWithoutTableInput, Prisma.GuestUncheckedCreateWithoutTableInput> | Prisma.GuestCreateWithoutTableInput[] | Prisma.GuestUncheckedCreateWithoutTableInput[]
+  connectOrCreate?: Prisma.GuestCreateOrConnectWithoutTableInput | Prisma.GuestCreateOrConnectWithoutTableInput[]
+  upsert?: Prisma.GuestUpsertWithWhereUniqueWithoutTableInput | Prisma.GuestUpsertWithWhereUniqueWithoutTableInput[]
+  createMany?: Prisma.GuestCreateManyTableInputEnvelope
+  set?: Prisma.GuestWhereUniqueInput | Prisma.GuestWhereUniqueInput[]
+  disconnect?: Prisma.GuestWhereUniqueInput | Prisma.GuestWhereUniqueInput[]
+  delete?: Prisma.GuestWhereUniqueInput | Prisma.GuestWhereUniqueInput[]
+  connect?: Prisma.GuestWhereUniqueInput | Prisma.GuestWhereUniqueInput[]
+  update?: Prisma.GuestUpdateWithWhereUniqueWithoutTableInput | Prisma.GuestUpdateWithWhereUniqueWithoutTableInput[]
+  updateMany?: Prisma.GuestUpdateManyWithWhereWithoutTableInput | Prisma.GuestUpdateManyWithWhereWithoutTableInput[]
+  deleteMany?: Prisma.GuestScalarWhereInput | Prisma.GuestScalarWhereInput[]
+}
+
+export type GuestUncheckedUpdateManyWithoutTableNestedInput = {
+  create?: Prisma.XOR<Prisma.GuestCreateWithoutTableInput, Prisma.GuestUncheckedCreateWithoutTableInput> | Prisma.GuestCreateWithoutTableInput[] | Prisma.GuestUncheckedCreateWithoutTableInput[]
+  connectOrCreate?: Prisma.GuestCreateOrConnectWithoutTableInput | Prisma.GuestCreateOrConnectWithoutTableInput[]
+  upsert?: Prisma.GuestUpsertWithWhereUniqueWithoutTableInput | Prisma.GuestUpsertWithWhereUniqueWithoutTableInput[]
+  createMany?: Prisma.GuestCreateManyTableInputEnvelope
+  set?: Prisma.GuestWhereUniqueInput | Prisma.GuestWhereUniqueInput[]
+  disconnect?: Prisma.GuestWhereUniqueInput | Prisma.GuestWhereUniqueInput[]
+  delete?: Prisma.GuestWhereUniqueInput | Prisma.GuestWhereUniqueInput[]
+  connect?: Prisma.GuestWhereUniqueInput | Prisma.GuestWhereUniqueInput[]
+  update?: Prisma.GuestUpdateWithWhereUniqueWithoutTableInput | Prisma.GuestUpdateWithWhereUniqueWithoutTableInput[]
+  updateMany?: Prisma.GuestUpdateManyWithWhereWithoutTableInput | Prisma.GuestUpdateManyWithWhereWithoutTableInput[]
+  deleteMany?: Prisma.GuestScalarWhereInput | Prisma.GuestScalarWhereInput[]
+}
+
 export type GuestCreateWithoutRsvpInput = {
   id?: string
   name: string
@@ -410,6 +476,7 @@ export type GuestCreateWithoutRsvpInput = {
   isManuallyConfirmed?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  table?: Prisma.TableCreateNestedOneWithoutGuestsInput
 }
 
 export type GuestUncheckedCreateWithoutRsvpInput = {
@@ -417,6 +484,7 @@ export type GuestUncheckedCreateWithoutRsvpInput = {
   name: string
   group?: string | null
   isManuallyConfirmed?: boolean
+  tableId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -456,8 +524,55 @@ export type GuestScalarWhereInput = {
   group?: Prisma.StringNullableFilter<"Guest"> | string | null
   rsvpId?: Prisma.StringNullableFilter<"Guest"> | string | null
   isManuallyConfirmed?: Prisma.BoolFilter<"Guest"> | boolean
+  tableId?: Prisma.StringNullableFilter<"Guest"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Guest"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Guest"> | Date | string
+}
+
+export type GuestCreateWithoutTableInput = {
+  id?: string
+  name: string
+  group?: string | null
+  isManuallyConfirmed?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  rsvp?: Prisma.RsvpCreateNestedOneWithoutGuestsInput
+}
+
+export type GuestUncheckedCreateWithoutTableInput = {
+  id?: string
+  name: string
+  group?: string | null
+  rsvpId?: string | null
+  isManuallyConfirmed?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type GuestCreateOrConnectWithoutTableInput = {
+  where: Prisma.GuestWhereUniqueInput
+  create: Prisma.XOR<Prisma.GuestCreateWithoutTableInput, Prisma.GuestUncheckedCreateWithoutTableInput>
+}
+
+export type GuestCreateManyTableInputEnvelope = {
+  data: Prisma.GuestCreateManyTableInput | Prisma.GuestCreateManyTableInput[]
+  skipDuplicates?: boolean
+}
+
+export type GuestUpsertWithWhereUniqueWithoutTableInput = {
+  where: Prisma.GuestWhereUniqueInput
+  update: Prisma.XOR<Prisma.GuestUpdateWithoutTableInput, Prisma.GuestUncheckedUpdateWithoutTableInput>
+  create: Prisma.XOR<Prisma.GuestCreateWithoutTableInput, Prisma.GuestUncheckedCreateWithoutTableInput>
+}
+
+export type GuestUpdateWithWhereUniqueWithoutTableInput = {
+  where: Prisma.GuestWhereUniqueInput
+  data: Prisma.XOR<Prisma.GuestUpdateWithoutTableInput, Prisma.GuestUncheckedUpdateWithoutTableInput>
+}
+
+export type GuestUpdateManyWithWhereWithoutTableInput = {
+  where: Prisma.GuestScalarWhereInput
+  data: Prisma.XOR<Prisma.GuestUpdateManyMutationInput, Prisma.GuestUncheckedUpdateManyWithoutTableInput>
 }
 
 export type GuestCreateManyRsvpInput = {
@@ -465,6 +580,7 @@ export type GuestCreateManyRsvpInput = {
   name: string
   group?: string | null
   isManuallyConfirmed?: boolean
+  tableId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -476,6 +592,7 @@ export type GuestUpdateWithoutRsvpInput = {
   isManuallyConfirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  table?: Prisma.TableUpdateOneWithoutGuestsNestedInput
 }
 
 export type GuestUncheckedUpdateWithoutRsvpInput = {
@@ -483,6 +600,7 @@ export type GuestUncheckedUpdateWithoutRsvpInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   group?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isManuallyConfirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tableId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -491,6 +609,47 @@ export type GuestUncheckedUpdateManyWithoutRsvpInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   group?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isManuallyConfirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tableId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type GuestCreateManyTableInput = {
+  id?: string
+  name: string
+  group?: string | null
+  rsvpId?: string | null
+  isManuallyConfirmed?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type GuestUpdateWithoutTableInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  group?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isManuallyConfirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  rsvp?: Prisma.RsvpUpdateOneWithoutGuestsNestedInput
+}
+
+export type GuestUncheckedUpdateWithoutTableInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  group?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rsvpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isManuallyConfirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type GuestUncheckedUpdateManyWithoutTableInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  group?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rsvpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isManuallyConfirmed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -504,9 +663,11 @@ export type GuestSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   group?: boolean
   rsvpId?: boolean
   isManuallyConfirmed?: boolean
+  tableId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   rsvp?: boolean | Prisma.Guest$rsvpArgs<ExtArgs>
+  table?: boolean | Prisma.Guest$tableArgs<ExtArgs>
 }, ExtArgs["result"]["guest"]>
 
 export type GuestSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -515,9 +676,11 @@ export type GuestSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   group?: boolean
   rsvpId?: boolean
   isManuallyConfirmed?: boolean
+  tableId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   rsvp?: boolean | Prisma.Guest$rsvpArgs<ExtArgs>
+  table?: boolean | Prisma.Guest$tableArgs<ExtArgs>
 }, ExtArgs["result"]["guest"]>
 
 export type GuestSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -526,9 +689,11 @@ export type GuestSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   group?: boolean
   rsvpId?: boolean
   isManuallyConfirmed?: boolean
+  tableId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   rsvp?: boolean | Prisma.Guest$rsvpArgs<ExtArgs>
+  table?: boolean | Prisma.Guest$tableArgs<ExtArgs>
 }, ExtArgs["result"]["guest"]>
 
 export type GuestSelectScalar = {
@@ -537,25 +702,30 @@ export type GuestSelectScalar = {
   group?: boolean
   rsvpId?: boolean
   isManuallyConfirmed?: boolean
+  tableId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type GuestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "group" | "rsvpId" | "isManuallyConfirmed" | "createdAt" | "updatedAt", ExtArgs["result"]["guest"]>
+export type GuestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "group" | "rsvpId" | "isManuallyConfirmed" | "tableId" | "createdAt" | "updatedAt", ExtArgs["result"]["guest"]>
 export type GuestInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   rsvp?: boolean | Prisma.Guest$rsvpArgs<ExtArgs>
+  table?: boolean | Prisma.Guest$tableArgs<ExtArgs>
 }
 export type GuestIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   rsvp?: boolean | Prisma.Guest$rsvpArgs<ExtArgs>
+  table?: boolean | Prisma.Guest$tableArgs<ExtArgs>
 }
 export type GuestIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   rsvp?: boolean | Prisma.Guest$rsvpArgs<ExtArgs>
+  table?: boolean | Prisma.Guest$tableArgs<ExtArgs>
 }
 
 export type $GuestPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Guest"
   objects: {
     rsvp: Prisma.$RsvpPayload<ExtArgs> | null
+    table: Prisma.$TablePayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -563,6 +733,7 @@ export type $GuestPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     group: string | null
     rsvpId: string | null
     isManuallyConfirmed: boolean
+    tableId: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["guest"]>
@@ -960,6 +1131,7 @@ readonly fields: GuestFieldRefs;
 export interface Prisma__GuestClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   rsvp<T extends Prisma.Guest$rsvpArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Guest$rsvpArgs<ExtArgs>>): Prisma.Prisma__RsvpClient<runtime.Types.Result.GetResult<Prisma.$RsvpPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  table<T extends Prisma.Guest$tableArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Guest$tableArgs<ExtArgs>>): Prisma.Prisma__TableClient<runtime.Types.Result.GetResult<Prisma.$TablePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -994,6 +1166,7 @@ export interface GuestFieldRefs {
   readonly group: Prisma.FieldRef<"Guest", 'String'>
   readonly rsvpId: Prisma.FieldRef<"Guest", 'String'>
   readonly isManuallyConfirmed: Prisma.FieldRef<"Guest", 'Boolean'>
+  readonly tableId: Prisma.FieldRef<"Guest", 'String'>
   readonly createdAt: Prisma.FieldRef<"Guest", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Guest", 'DateTime'>
 }
@@ -1413,6 +1586,25 @@ export type Guest$rsvpArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    */
   include?: Prisma.RsvpInclude<ExtArgs> | null
   where?: Prisma.RsvpWhereInput
+}
+
+/**
+ * Guest.table
+ */
+export type Guest$tableArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Table
+   */
+  select?: Prisma.TableSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Table
+   */
+  omit?: Prisma.TableOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TableInclude<ExtArgs> | null
+  where?: Prisma.TableWhereInput
 }
 
 /**

@@ -406,7 +406,8 @@ export const ModelName = {
   AuditLog: 'AuditLog',
   GuestMessage: 'GuestMessage',
   EmailLog: 'EmailLog',
-  FoodAndDrink: 'FoodAndDrink'
+  FoodAndDrink: 'FoodAndDrink',
+  Table: 'Table'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -422,7 +423,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "administrator" | "siteSetting" | "eventSetting" | "paymentSetting" | "category" | "gift" | "galleryImage" | "video" | "musicSetting" | "vote" | "rsvp" | "guest" | "cart" | "cartItem" | "order" | "orderItem" | "payment" | "paymentEvent" | "uploadedReceipt" | "auditLog" | "guestMessage" | "emailLog" | "foodAndDrink"
+    modelProps: "administrator" | "siteSetting" | "eventSetting" | "paymentSetting" | "category" | "gift" | "galleryImage" | "video" | "musicSetting" | "vote" | "rsvp" | "guest" | "cart" | "cartItem" | "order" | "orderItem" | "payment" | "paymentEvent" | "uploadedReceipt" | "auditLog" | "guestMessage" | "emailLog" | "foodAndDrink" | "table"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2128,6 +2129,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Table: {
+      payload: Prisma.$TablePayload<ExtArgs>
+      fields: Prisma.TableFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TableFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TablePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TableFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TablePayload>
+        }
+        findFirst: {
+          args: Prisma.TableFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TablePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TableFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TablePayload>
+        }
+        findMany: {
+          args: Prisma.TableFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TablePayload>[]
+        }
+        create: {
+          args: Prisma.TableCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TablePayload>
+        }
+        createMany: {
+          args: Prisma.TableCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.TableCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TablePayload>[]
+        }
+        delete: {
+          args: Prisma.TableDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TablePayload>
+        }
+        update: {
+          args: Prisma.TableUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TablePayload>
+        }
+        deleteMany: {
+          args: Prisma.TableDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TableUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TableUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TablePayload>[]
+        }
+        upsert: {
+          args: Prisma.TableUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TablePayload>
+        }
+        aggregate: {
+          args: Prisma.TableAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTable>
+        }
+        groupBy: {
+          args: Prisma.TableGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TableGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TableCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TableCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2356,6 +2431,7 @@ export const GuestScalarFieldEnum = {
   group: 'group',
   rsvpId: 'rsvpId',
   isManuallyConfirmed: 'isManuallyConfirmed',
+  tableId: 'tableId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -2513,6 +2589,17 @@ export const FoodAndDrinkScalarFieldEnum = {
 } as const
 
 export type FoodAndDrinkScalarFieldEnum = (typeof FoodAndDrinkScalarFieldEnum)[keyof typeof FoodAndDrinkScalarFieldEnum]
+
+
+export const TableScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  capacity: 'capacity',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TableScalarFieldEnum = (typeof TableScalarFieldEnum)[keyof typeof TableScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -2785,6 +2872,7 @@ export type GlobalOmitConfig = {
   guestMessage?: Prisma.GuestMessageOmit
   emailLog?: Prisma.EmailLogOmit
   foodAndDrink?: Prisma.FoodAndDrinkOmit
+  table?: Prisma.TableOmit
 }
 
 /* Types for Logging */

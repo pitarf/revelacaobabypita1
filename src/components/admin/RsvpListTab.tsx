@@ -42,6 +42,7 @@ export default function RsvpListTab() {
   const [notes, setNotes] = useState("");
   const [status, setStatus] = useState("confirmed");
   const [submitting, setSubmitting] = useState(false);
+  const [broadcasting, setBroadcasting] = useState(false);
 
   useEffect(() => {
     fetchRsvps();
@@ -255,6 +256,29 @@ export default function RsvpListTab() {
     toast.success("Arquivo CSV exportado com sucesso!");
   };
 
+  const handleBroadcastEmails = async () => {
+    if (!window.confirm("Atenção! Isso enviará e-mails para todos os convidados confirmados. Você já configurou o SMTP? Deseja continuar?")) return;
+
+    setBroadcasting(true);
+    toast.loading("Disparando e-mails... Isso pode demorar um pouco.", { id: "broadcast" });
+
+    try {
+      const res = await fetch("/api/admin/broadcast-emails", { method: "POST" });
+      const json = await res.json();
+
+      if (res.ok) {
+        toast.success(`Disparo concluído! Enviados: ${json.sent}, Sem E-mail: ${json.skippedNoEmail}, Falhas: ${json.failed}`, { id: "broadcast" });
+      } else {
+        toast.error(json.error || "Erro ao disparar e-mails.", { id: "broadcast" });
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Erro de conexão ao disparar e-mails.", { id: "broadcast" });
+    } finally {
+      setBroadcasting(false);
+    }
+  };
+
   // Filtra RSVPs na busca em tempo real
   const filteredRsvps = rsvps.filter((rsvp) => {
     const matchesSearch = 
@@ -283,7 +307,15 @@ export default function RsvpListTab() {
             <p className="text-xs text-slate-400 font-semibold mt-0.5 uppercase tracking-wider">Acompanhe as confirmações de presença e acompanhantes</p>
           </div>
           
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={handleBroadcastEmails}
+              disabled={broadcasting}
+              className="flex items-center gap-1.5 bg-[#5c5bd5] text-white border border-[#4a49ac] text-xs font-black uppercase tracking-wider px-4 py-2.5 rounded-xl shadow-sm transition-all hover:bg-[#4a49ac] active:scale-95 disabled:opacity-50"
+            >
+              <MessageSquare className="h-4 w-4" />
+              {broadcasting ? "Enviando..." : "Disparar E-mails"}
+            </button>
             <button
               onClick={handleExportCSV}
               className="flex items-center gap-1.5 bg-white text-slate-700 border border-slate-200 text-xs font-black uppercase tracking-wider px-4 py-2.5 rounded-xl shadow-sm transition-all hover:bg-slate-50 active:scale-95"

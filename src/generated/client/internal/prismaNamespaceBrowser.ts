@@ -73,7 +73,8 @@ export const ModelName = {
   AuditLog: 'AuditLog',
   GuestMessage: 'GuestMessage',
   EmailLog: 'EmailLog',
-  FoodAndDrink: 'FoodAndDrink'
+  FoodAndDrink: 'FoodAndDrink',
+  Table: 'Table'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -281,6 +282,7 @@ export const GuestScalarFieldEnum = {
   group: 'group',
   rsvpId: 'rsvpId',
   isManuallyConfirmed: 'isManuallyConfirmed',
+  tableId: 'tableId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -438,6 +440,17 @@ export const FoodAndDrinkScalarFieldEnum = {
 } as const
 
 export type FoodAndDrinkScalarFieldEnum = (typeof FoodAndDrinkScalarFieldEnum)[keyof typeof FoodAndDrinkScalarFieldEnum]
+
+
+export const TableScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  capacity: 'capacity',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TableScalarFieldEnum = (typeof TableScalarFieldEnum)[keyof typeof TableScalarFieldEnum]
 
 
 export const SortOrder = {

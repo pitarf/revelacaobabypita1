@@ -132,3 +132,8 @@ export type EmailLog = Prisma.EmailLogModel
  * 
  */
 export type FoodAndDrink = Prisma.FoodAndDrinkModel
+/**
+ * Model Table
+ * 
+ */
+export type Table = Prisma.TableModel
