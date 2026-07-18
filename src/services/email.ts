@@ -19,7 +19,7 @@ const transporter = nodemailer.createTransport({
 
 export async function sendEmail({ to, subject, html }: SendMailParams) {
   try {
-    const from = process.env.SMTP_FROM || '"Chá Revelação" <contato@seusite.com.br>';
+    const from = process.env.SMTP_FROM || '"Chá Revelação" <rfpita.work@gmail.com>';
     await transporter.sendMail({
       from,
       to,
