@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server';
 import { broadcastConfirmedGuests } from '@/services/email';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { getAdminSession } from '@/lib/auth';
 
 export async function POST() {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
+    const session = await getAdminSession();
+    if (!session) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
