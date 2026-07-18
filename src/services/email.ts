@@ -95,8 +95,8 @@ export async function broadcastConfirmedGuests() {
     if (!order) {
       htmlContent += `
         <p><strong>Caso você ainda esteja em dúvida sobre o que nos dar de presente,</strong> preparamos uma listinha super prática e segura no nosso site.</p>
-        <p>Tem opções para todos os bolsos e você nem precisa se preocupar em levar nada no dia da festa! É só acessar a Lista de Presentes no nosso site. 🎁</p>
-        <p><a href="${appUrl}/presentes" style="display: inline-block; padding: 10px 20px; background-color: #e0589a; color: white; text-decoration: none; border-radius: 5px;">Ver Lista de Presentes</a></p>
+        <p>Você pode optar por comprar o presente fisicamente e <strong>levar pessoalmente no dia da festa</strong>, ou, se preferir mais comodidade, pode <strong>comprar diretamente pelo nosso site</strong> e nós recebemos o valor! 🎁</p>
+        <p><a href="${appUrl}/#presentes" style="display: inline-block; padding: 10px 20px; background-color: #e0589a; color: white; text-decoration: none; border-radius: 5px;">Ver Lista de Presentes</a></p>
         <hr style="border: 1px solid #eee; my-4" />
       `;
     }
