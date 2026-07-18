@@ -1,37 +1,5 @@
-import nodemailer from 'nodemailer';
 import { prisma } from '@/lib/prisma';
-
-interface SendMailParams {
-  to: string;
-  subject: string;
-  html: string;
-}
-
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: parseInt(process.env.SMTP_PORT || '465'),
-  secure: process.env.SMTP_PORT === '465',
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
-
-export async function sendEmail({ to, subject, html }: SendMailParams) {
-  try {
-    const from = process.env.SMTP_FROM || '"Chá Revelação" <rfpita.work@gmail.com>';
-    await transporter.sendMail({
-      from,
-      to,
-      subject,
-      html,
-    });
-    return { success: true };
-  } catch (error) {
-    console.error('Erro ao enviar email para', to, error);
-    return { success: false, error };
-  }
-}
+import { sendEmail } from '@/lib/email';
 
 export async function broadcastConfirmedGuests() {
   // Pega os guests que tem RSVP atrelado (portanto, tem e-mail)
@@ -107,37 +75,17 @@ export async function broadcastConfirmedGuests() {
       </div>
     `;
 
-    // Enviar o e-mail
-    const emailResult = await sendEmail({
-      to: rsvp.email,
-      subject: 'Falta pouco para o nosso encontro! 🍼🎉',
-      html: htmlContent
-    });
-
-    if (emailResult.success) {
+    // Enviar o e-mail via Brevo usando a função do projeto
+    try {
+      await sendEmail(
+        rsvp.email,
+        'Falta pouco para o nosso encontro! 🍼🎉',
+        htmlContent
+      );
       results.sent++;
-      
-      // Salva no log de emails
-      await prisma.emailLog.create({
-        data: {
-          to: rsvp.email,
-          subject: 'Falta pouco para o nosso encontro! 🍼🎉',
-          htmlContent,
-          status: 'sent',
-          sentAt: new Date(),
-        }
-      });
-    } else {
+    } catch (e) {
+      console.error(e);
       results.failed++;
-      await prisma.emailLog.create({
-        data: {
-          to: rsvp.email,
-          subject: 'Falta pouco para o nosso encontro! 🍼🎉',
-          htmlContent,
-          status: 'failed',
-          errorMessage: emailResult.error ? JSON.stringify(emailResult.error) : 'Erro desconhecido'
-        }
-      });
     }
   }
 
